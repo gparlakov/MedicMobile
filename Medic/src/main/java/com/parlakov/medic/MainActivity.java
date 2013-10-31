@@ -16,7 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
+
+import com.parlakov.medic.data.HttpRequester;
+
+import org.apache.http.message.BasicHeader;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -53,6 +58,8 @@ public class MainActivity extends ActionBarActivity
         fragmentManager.beginTransaction()
                 .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
                 .commit();
+
+
     }
 
     public void onSectionAttached(int number) {
@@ -127,13 +134,46 @@ public class MainActivity extends ActionBarActivity
         public PlaceholderFragment() {
         }
 
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
+
+            initializeUi(rootView);
+
             return rootView;
+        }
+
+        private void initializeUi(View rootView) {
+            Button sendGetButton = (Button) rootView.findViewById(R.id.buttonSendGetRequest);
+            sendGetButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    doSendGet();
+                }
+            });
+
+            Button sendGPostButton = (Button) rootView.findViewById(R.id.buttonSendPost);
+            sendGPostButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    doSendPost();
+                }
+            });
+        }
+
+        private void doSendPost() {
+
+        }
+
+        private void doSendGet() {
+            HttpRequester requester = new HttpRequester();
+            String textResponse =
+                    requester.httpGet("http://www.abv.bg/",
+                            new BasicHeader("Authorization","Bearer 9ZjuCuRmsDNSzQgC"), null);
         }
 
         @Override

@@ -13,4 +13,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/send_get_request_text"
+        android:id="@+id/buttonSendGetRequest"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/send_post_text"
+        android:id="@+id/buttonSendPost"
+        android:layout_below="@+id/buttonSendGetRequest"
+        android:layout_alignParentLeft="true" />
+
 </RelativeLayout>
