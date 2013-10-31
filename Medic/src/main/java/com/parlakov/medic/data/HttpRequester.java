@@ -1,18 +1,18 @@
 package com.parlakov.medic.data;
 
-import android.net.Uri;
 import android.util.Log;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.params.BasicHttpParams;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -21,14 +21,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.net.URI;
 
 /**
  * Created by georgi on 13-10-30.
  */
 public class HttpRequester {
     private static final String USER_AGENT_STRING = "Mozilla/5.0 (Windows NT 6.3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36";
-
 
     HttpClient mHttpClient;
 
@@ -95,6 +93,7 @@ public class HttpRequester {
 
         }
         catch (Exception e) {
+            Log.e("httpPost", e.getCause().getMessage());
             // TODO - refactor
             // throw new HttpException(e.getMessage());
         }
@@ -103,15 +102,14 @@ public class HttpRequester {
     }
 
     private HttpEntity getHttpEntity(String data) {
-        HttpEntity entity = new BasicHttpEntity();
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        Writer writer = new OutputStreamWriter(output);
-        try{
-            writer.write(data);
+        HttpEntity entity = null;
 
-            entity.writeTo(output);
+        try{
+            entity = new StringEntity(data, "UTF-8");
+            Log.e("Entity converted to string ", convertStreamToString(entity.getContent()));
         }
         catch (Exception e){}
+
         return entity;
     }
 

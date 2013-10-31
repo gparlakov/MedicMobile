@@ -8,10 +8,10 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MainActivity$PlaceholderFragment">
 
-    <TextView
-        android:id="@+id/section_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <!--<TextView-->
+        <!--android:id="@+id/section_label"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"/>-->
 
     <Button
         android:layout_width="wrap_content"
@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/send_post_text"
-        android:id="@+id/buttonSendPost"
+        android:id="@+id/buttonSendPostRequest"
         android:layout_below="@+id/buttonSendGetRequest"
         android:layout_alignParentLeft="true" />
 
