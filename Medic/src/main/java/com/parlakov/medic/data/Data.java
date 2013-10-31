@@ -1,17 +1,32 @@
 package com.parlakov.medic.data;
 
+import com.parlakov.medic.models.Examination;
+import com.parlakov.medic.models.Patient;
+import com.parlakov.uow.IRepository;
+import com.parlakov.uow.IUow;
+
 /**
  * Created by georgi on 13-10-30.
  */
-public class Data {
+public class Data implements IUow{
     private final String BASE_URL = "http://api.everlive.com/v1/";
     private final String API_KEY = "9ZjuCuRmsDNSzQgC";
 
 
     HttpRequester mRequester;
 
-    public Users getDoctors() {
+    public Users getUsers() {
         return mDoctors;
+    }
+
+    @Override
+    public IRepository<Patient> getPatients() {
+        return null;
+    }
+
+    @Override
+    public IRepository<Examination> getExaminations() {
+        return null;
     }
 
     Users mDoctors;
