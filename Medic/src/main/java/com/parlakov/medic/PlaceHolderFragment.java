@@ -57,21 +57,21 @@ public class PlaceholderFragment extends Fragment {
     }
 
     private void initializeUi(View rootView) {
-        Button sendGetButton = (Button) rootView.findViewById(R.id.buttonSendGetRequest);
-        sendGetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doSendGet();
-            }
-        });
-
-        Button sendGPostButton = (Button) rootView.findViewById(R.id.buttonSendPostRequest);
-        sendGPostButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doSendPost();
-            }
-        });
+//        Button sendGetButton = (Button) rootView.findViewById(R.id.buttonSendGetRequest);
+//        sendGetButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                doSendGet();
+//            }
+//        });
+//
+//        Button sendGPostButton = (Button) rootView.findViewById(R.id.buttonSendPostRequest);
+//        sendGPostButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                doSendPost();
+//            }
+//        });
     }
 
     private void doSendPost() {

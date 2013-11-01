@@ -3,15 +3,28 @@
 
     <string name="app_name">Medic</string>
 
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
+    <string name="title_sectionHome">Home</string>
+    <string name="title_sectionLogin">Login</string>
+    <string name="title_sectionRegister">Register</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
 
     <string name="send_get_request_text">Send Get</string>
     <string name="send_post_text">Register new Doctor</string>
+    <string name="hint_username">Username...</string>
+
+    <string name="hint_password">Password...</string>
+    <string name="login_doLoginButton">Goin</string>
+    <string name="register_phone">Phone...</string>
+    <string name="hint_registerPhone">Phone...</string>
+    <string name="hint_registerEmail">Email....</string>
+    <string name="hint_displayName">Display Name...</string>
+    <string name="register_doRegisterText">Register</string>
+    <string name="home_welcomeGreeting">Welcome to MEDIC. Your helper in the practice...</string>
 
 </resources>
+

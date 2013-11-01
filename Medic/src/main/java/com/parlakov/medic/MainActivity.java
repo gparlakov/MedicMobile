@@ -1,27 +1,23 @@
 package com.parlakov.medic;
 
-import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.Button;
-import android.widget.TextView;
 
-import com.parlakov.medic.data.HttpRequester;
-
-import org.apache.http.message.BasicHeader;
+import com.parlakov.medic.fragments.HomeFragment;
+import com.parlakov.medic.fragments.LoginFragment;
+import com.parlakov.medic.fragments.RegisterFragment;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
+    private static final int LOGIN_DRAWER_POSITION = 1;
+    private static final int REGISTER_DRAWER_POSITION = 2;
+    private static final int HOME_DRAWER_POSITION = 0;
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -44,30 +40,46 @@ public class MainActivity extends ActionBarActivity
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+                (DrawerLayout) findViewById(R.id.drawer_layoutCustomMy));
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .commit();
 
+        switch (position) {
+            case HOME_DRAWER_POSITION:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, new HomeFragment())
+                        .commit();
+                break;
+
+            case LOGIN_DRAWER_POSITION:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, new LoginFragment())
+                        .commit();
+                break;
+
+            case REGISTER_DRAWER_POSITION:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, new RegisterFragment())
+                        .commit();
+                break;
+        }
 
     }
 
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
+                mTitle = getString(R.string.title_sectionHome);
                 break;
             case 2:
-                mTitle = getString(R.string.title_section2);
+                mTitle = getString(R.string.title_sectionLogin);
                 break;
             case 3:
-                mTitle = getString(R.string.title_section3);
+                mTitle = getString(R.string.title_sectionRegister);
                 break;
         }
     }

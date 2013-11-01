@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 
 import com.parlakov.medic.models.LoginUser;
 import com.parlakov.medic.models.User;
-import com.parlakov.uow.IRepository;
 import com.parlakov.uow.IUsersRepository;
 
 import java.util.Collection;
@@ -37,7 +36,6 @@ public class Users implements IUsersRepository<User>{
 
         return response;
     }
-
 
     public String login(String username, String password){
         LoginUser loginUser = new LoginUser(username, password);
@@ -74,7 +72,6 @@ public class Users implements IUsersRepository<User>{
     public User update(User entity) {
         return null;
     }
-
 
     private String getId(String response) {
         String id = null;
