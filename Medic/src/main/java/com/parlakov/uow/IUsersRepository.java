@@ -1,5 +1,6 @@
 package com.parlakov.uow;
 
+import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -16,7 +17,7 @@ public interface IUsersRepository<T> {
 
     public T update(T entity);
 
-    public String login(String username, String password);
+    public void login(String username, String password) throws IOException;
 
-    public String register(Object user);
+    public void register(Object user) throws IOException;
 }

@@ -8,9 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.parlakov.medic.R;
 import com.parlakov.medic.data.Data;
+
+import java.io.IOException;
 
 /**
  * Created by georgi on 13-11-1.
@@ -41,11 +44,16 @@ public class LoginFragment extends BaseFragment {
         Log.i("Username via getString method", getString(R.id.login_usernameEditText));
 
         Data data = new Data();
+        String result = null;
+        try {
+            data.getUsers().login(username, password);
+            result = "Logged in!";
 
-        String loggedIn = data.getUsers().login(username, password);
+        } catch (IOException e) {
+            result = "Not logged in. Error: " + e.getMessage();
+        }
 
-        Bundle loginBundle = new Bundle();
-        loginBundle.putString("Result", "Ok");
+        showToastMessage(result, 10000, view);
     }
 
 }

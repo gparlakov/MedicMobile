@@ -34,7 +34,7 @@ public class HttpRequester {
         mHttpClient = new DefaultHttpClient();
     }
 
-    public String httpGet(String url, Header header, String contentType){
+    public String httpGet(String url, Header header, String contentType) throws IOException {
         if (contentType == null)
             contentType = "application/json";
 
@@ -48,25 +48,18 @@ public class HttpRequester {
 
         HttpResponse response;
         String result = null;
-        try {
-            response = mHttpClient.execute(getRequest);
 
-            HttpEntity entity = response.getEntity();
-            if (entity != null){
-                result = convertStreamToString(entity.getContent());
-            }
+        response = mHttpClient.execute(getRequest);
 
-        }
-        catch (Exception e) {
-            Log.e("Exception on Get", e.getMessage());
-            // TODO - refactor
-            // throw new HttpException(e.getMessage());
+        HttpEntity entity = response.getEntity();
+        if (entity != null){
+            result = convertStreamToString(entity.getContent());
         }
 
         return result;
     }
 
-    public String httpPost(String url,String data, Header header, String contentType){
+    public String httpPost(String url,String data, Header header, String contentType) throws IOException {
         if (contentType == null)
             contentType = "application/json";
 
@@ -74,7 +67,7 @@ public class HttpRequester {
 
         HttpEntity requestEntity = getHttpEntity(data);
         postRequest.setEntity(requestEntity);
-
+        postRequest.setHeader("User-Agent", USER_AGENT_STRING);
         postRequest.setHeader(new BasicHeader("Content-Type", contentType));
 
         if (header != null){
@@ -83,19 +76,12 @@ public class HttpRequester {
 
         HttpResponse response;
         String result = null;
-        try {
-            response = mHttpClient.execute(postRequest);
 
-            HttpEntity entity = response.getEntity();
-            if (entity != null){
-                result = convertStreamToString(entity.getContent());
-            }
+        response = mHttpClient.execute(postRequest);
 
-        }
-        catch (Exception e) {
-            Log.e("httpPost", e.getCause().getMessage());
-            // TODO - refactor
-            // throw new HttpException(e.getMessage());
+        HttpEntity entity = response.getEntity();
+        if (entity != null){
+            result = convertStreamToString(entity.getContent());
         }
 
         return result;
@@ -113,7 +99,7 @@ public class HttpRequester {
         return entity;
     }
 
-    private static String convertStreamToString(InputStream is) {
+    private static String convertStreamToString(InputStream is) throws IOException {
     /*
      * To convert the InputStream to String we use the BufferedReader.readLine()
      * method. We iterate until the BufferedReader return null which means
@@ -129,13 +115,9 @@ public class HttpRequester {
                 sb.append(line + "\n");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw e;
         } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+           is.close();
         }
         return sb.toString();
     }

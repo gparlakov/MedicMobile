@@ -1,7 +1,6 @@
 package com.parlakov.medic.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,8 @@ import android.widget.Button;
 import com.parlakov.medic.R;
 import com.parlakov.medic.data.Data;
 import com.parlakov.medic.models.User;
+
+import java.io.IOException;
 
 /**
  * Created by georgi on 13-11-1.
@@ -38,15 +39,22 @@ public class RegisterFragment extends BaseFragment {
     }
 
     private void doRegister(View view) {
-        User newUser = getUser(view);
+        User newUser = getUserInfo(view);
 
         Data data = new Data();
 
-        String registered = data.getUsers().register(newUser);
+        String result = null;
+        try {
+            data.getUsers().register(newUser);
+            result = "Registered";
+        } catch (IOException e) {
+            result = "NOT Registered. Error: " + e.getMessage();
+        }
 
+        showToastMessage(result, 5000, view);
     }
 
-    private User getUser(View view) {
+    private User getUserInfo(View view) {
         String username = getTextFromEditView(R.id.register_usernameEditText, view);
         String password = getTextFromEditView(R.id.register_passwordEditText, view);
         String email = getTextFromEditView(R.id.register_emailEditText, view);

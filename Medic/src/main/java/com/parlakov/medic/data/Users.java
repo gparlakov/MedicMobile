@@ -6,6 +6,7 @@ import com.parlakov.medic.models.LoginUser;
 import com.parlakov.medic.models.User;
 import com.parlakov.uow.IUsersRepository;
 
+import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -13,12 +14,17 @@ import java.util.Collection;
  */
 public class Users implements IUsersRepository<User>{
 
+    public static final String NOT_CREATED_RESPONSE = "Not created";
+    private static final String NOT_LOGGED_RESPONSE = "Not logged";
+
     private final String mBaseUrl;
     private final String mApiKey;
     private final HttpRequester mHttpRequester;
     private final Gson mGson;
 
-    public String mId;
+    public String mPrincipalId;
+    public String mAccessToken;
+
 
     public Users(String baseUrl, HttpRequester requester, String apiKey) {
         mBaseUrl = baseUrl;
@@ -27,26 +33,28 @@ public class Users implements IUsersRepository<User>{
         mGson = new Gson();
     }
 
-    public String register(Object user){
-
+    public void register(Object user) throws IOException {
         String data = mGson.toJson(user);
         String response = mHttpRequester.httpPost(mBaseUrl + mApiKey + "/Users", data, null, null);
-        if (response != null)
-            mId = getId(response);
-
-        return response;
+        if (response != null){
+            mPrincipalId = getFromJson(response, "Id");
+        }
     }
 
-    public String login(String username, String password){
+    public void login(String username, String password) throws IOException {
         LoginUser loginUser = new LoginUser(username, password);
         String data = mGson.toJson(loginUser);
 
         String url = mBaseUrl + mApiKey + "/oauth/token";
 
         String response = mHttpRequester.httpPost(url, data, null, null);
-
-        return response;
+        if(response != null){
+            mAccessToken = getFromJson(response, "access_token");
+            mPrincipalId = getFromJson(response, "principal_id");
+        }
     }
+
+
 
     @Override
     public User getById(String id) {
@@ -73,15 +81,17 @@ public class Users implements IUsersRepository<User>{
         return null;
     }
 
-    private String getId(String response) {
-        String id = null;
+    private String getFromJson(String jsonString, String fieldName) {
 
-        int idIndex = response.indexOf("Id");
+        String fieldValue = null;
 
-        int start = idIndex + 5;
-        int end = response.indexOf('"', start);
+        int fieldNameIndex = jsonString.indexOf(fieldName);
 
-        id = response.substring(start, end);
-        return id;
+        int start = fieldNameIndex + fieldName.length() + 3;
+        int end = jsonString.indexOf('"', start);
+
+        fieldValue = jsonString.substring(start, end);
+        return fieldValue;
     }
+
 }
