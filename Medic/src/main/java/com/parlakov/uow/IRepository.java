@@ -12,7 +12,7 @@ public interface IRepository<T> {
 
     public Collection<T> getAll();
 
-    public int add(T entity);
+    public void add(T entity);
 
     public Boolean delete(T entity);
 

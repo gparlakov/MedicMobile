@@ -2,8 +2,10 @@ package com.parlakov.medic.data;
 
 import com.parlakov.medic.models.Examination;
 import com.parlakov.medic.models.Patient;
+import com.parlakov.medic.models.User;
 import com.parlakov.uow.IRepository;
 import com.parlakov.uow.IUow;
+import com.parlakov.uow.IUsersRepository;
 
 /**
  * Created by georgi on 13-10-30.

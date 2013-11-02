@@ -25,6 +25,7 @@
     <string name="hint_displayName">Display Name...</string>
     <string name="register_doRegisterText">Register</string>
     <string name="home_welcomeGreeting">Welcome to MEDIC. Your helper in the practice...</string>
+    <string name="create_tables">Create tables</string>
 
 </resources>
 

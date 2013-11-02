@@ -1,6 +1,7 @@
 package com.parlakov.medic.models;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -12,7 +13,8 @@ public class Patient {
     private String lastName;
     private int age;
     private String phone;
-    private List<Examination> examinations;
+    private Collection<Examination> examinations;
+    private byte[] image;
 
     public  Patient(){
         this(null, null, 0, null);
@@ -25,6 +27,7 @@ public class Patient {
         setAge(age);
         setPhone(phone);
     }
+
     public String getFirstName() {
         return firstName;
     }
@@ -57,7 +60,7 @@ public class Patient {
         this.phone = phone;
     }
 
-    public List<Examination> getExaminations() {
+    public Collection<Examination> getExaminations() {
         return examinations;
     }
 

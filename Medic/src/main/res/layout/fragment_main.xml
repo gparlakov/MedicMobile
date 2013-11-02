@@ -9,11 +9,13 @@
     tools:context=".MainActivity$PlaceholderFragment">
 
     <ImageView
-        android:layout_width="fill_parent"
-        android:layout_height="200dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:id="@+id/imageView"
         android:src="@drawable/ic_launcher"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/fragment_mainTitle"
@@ -26,13 +28,13 @@
         android:layout_below="@+id/imageView"
         android:phoneNumber="false" />
 
-    <!--<Button-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/send_get_request_text"-->
-        <!--android:id="@+id/buttonSendGetRequest"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_alignParentLeft="true" />-->
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/create_tables"
+        android:id="@+id/buttonCreateDB"
+        android:layout_below="@+id/fragment_mainTitle"
+        android:layout_centerHorizontal="true" />
 
     <!--<Button-->
         <!--android:layout_width="wrap_content"-->
