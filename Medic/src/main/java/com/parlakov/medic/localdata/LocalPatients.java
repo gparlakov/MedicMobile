@@ -2,6 +2,7 @@ package com.parlakov.medic.localdata;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.parlakov.medic.models.Patient;
 import com.parlakov.uow.IRepository;
@@ -31,16 +32,20 @@ public class LocalPatients implements IRepository<Patient> {
 
     @Override
     public void add(com.parlakov.medic.models.Patient entity) {
+        try{
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        mDbHelper.onUpgrade(db,1,2);
         ContentValues values = new ContentValues();
 
         values.put(MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME, entity.getFirstName());
         values.put(MedicDbContract.Patient.COLUMN_NAME_LAST_NAME, entity.getLastName());
         values.put(MedicDbContract.Patient.COLUMN_NAME_AGE, entity.getAge());
 
-        db.insert(MedicDbContract.Patient.TABLE_NAME, null, values );
-
-
+        db.insert(MedicDbContract.Patient.TABLE_NAME, null, values);
+        }
+        catch(Exception e){
+            Log.e("add:", e.getMessage());
+        }
     }
 
     @Override

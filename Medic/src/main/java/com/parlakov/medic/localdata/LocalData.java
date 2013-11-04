@@ -20,7 +20,8 @@ public class LocalData implements IUow {
     private SQLiteOpenHelper mDbHelper;
 
     public LocalData(Context context){
-        String dbPath = MedicDbHelper.getDatabasePath();
+        String dbPath = MedicDbHelper.getSDDatabasePath();
+
         MedicDbHelper dbHelper = new MedicDbHelper(context, dbPath);
 
         mDbHelper = dbHelper;

@@ -47,8 +47,8 @@ public class MedicDbHelper extends SQLiteOpenHelper {
                 " TEXT NOT NULL," +
             "CONSTRAINT FK_PATIENT_ID FOREIGN KEY (" +
                     MedicDbContract.Examination.COLUMN_NAME_PATIENT_ID + ")" +
-                    "REFERENCES " + MedicDbContract.Patient.TABLE_NAME +
-                    MedicDbContract.Patient.COLUMN_NAME_ID +
+                    "REFERENCES " + MedicDbContract.Patient.TABLE_NAME + "(" +
+                    MedicDbContract.Patient.COLUMN_NAME_ID + ")" +
         ")";
 
     public static final String SQL_DROP_TABLE_PATIENTS =
@@ -62,9 +62,9 @@ public class MedicDbHelper extends SQLiteOpenHelper {
         super(context, databasePath, null, DATABASE_VERSION);
     }
 
-    public static String getDatabasePath() {
-        return Environment.getExternalStorageDirectory() + File.pathSeparator +
-                    DATABASE_FOLDER + File.pathSeparator + DATABASE_NAME;
+    public static String getSDDatabasePath() {
+        return Environment.getExternalStorageDirectory() + File.separator +
+                    DATABASE_FOLDER + File.separator + DATABASE_NAME;
     }
 
     @Override
