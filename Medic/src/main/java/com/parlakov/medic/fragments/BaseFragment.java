@@ -9,7 +9,7 @@ import android.widget.Toast;
 /**
  * Created by georgi on 13-11-1.
  */
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
 
     protected String getTextFromEditView(int id, View rootView){
         EditText view = (EditText) rootView.findViewById(id);
