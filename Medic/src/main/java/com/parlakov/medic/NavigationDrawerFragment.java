@@ -79,7 +79,7 @@ public class NavigationDrawerFragment extends Fragment {
         selectItem(mCurrentSelectedPosition);
 
         // Indicate that this fragment would like to influence the set of actions in the action bar.
-        setHasOptionsMenu(true);
+        // setHasOptionsMenu(true);
     }
 
     @Override
@@ -226,31 +226,31 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // If the drawer is open, show the global app actions in the action bar. See also
-        // showGlobalContextActionBar, which controls the top-left area of the action bar.
-        if (mDrawerLayout != null && isDrawerOpen()) {
-            inflater.inflate(R.menu.global, menu);
-            showGlobalContextActionBar();
-        }
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        switch (item.getItemId()) {
-            case R.id.action_example:
-                Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        // If the drawer is open, show the global app actions in the action bar. See also
+//        // showGlobalContextActionBar, which controls the top-left area of the action bar.
+//        if (mDrawerLayout != null && isDrawerOpen()) {
+//            inflater.inflate(R.menu.global, menu);
+//            showGlobalContextActionBar();
+//        }
+//        super.onCreateOptionsMenu(menu, inflater);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (mDrawerToggle.onOptionsItemSelected(item)) {
+//            return true;
+//        }
+//
+////        switch (item.getItemId()) {
+////            case R.id.action_addPatient:
+////                Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
+////                return true;
+////        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     /**
      * Per the navigation drawer design guidelines, updates the action bar to show the global app

@@ -10,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 
 import com.parlakov.medic.fragments.HomeFragment;
 import com.parlakov.medic.fragments.LoginFragment;
+import com.parlakov.medic.fragments.PatientsListFragment;
 import com.parlakov.medic.fragments.RegisterFragment;
 
 public class MainActivity extends ActionBarActivity
@@ -29,7 +30,7 @@ public class MainActivity extends ActionBarActivity
     private CharSequence mTitle;
 
     @Override
-     protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -51,7 +52,7 @@ public class MainActivity extends ActionBarActivity
         switch (position) {
             case HOME_DRAWER_POSITION:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, new HomeFragment())
+                        .replace(R.id.container, new PatientsListFragment())
                         .commit();
                 break;
 
@@ -97,7 +98,7 @@ public class MainActivity extends ActionBarActivity
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.main, menu);
+            getMenuInflater().inflate(R.menu.global, menu);
             restoreActionBar();
             return true;
         }
@@ -115,5 +116,4 @@ public class MainActivity extends ActionBarActivity
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

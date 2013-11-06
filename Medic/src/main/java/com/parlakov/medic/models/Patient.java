@@ -14,7 +14,8 @@ public class Patient {
     private int age;
     private String phone;
     private Collection<Examination> examinations;
-    private byte[] image;
+    private String imagePath;
+    private int id;
 
     public  Patient(){
         this(null, null, 0, null);
@@ -66,5 +67,21 @@ public class Patient {
 
     public void setExaminations(List<Examination> examinations) {
         this.examinations = examinations;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getImagePath() {
+        return imagePath;
     }
 }

@@ -15,17 +15,17 @@ public class MedicDbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_FOLDER = "medic";
     public static final String DATABASE_NAME = "Medic.db";
 
-    public static int DATABASE_VERSION = 1;
+    public static int DATABASE_VERSION = 2;
 
     //<editor-fold desc="SQL_QUERIES">
     public static final String SQL_CREATE_TABLE_PATIENTS =
         "CREATE TABLE " + MedicDbContract.Patient.TABLE_NAME + "(" +
         MedicDbContract.Patient.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-        MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME + " NVARCHAR(100), " +
-        MedicDbContract.Patient.COLUMN_NAME_LAST_NAME + " NVARCHAR(100) NOT NULL," +
+        MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME + " TEXT, " +
+        MedicDbContract.Patient.COLUMN_NAME_LAST_NAME + " TEXT NOT NULL," +
         MedicDbContract.Patient.COLUMN_NAME_AGE + " INTEGER," +
-        MedicDbContract.Patient.COLUMN_NAME_PHONE + " NVARCHAR(20)," +
-        MedicDbContract.Patient.COLUMN_NAME_IMAGE + " BLOB)";
+        MedicDbContract.Patient.COLUMN_NAME_PHONE + " TEXT," +
+        MedicDbContract.Patient.COLUMN_NAME_IMAGE_PATH + " TEXT)";
 
     public static final String SQL_CREATE_TABLE_EXAMINATIONS =
         "CREATE TABLE " + MedicDbContract.Examination.TABLE_NAME + "(" +
@@ -34,13 +34,13 @@ public class MedicDbHelper extends SQLiteOpenHelper {
             MedicDbContract.Examination.COLUMN_NAME_PATIENT_ID +
                 " INTEGER NOT NULL, " +
             MedicDbContract.Examination.COLUMN_NAME_COMPLAINTS +
-                " NVARCHAR(1000), " +
+                " TEXT, " +
             MedicDbContract.Examination.COLUMN_NAME_CONCLUSION +
-                " NVARCHAR(1000), " +
+                " TEXT, " +
             MedicDbContract.Examination.COLUMN_NAME_TREATMENT +
-                " NVARCHAR(1000), " +
+                " TEXT, " +
             MedicDbContract.Examination.COLUMN_NAME_NOTES +
-                " NVARCHAR(1000), " +
+                " TEXT, " +
             MedicDbContract.Examination.COLUMN_NAME_CANCELED +
                 " BOOLEAN, " +
             MedicDbContract.Examination.COLUMN_NAME_DATE +
@@ -77,8 +77,6 @@ public class MedicDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(SQL_DROP_TABLE_EXAMINATIONS);
         db.execSQL(SQL_DROP_TABLE_PATIENTS);
-
-        DATABASE_VERSION = newVersion;
 
         onCreate(db);
     }

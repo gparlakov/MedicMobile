@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/root_add_patient_activity">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/title_addPatient"
+            android:id="@+id/addPatientTitle"
+            style="g"
+            android:gravity="center_horizontal" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/newPatientImage"
+                android:layout_height="150dp"
+                android:layout_width="150dp"
+                android:layout_margin="@dimen/activity_horizontal_margin" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_takeNewPatientPicture"
+                android:id="@+id/buttonTakeNewPatientPicture"
+                android:layout_gravity="bottom" />
+        </LinearLayout>
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/addPatientFristNameEditView"
+            android:hint="@string/hint_patientFirstName" />
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/addPatientLastNameEditView"
+            android:hint="@string/hint_patientLastName" />
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:ems="10"
+            android:id="@+id/addPatientPhoneEditText"
+            android:hint="@string/hint_patientPhone" />
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/addPatientAgeEditText"
+            android:hint="@string/hint_patientAge" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_addPatient"
+            android:id="@+id/buttonAddPatient"
+            android:layout_gravity="center_horizontal" />
+
+    </LinearLayout>
+</ScrollView>
