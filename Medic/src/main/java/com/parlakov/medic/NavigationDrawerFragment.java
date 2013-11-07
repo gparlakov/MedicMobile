@@ -1,4 +1,4 @@
-package com.parlakov.medic.fragments;
+package com.parlakov.medic;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
