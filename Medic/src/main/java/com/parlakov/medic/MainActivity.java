@@ -1,5 +1,6 @@
 package com.parlakov.medic;
 
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 
 import com.parlakov.medic.fragments.HomeFragment;
 import com.parlakov.medic.fragments.LoginFragment;
+import com.parlakov.medic.fragments.NavigationDrawerFragment;
 import com.parlakov.medic.fragments.PatientsListFragment;
 import com.parlakov.medic.fragments.RegisterFragment;
 

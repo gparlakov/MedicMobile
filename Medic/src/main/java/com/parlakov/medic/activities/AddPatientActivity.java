@@ -17,6 +17,7 @@ import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.models.Patient;
 import com.parlakov.medic.util.Util;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -72,9 +73,24 @@ public class AddPatientActivity extends Activity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case REQUEST_CODE_TAKE_PICTURE:
+                handleAddPicture(resultCode);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void handleAddPicture(int resultCode) {
         if (resultCode == RESULT_OK) {
             ImageView view = (ImageView) findViewById(R.id.newPatientImage);
             view.setImageDrawable(Drawable.createFromPath(patientImagePath));
+        }
+        else{
+            File newImageFile = new File(patientImagePath);
+            newImageFile.delete();
+            patientImagePath = null;
         }
     }
 
@@ -100,6 +116,7 @@ public class AddPatientActivity extends Activity {
         finish();
     }
 
+    //<editor-fold desc="State Save and restore">
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString(PICTURE_PATH_NAME, patientImagePath);
@@ -109,4 +126,5 @@ public class AddPatientActivity extends Activity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         patientImagePath = savedInstanceState.getString(PICTURE_PATH_NAME);
     }
+    //</editor-fold>
 }

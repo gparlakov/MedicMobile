@@ -15,7 +15,7 @@ public class MedicDbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_FOLDER = "medic";
     public static final String DATABASE_NAME = "Medic.db";
 
-    public static int DATABASE_VERSION = 2;
+    public static int DATABASE_VERSION = 3;
 
     //<editor-fold desc="SQL_QUERIES">
     public static final String SQL_CREATE_TABLE_PATIENTS =

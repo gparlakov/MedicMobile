@@ -12,13 +12,13 @@ public final class MedicDbContract {
     public static abstract class User implements BaseColumns{
         public static final String TABLE_NAME = "users";
 
-        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_ID = "_id";
     }
 
     public static abstract class Patient implements BaseColumns{
         public static final String TABLE_NAME = "patients";
 
-        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_ID = "_id";
         public static final String COLUMN_NAME_FIRST_NAME = "firstName";
         public static final String COLUMN_NAME_LAST_NAME = "lastName";
         public static final String COLUMN_NAME_AGE = "age";
@@ -29,7 +29,7 @@ public final class MedicDbContract {
     public static abstract class Examination implements BaseColumns{
         public static final String TABLE_NAME = "examinations";
 
-        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_ID = "_id";
         public static final String COLUMN_NAME_PATIENT_ID = "patientId";
         public static final String COLUMN_NAME_DATE = "date";
         public static final String COLUMN_NAME_COMPLAINTS = "complaints";
