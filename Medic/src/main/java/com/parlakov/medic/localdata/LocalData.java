@@ -13,10 +13,10 @@ import com.parlakov.uow.IUsersRepository;
 /**
  * Created by georgi on 13-11-2.
  */
-public class LocalData implements IUow {
+public class LocalData {
 
     private IUsersRepository<User> mUsers;
-    private IRepository<Patient> mPatients;
+    private LocalPatients mPatients;
     private SQLiteOpenHelper mDbHelper;
 
     public LocalData(Context context){
@@ -32,7 +32,7 @@ public class LocalData implements IUow {
     }
 
 
-    @Override
+
     public IUsersRepository<User> getUsers() {
         if(mUsers == null){
             mUsers = new LocalUsers();
@@ -40,15 +40,15 @@ public class LocalData implements IUow {
         return mUsers;
     }
 
-    @Override
-    public IRepository<Patient> getPatients() {
+
+    public LocalPatients getPatients() {
         if(mPatients == null){
             mPatients = new LocalPatients((MedicDbHelper)mDbHelper);
         }
         return mPatients;
     }
 
-    @Override
+
     public IRepository<Examination> getExaminations() {
         return null;
     }

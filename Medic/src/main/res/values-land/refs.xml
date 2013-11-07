@@ -1,0 +1,3 @@
+<resources>
+    <item name="activity_add_patient" type="layout">@layout/activity_add_patient_wide</item>
+</resources>

@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 
-import com.parlakov.medic.fragments.HomeFragment;
 import com.parlakov.medic.fragments.LoginFragment;
 import com.parlakov.medic.fragments.PatientsListFragment;
 import com.parlakov.medic.fragments.RegisterFragment;

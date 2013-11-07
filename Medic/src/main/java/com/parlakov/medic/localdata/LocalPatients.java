@@ -1,5 +1,6 @@
 package com.parlakov.medic.localdata;
 
+import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,11 +10,12 @@ import com.parlakov.uow.IRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 
 /**
  * Created by georgi on 13-11-2.
  */
-public class LocalPatients implements IRepository<Patient> {
+public class LocalPatients {
 
     private final MedicDbHelper mDbHelper;
 
@@ -21,42 +23,19 @@ public class LocalPatients implements IRepository<Patient> {
         mDbHelper = dbHelper;
     }
 
-    @Override
     public com.parlakov.medic.models.Patient getById(int id) {
         return null;
     }
 
-    @Override
-    public Collection<Patient> getAll() {
+    public Cursor getAll() {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        Cursor allPatients = db.rawQuery("Select * from " + MedicDbContract.Patient.TABLE_NAME, null);
+        Cursor allPatients = db.rawQuery("Select * from " +
+                MedicDbContract.Patient.TABLE_NAME, null);
 
-        Collection<Patient> patients = getCollection(allPatients);
-        db.close();
-        return  patients;
+//        db.close();
+        return allPatients;
     }
 
-    private Collection<Patient> getCollection(Cursor allPatients) {
-        ArrayList<Patient> patientsList = new ArrayList<Patient>();
-        if (allPatients != null && allPatients.getCount() > 0) {
-            allPatients.moveToFirst();
-            do {
-                Patient nextPatient = new Patient();
-                nextPatient.setFirstName(allPatients.getString(allPatients.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME)));
-                nextPatient.setLastName(allPatients.getString(allPatients.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_LAST_NAME)));
-                nextPatient.setAge(allPatients.getInt(allPatients.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_AGE)));
-                nextPatient.setId(allPatients.getInt(allPatients.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_ID)));
-                nextPatient.setPhone(allPatients.getString(allPatients.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_PHONE)));
-
-                patientsList.add(nextPatient);
-
-            } while (allPatients.moveToNext());
-        }
-
-        return patientsList;
-    }
-
-    @Override
     public void add(Patient entity) {
         if(entity == null)
             throw new NullPointerException("Passed entity is null");
@@ -73,20 +52,12 @@ public class LocalPatients implements IRepository<Patient> {
 
         db.insert(MedicDbContract.Patient.TABLE_NAME, null, values);
         db.close();
-
     }
 
-    @Override
-    public Boolean delete(Patient entity) {
-        return null;
-    }
-
-    @Override
     public Boolean delete(int id) {
         return null;
     }
 
-    @Override
     public Patient update(Patient entity) {
         return null;
     }

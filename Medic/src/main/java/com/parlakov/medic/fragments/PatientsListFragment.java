@@ -1,84 +1,114 @@
 package com.parlakov.medic.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
 
 import com.parlakov.medic.R;
 import com.parlakov.medic.activities.AddPatientActivity;
 import com.parlakov.medic.localdata.LocalData;
-import com.parlakov.medic.models.Patient;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import com.parlakov.medic.localdata.MedicDbContract;
 
 /**
  * Created by georgi on 13-11-5.
  */
 public class PatientsListFragment extends ListFragment {
 
-    //<editor-fold desc="patientsList Property">
-    private Collection<Patient> patientsList;
-
-    public void setPatientsList(Collection<Patient> patientsList) {
-        this.patientsList = patientsList;
-    }
-
-    public Collection<Patient> getPatientsList() {
-        return patientsList;
-    }
-    //</editor-fold>
+    private Boolean initialized = false;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        try{
-            super.onViewCreated(view, savedInstanceState);
+        super.onViewCreated(view, savedInstanceState);
 
-            setAdapter(view);
+        initialize();
+        initialized = true;
 
-            setHasOptionsMenu(true);
-        }
-        catch(Exception e){
-           Log.e("Exception:", e.getLocalizedMessage());
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(!initialized){
+            initialize();
         }
     }
 
-    private void setAdapter(View view) {
-        Context context = view.getContext();
-        LocalData data = new LocalData(view.getContext());
-        setPatientsList(data.getPatients().getAll());
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+    }
 
-        List<String> patients = getPatientNames(getPatientsList());
+    public void initialize() {
+        Context context = getListView().getContext();
+        LocalData data = new LocalData(context);
+        Cursor patients = data.getPatients().getAll();
 
-        ListAdapter adapter = new ArrayAdapter<String>(context,
-                android.R.layout.simple_list_item_1, patients);
+        SimpleCursorAdapter adapter = getPatiensSimpleCursorAdapter(context, patients);
 
         this.setListAdapter(adapter);
+        this.setEmptyText(getString(R.string.emptyPatientsList));
     }
 
-    private List<String> getPatientNames(Collection<Patient> patientsList) {
-        List<String> patientsNamesList = new ArrayList<String>();
+    private SimpleCursorAdapter getPatiensSimpleCursorAdapter(Context context, Cursor patients) {
+        String [] from = new String[]
+                {
+                        MedicDbContract.Patient.COLUMN_NAME_IMAGE_PATH ,
+                        MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME ,
+                        MedicDbContract.Patient.COLUMN_NAME_LAST_NAME ,
+                };
 
-        for (Iterator<Patient> iterator = patientsList.iterator(); iterator.hasNext(); ) {
-            Patient next = iterator.next();
-            String name = next.getFirstName() + "" + next.getLastName();
-            patientsNamesList.add(name);
-        }
+        int[] to = new int[]
+                {
+                        R.id.listItemPatientImage,
+                        R.id.listItemPatientFirstName,
+                        R.id.listItemPatientLastName
+                };
 
-        return patientsNamesList;
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(context,
+                R.layout.item_patient,
+                patients,
+                from,
+                to,
+                0);
+
+        adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+                if (columnIndex ==
+                        cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_IMAGE_PATH))
+                {
+                    String picturePath = cursor.getString(columnIndex);
+                    ImageView patientPicture = (ImageView)view;
+                    if(picturePath != null && !picturePath.isEmpty()){
+                        patientPicture.setImageDrawable(Drawable.createFromPath(picturePath));
+                    }
+                    else{
+                        patientPicture.setImageResource(R.drawable.ic_default_picture);
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        return adapter;
     }
 
+    //<editor-fold desc="action bar addition">
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.addpatientmenu, menu);
@@ -101,4 +131,17 @@ public class PatientsListFragment extends ListFragment {
 
         return handled;
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Save/Restore instance">
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+    }
+    //</editor-fold>
 }
