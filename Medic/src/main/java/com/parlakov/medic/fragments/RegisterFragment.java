@@ -39,7 +39,7 @@ public class RegisterFragment extends BaseFragment {
     }
 
     private void doRegister(View view) {
-        User newUser = getUserInfo(view);
+       /* User newUser = getUserInfo(view);
 
         Data data = new Data();
 
@@ -51,7 +51,7 @@ public class RegisterFragment extends BaseFragment {
             result = "NOT Registered. Error: " + e.getMessage();
         }
 
-        showToastMessage(result, 5000, view);
+        showToastMessage(result, 5000, view);*/
     }
 
     private User getUserInfo(View view) {

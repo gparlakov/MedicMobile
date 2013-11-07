@@ -39,21 +39,21 @@ public class LoginFragment extends BaseFragment {
     }
 
     private void doLogin(View view) {
-        String username = getTextFromEditView(R.id.login_usernameEditText, view);
-        String password = getTextFromEditView(R.id.login_passwordEditText, view);
-        Log.i("Username via getString method", getString(R.id.login_usernameEditText));
+//        String username = getTextFromEditView(R.id.login_usernameEditText, view);
+//        String password = getTextFromEditView(R.id.login_passwordEditText, view);
+//        Log.i("Username via getString method", getString(R.id.login_usernameEditText));
+//
+//        Data data = new Data();
+//        String result = null;
+//        try {
+//            data.getUsers().login(username, password);
+//            result = "Logged in!";
+//
+//        } catch (IOException e) {
+//            result = "Not logged in. Error: " + e.getMessage();
+//        }
 
-        Data data = new Data();
-        String result = null;
-        try {
-            data.getUsers().login(username, password);
-            result = "Logged in!";
-
-        } catch (IOException e) {
-            result = "Not logged in. Error: " + e.getMessage();
-        }
-
-        showToastMessage(result, 10000, view);
+//        showToastMessage(result, 10000, view);
     }
 
 }
