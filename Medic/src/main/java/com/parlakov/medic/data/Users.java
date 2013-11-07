@@ -1,6 +1,6 @@
 package com.parlakov.medic.data;
 
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 
 import com.parlakov.medic.models.LoginUser;
 import com.parlakov.medic.models.User;
@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * Created by georgi on 13-10-30.
- */
+* Created by georgi on 13-10-30.
+*/
 public class Users implements IUsersRepository<User>{
 
     public static final String NOT_CREATED_RESPONSE = "Not created";
@@ -20,7 +20,7 @@ public class Users implements IUsersRepository<User>{
     private final String mBaseUrl;
     private final String mApiKey;
     private final HttpRequester mHttpRequester;
-    private final Gson mGson;
+//    private final Gson mGson;
 
     public String mPrincipalId;
     public String mAccessToken;
@@ -30,28 +30,28 @@ public class Users implements IUsersRepository<User>{
         mBaseUrl = baseUrl;
         mHttpRequester = requester;
         mApiKey = apiKey;
-        mGson = new Gson();
+//        mGson = new Gson();
     }
 
     public void register(Object user) throws IOException {
-        String data = mGson.toJson(user);
-        String response = mHttpRequester.httpPost(mBaseUrl + mApiKey + "/Users", data, null, null);
-        if (response != null){
-            mPrincipalId = getFromJson(response, "Id");
-        }
+//        String data = mGson.toJson(user);
+//        String response = mHttpRequester.httpPost(mBaseUrl + mApiKey + "/Users", data, null, null);
+//        if (response != null){
+//            mPrincipalId = getFromJson(response, "Id");
+//        }
     }
 
     public void login(String username, String password) throws IOException {
-        LoginUser loginUser = new LoginUser(username, password);
-        String data = mGson.toJson(loginUser);
+//        LoginUser loginUser = new LoginUser(username, password);
+//        String data = mGson.toJson(loginUser);
 
-        String url = mBaseUrl + mApiKey + "/oauth/token";
+//        String url = mBaseUrl + mApiKey + "/oauth/token";
 
-        String response = mHttpRequester.httpPost(url, data, null, null);
-        if(response != null){
-            mAccessToken = getFromJson(response, "access_token");
-            mPrincipalId = getFromJson(response, "principal_id");
-        }
+//        String response = mHttpRequester.httpPost(url, data, null, null);
+//        if(response != null){
+//            mAccessToken = getFromJson(response, "access_token");
+//            mPrincipalId = getFromJson(response, "principal_id");
+//        }
     }
 
 
