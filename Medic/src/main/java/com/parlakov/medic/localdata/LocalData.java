@@ -1,8 +1,10 @@
 package com.parlakov.medic.localdata;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.parlakov.medic.MainActivity;
 import com.parlakov.medic.models.Examination;
 import com.parlakov.medic.models.Patient;
 import com.parlakov.medic.models.User;
@@ -20,11 +22,29 @@ public class LocalData {
     private SQLiteOpenHelper mDbHelper;
 
     public LocalData(Context context){
-        String dbPath = MedicDbHelper.getSDDatabasePath();
+        String dbPath = getDbLocationPathFromPreferences(context);
 
         MedicDbHelper dbHelper = new MedicDbHelper(context, dbPath);
 
         mDbHelper = dbHelper;
+    }
+
+    private String getDbLocationPathFromPreferences(Context context) {
+        SharedPreferences prefs = context
+                .getSharedPreferences(MainActivity.PREFERENCES_NAME, Context.MODE_PRIVATE);
+
+        int saveDataLocation = prefs
+                .getInt(MainActivity.APP_SAVE_DATA_LOCATION, MainActivity.NOT_CHOSEN_LOCATION);
+
+        String dbPath = null;
+
+        if (saveDataLocation != MainActivity.SAVE_LOCATION_SD_CARD){
+            dbPath = context.getDatabasePath(MedicDbHelper.DATABASE_NAME).getAbsolutePath();
+        }
+        else{
+            dbPath = MedicDbHelper.getSDDatabasePath();
+        }
+        return dbPath;
     }
 
     public LocalData(SQLiteOpenHelper dbHelper){

@@ -15,7 +15,7 @@ public class Patient {
     private String phone;
     private Collection<Examination> examinations;
     private String imagePath;
-    private int id;
+    private long id;
 
     public  Patient(){
         this(null, null, 0, null);
@@ -69,11 +69,11 @@ public class Patient {
         this.examinations = examinations;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

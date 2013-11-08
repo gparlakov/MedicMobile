@@ -57,7 +57,7 @@
             <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/addPatientFristNameEditView"
+                android:id="@+id/addPatientFirstNameEditView"
                 android:hint="@string/hint_patientFirstName" />
 
             <EditText

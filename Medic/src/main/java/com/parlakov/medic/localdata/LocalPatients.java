@@ -11,6 +11,7 @@ import com.parlakov.uow.IRepository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Queue;
 
 /**
  * Created by georgi on 13-11-2.
@@ -23,8 +24,38 @@ public class LocalPatients {
         mDbHelper = dbHelper;
     }
 
-    public com.parlakov.medic.models.Patient getById(int id) {
-        return null;
+    public Patient getById(long id) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Cursor cursor = null;
+        Patient patient = null;
+
+        if(db != null){
+            cursor = db.rawQuery("SELECT * FROM " + MedicDbContract.Patient.TABLE_NAME,
+                    new String[]{MedicDbContract.Patient.COLUMN_NAME_ID + " = " + id});
+        }
+        if(cursor != null){
+            cursor.moveToFirst();
+            patient = new Patient();
+            patient.setFirstName(cursor.getString(
+                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME)));
+
+            patient.setLastName(cursor.getString(
+                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_LAST_NAME)));
+
+            patient.setAge(cursor.getInt(
+                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_AGE)));
+
+            patient.setPhone(cursor.getString(
+                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_PHONE)));
+
+            patient.setImagePath(cursor.getString(
+                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_IMAGE_PATH)));
+
+            patient.setId(id);
+        }
+
+
+        return patient;
     }
 
     public Cursor getAll() {

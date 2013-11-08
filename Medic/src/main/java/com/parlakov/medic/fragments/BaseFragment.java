@@ -20,9 +20,4 @@ public abstract class BaseFragment extends Fragment {
 
         return text;
     }
-
-    protected void showToastMessage(String message, int length, View view){
-        Toast resultToast = Toast.makeText(view.getContext(), message, length);
-        resultToast.show();
-    }
 }

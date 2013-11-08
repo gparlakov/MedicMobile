@@ -34,5 +34,9 @@
     <string name="newPatientPicture">Patient picture</string>
     <string name="emptyPatientsList">Add patients - click + on action bar</string>
     <string name="title_activity_patients_list">Patients List</string>
+    <string name="radio_button_use_sd_card">Use SD Card</string>
+    <string name="radio_button_use_device_storage">Use device storage</string>
+    <string name="title_saveLocation">Choose where to save your data</string>
+    <string name="button_saveLocationChosen">Done</string>
 
 </resources>
