@@ -30,6 +30,7 @@ public class PatientDetailsFragment extends Fragment {
     private long mId;
     private String mPhotoPath;
     private Patient mPatient;
+    private View mPatientDetailsView;
 
     public PatientDetailsFragment(){
         this(0);
@@ -42,17 +43,22 @@ public class PatientDetailsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View patientDetailsView =
+        mPatientDetailsView =
                 inflater.inflate(R.layout.fragment_patient_details, container, false);
-
-        if(mId != 0){
-            getPatientData(patientDetailsView);
-            showPatientInfo(patientDetailsView);
-        }
 
         setHasOptionsMenu(true);
 
-        return patientDetailsView;
+        return mPatientDetailsView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if(mId != 0){
+            getPatientData(mPatientDetailsView);
+            showPatientInfo(mPatientDetailsView);
+        }
     }
 
     private void getPatientData(View view) {

@@ -53,6 +53,7 @@ public class AddEditPatientActivity extends Activity {
             Patient patientToEdit = getPatientFromIntentExtra();
             if(patientToEdit != null){
                 mPatient = patientToEdit;
+
                 setPatientInfoToEditFields();
             }
             else{
@@ -218,6 +219,9 @@ public class AddEditPatientActivity extends Activity {
 
         EditText phoneEditText = (EditText) findViewById(R.id.addPatientPhoneEditText);
         phoneEditText.setText(phone);
+
+        mPhotoPath = mPatient.getPhotoPath();
+        showTakenPhotoOnView();
     }
 
     private Patient getPatientFromIntentExtra() {

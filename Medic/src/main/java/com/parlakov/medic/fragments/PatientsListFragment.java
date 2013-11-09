@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -35,9 +36,6 @@ public class PatientsListFragment extends ListFragment {
         super.onViewCreated(view, savedInstanceState);
 
         setHasOptionsMenu(true);
-
-        if(savedInstanceState == null)
-            initialize();
     }
 
     @Override
@@ -139,5 +137,11 @@ public class PatientsListFragment extends ListFragment {
     public void onStop() {
         super.onStop();
         mData.getPatients().close();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        initialize();
     }
 }
