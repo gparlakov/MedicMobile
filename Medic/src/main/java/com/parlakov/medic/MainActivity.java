@@ -67,7 +67,9 @@ public class MainActivity extends ActionBarActivity
         if(requestCode == CHOOSE_LOCATION_REQUEST_CODE ){
             switch (resultCode){
                 case RESULT_OK:
-                    int chosenLocation = data.getIntExtra(APP_SAVE_DATA_LOCATION_EXTRA, NOT_CHOSEN_LOCATION);
+                    int chosenLocation = data
+                            .getIntExtra(APP_SAVE_DATA_LOCATION_EXTRA, NOT_CHOSEN_LOCATION);
+
                     if (chosenLocation == NOT_CHOSEN_LOCATION){
                         finish();
                         return;

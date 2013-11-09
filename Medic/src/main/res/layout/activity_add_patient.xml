@@ -29,13 +29,13 @@
                 android:layout_width="150dp"
                 android:layout_margin="@dimen/activity_horizontal_margin"
                 android:contentDescription="@string/newPatientPicture"
-                android:background="@drawable/ic_default_picture"/>
+                android:src="@drawable/ic_default_picture"/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/button_takeNewPatientPicture"
-                android:id="@+id/buttonTakeNewPatientPicture"
+                android:id="@+id/buttonPatientPhoto"
                 android:layout_gravity="bottom" />
         </LinearLayout>
 

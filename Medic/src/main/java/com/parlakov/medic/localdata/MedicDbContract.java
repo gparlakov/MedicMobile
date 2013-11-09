@@ -22,7 +22,7 @@ public final class MedicDbContract {
         public static final String COLUMN_NAME_FIRST_NAME = "firstName";
         public static final String COLUMN_NAME_LAST_NAME = "lastName";
         public static final String COLUMN_NAME_AGE = "age";
-        public static final String COLUMN_NAME_IMAGE_PATH = "image";
+        public static final String COLUMN_NAME_PHOTO_PATH = "image";
         public static final String COLUMN_NAME_PHONE = "phone";
     }
 

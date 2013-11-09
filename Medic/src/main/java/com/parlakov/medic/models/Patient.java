@@ -82,7 +82,7 @@ public class Patient implements Serializable {
         this.imagePath = imagePath;
     }
 
-    public String getImagePath() {
+    public String getPhotoPath() {
         return imagePath;
     }
 }

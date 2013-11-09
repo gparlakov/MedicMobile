@@ -1,11 +1,11 @@
 package com.parlakov.medic.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.Menu;
@@ -16,28 +16,28 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.parlakov.medic.R;
-import com.parlakov.medic.activities.AddPatientActivity;
+import com.parlakov.medic.activities.AddEditPatientActivity;
 import com.parlakov.medic.activities.PatientManagementActivity;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.localdata.MedicDbContract;
-import com.parlakov.medic.models.Patient;
+import com.parlakov.medic.util.BitmapWorkerTask;
+import com.parlakov.medic.util.ImageHelper;
 
 /**
  * Created by georgi on 13-11-5.
  */
 public class PatientsListFragment extends ListFragment {
 
+    private LocalData mData;
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         setHasOptionsMenu(true);
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        initialize();
+        if(savedInstanceState == null)
+            initialize();
     }
 
     @Override
@@ -53,19 +53,21 @@ public class PatientsListFragment extends ListFragment {
 
     private void initialize() {
         Context context = getListView().getContext();
-        LocalData data = new LocalData(context);
-        Cursor patients = data.getPatients().getAll();
+        mData = new LocalData(context);
+        Cursor patients = mData.getPatients().getAll();
 
         SimpleCursorAdapter adapter = getPatiensSimpleCursorAdapter(context, patients);
 
         this.setListAdapter(adapter);
+
         this.setEmptyText(getString(R.string.emptyPatientsList));
     }
 
-    private SimpleCursorAdapter getPatiensSimpleCursorAdapter(Context context, Cursor patients) {
+    private SimpleCursorAdapter getPatiensSimpleCursorAdapter(
+            Context context, Cursor patients) {
         String[] from = new String[]
                 {
-                        MedicDbContract.Patient.COLUMN_NAME_IMAGE_PATH,
+                        MedicDbContract.Patient.COLUMN_NAME_PHOTO_PATH,
                         MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME,
                         MedicDbContract.Patient.COLUMN_NAME_LAST_NAME,
                 };
@@ -88,12 +90,14 @@ public class PatientsListFragment extends ListFragment {
             @Override
             public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
                 if (columnIndex ==
-                        cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_IMAGE_PATH)) {
+                        cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_PHOTO_PATH)) {
                     String picturePath = cursor.getString(columnIndex);
                     ImageView patientPicture = (ImageView) view;
+
                     if (picturePath != null && !picturePath.isEmpty()) {
-                        patientPicture.setImageDrawable(Drawable.createFromPath(picturePath));
-                    } else {
+                        ImageHelper.loadImageFromFileAsync(picturePath, patientPicture);
+                    }
+                    else {
                         patientPicture.setImageResource(R.drawable.ic_default_picture);
                     }
                     return true;
@@ -119,7 +123,7 @@ public class PatientsListFragment extends ListFragment {
         int itemId = item.getItemId();
         switch (itemId) {
             case R.id.action_addPatient:
-                Intent newPatientIntent = new Intent(getActivity(), AddPatientActivity.class);
+                Intent newPatientIntent = new Intent(getActivity(), AddEditPatientActivity.class);
                 startActivity(newPatientIntent);
                 break;
             default:
@@ -130,4 +134,10 @@ public class PatientsListFragment extends ListFragment {
         return handled;
     }
     //</editor-fold>
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mData.getPatients().close();
+    }
 }

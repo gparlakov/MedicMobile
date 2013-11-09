@@ -1,16 +1,21 @@
 package com.parlakov.medic.fragments;
 
+import android.content.Intent;
+import android.database.sqlite.SQLiteException;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.parlakov.medic.R;
+import com.parlakov.medic.activities.AddEditPatientActivity;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.models.Patient;
 import com.parlakov.medic.util.ViewHelper;
@@ -20,7 +25,7 @@ import com.parlakov.medic.util.ViewHelper;
  */
 public class PatientDetailsFragment extends Fragment {
 
-    public static final String PATIENT_SAVE = "PATIENT_SAVE";
+    public static final String PATIENT_TO_EDIT_EXTRA = "patient to edit";
 
     private long mId;
     private String mPhotoPath;
@@ -37,9 +42,9 @@ public class PatientDetailsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View patientDetailsView = inflater.inflate(R.layout.fragment_patient_details, container, false);
+        View patientDetailsView =
+                inflater.inflate(R.layout.fragment_patient_details, container, false);
 
-        // the fragment has been restored from stop() and does not know which mPatient
         if(mId != 0){
             getPatientData(patientDetailsView);
             showPatientInfo(patientDetailsView);
@@ -62,11 +67,12 @@ public class PatientDetailsFragment extends Fragment {
             name = firstName + " " + name;
         }
         ViewHelper.setTextToTextView(R.id.textViewPatientName, view, name);
+        ViewHelper.setTextToTextView(R.id.textViewPatientPhone, view,
+                mPatient.getPhone());
+        ViewHelper.setTextToTextView(R.id.textViewPatientAge, view,
+                String.valueOf(mPatient.getAge()));
 
-        ViewHelper.setTextToTextView(R.id.textViewPatientPhone, view, mPatient.getPhone());
-        ViewHelper.setTextToTextView(R.id.textViewPatientAge, view, String.valueOf(mPatient.getAge()));
-
-        mPhotoPath = mPatient.getImagePath();
+        mPhotoPath = mPatient.getPhotoPath();
         if(mPhotoPath!= null && !mPhotoPath.isEmpty()){
             ImageView patientPhotoView = (ImageView) view.findViewById(R.id.imageView_patientDetails_Photo);
             patientPhotoView.setImageDrawable(Drawable.createFromPath(mPhotoPath));
@@ -74,24 +80,65 @@ public class PatientDetailsFragment extends Fragment {
     }
 
     @Override
-         public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
         inflater.inflate(R.menu.patient_details, menu);
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putSerializable(PATIENT_SAVE, mPatient);
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Boolean handled = true;
+
+        int itemId = item.getItemId();
+        switch (itemId){
+            case R.id.action_editPatientData:
+                handleEditPatient();
+                break;
+            case R.id.action_deletePatient:
+                handleDeletePatient();
+                break;
+            default:
+                handled = super.onOptionsItemSelected(item);
+                break;
+        }
+
+        return handled;
     }
 
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-
-        if(savedInstanceState != null){
-            mPatient = (Patient) savedInstanceState.getSerializable(PATIENT_SAVE);
-            showPatientInfo(getView());
+    private void handleEditPatient() {
+        if(mId == 0){
+            showToastNotFound();
         }
+
+        Intent editPatientIntent = new Intent(getActivity().getApplicationContext(),
+                AddEditPatientActivity.class);
+        editPatientIntent.putExtra(PATIENT_TO_EDIT_EXTRA, mPatient);
+        startActivity(editPatientIntent);
+
+    }
+
+    private void handleDeletePatient() {
+        if(mId == 0){
+            showToastNotFound();
+        }
+        try{
+            LocalData data = new LocalData(getView().getContext());
+            data.getPatients().delete(mId);
+            data.getPatients().deletePhoto(mPatient.getPhotoPath());
+            getActivity().finish();
+        }
+        catch(SQLiteException ex){
+            Toast.makeText(getView().getContext(),
+                    getString(R.string.exception_patientNotDeleted), Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    private void showToastNotFound() {
+        Toast.makeText(getView().getContext(),
+                getString(R.string.error_patientIdCanNotBeFound),
+                Toast.LENGTH_LONG)
+                .show();
     }
 }

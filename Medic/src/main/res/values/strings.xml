@@ -9,7 +9,7 @@
     <string name="title_sectionRegister">Register</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="add_patient">Add Patient</string>
+    <string name="add_patient">Add</string>
     <string name="action_settings">Settings</string>
     <string name="send_get_request_text">Send Get</string>
     <string name="send_post_text">Register new Doctor</string>
@@ -46,5 +46,11 @@
     <string name="label_patientAge">Age</string>
     <string name="label_patientPhone">Phone</string>
     <string name="app_patients_activity">Patients</string>
+    <string name="exception_patientNotDeleted">Could not delete patient from db - please try again</string>
+    <string name="error_patientIdCanNotBeFound">No patient selected - go back and try again</string>
+    <string name="action_addAppointment">Add Appointment</string>
+    <string name="exception_unableToOpenDb">Could not open database</string>
+    <string name="exception_unknownException">Error occured. Please try again.</string>
+    <string name="accessibility_patientPhoto">Patient Photo</string>
 
 </resources>

@@ -25,7 +25,7 @@ public class MedicDbHelper extends SQLiteOpenHelper {
                     MedicDbContract.Patient.COLUMN_NAME_LAST_NAME + " TEXT NOT NULL," +
                     MedicDbContract.Patient.COLUMN_NAME_AGE + " INTEGER," +
                     MedicDbContract.Patient.COLUMN_NAME_PHONE + " TEXT," +
-                    MedicDbContract.Patient.COLUMN_NAME_IMAGE_PATH + " TEXT)";
+                    MedicDbContract.Patient.COLUMN_NAME_PHOTO_PATH + " TEXT)";
 
     public static final String SQL_CREATE_TABLE_EXAMINATIONS =
             "CREATE TABLE " + MedicDbContract.Examination.TABLE_NAME + "(" +

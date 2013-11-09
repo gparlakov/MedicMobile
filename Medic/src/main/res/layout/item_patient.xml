@@ -5,8 +5,8 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:layout_width="@dimen/patients_list_item_height"
-        android:layout_height="@dimen/patients_list_item_height"
+        android:layout_width="@dimen/patients_list_item_dimen"
+        android:layout_height="@dimen/patients_list_item_dimen"
         android:id="@+id/listItemPatientImage"
         android:contentDescription="@string/contentDescription_patientImage"
         android:layout_marginRight="@dimen/patients_list_item_picture_horizontal_margin"
