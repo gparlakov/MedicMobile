@@ -38,5 +38,13 @@
     <string name="radio_button_use_device_storage">Use device storage</string>
     <string name="title_saveLocation">Choose where to save your data</string>
     <string name="button_saveLocationChosen">Done</string>
+    <string name="action_callPatient">Call Patient</string>
+    <string name="action_deletePatient">Delete Patient</string>
+    <string name="action_editPatient">Edit</string>
+    <string name="title_patientDetails">Patient details</string>
+    <string name="label_patientName">Name</string>
+    <string name="label_patientAge">Age</string>
+    <string name="label_patientPhone">Phone</string>
+    <string name="app_patients_activity">Patients</string>
 
 </resources>

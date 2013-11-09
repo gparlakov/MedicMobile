@@ -2,7 +2,6 @@ package com.parlakov.medic.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,12 +15,11 @@ import android.widget.Toast;
 import com.parlakov.medic.R;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.models.Patient;
-import com.parlakov.medic.util.Util;
+import com.parlakov.medic.util.ImageHelper;
+import com.parlakov.medic.util.ViewHelper;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * Created by georgi on 13-11-6.
@@ -92,14 +90,14 @@ public class AddPatientActivity extends Activity {
 
     private void doAddPatient() {
         View rootView = findViewById(R.id.root_add_patient_activity);
-        String firstName = Util.getTextFromEditView(R.id.addPatientFirstNameEditView, rootView);
-        String lastName = Util.getTextFromEditView(R.id.addPatientLastNameEditView, rootView);
-        String ageAsString = Util.getTextFromEditView(R.id.addPatientAgeEditText, rootView);
+        String firstName = ViewHelper.getTextFromEditView(R.id.addPatientFirstNameEditView, rootView);
+        String lastName = ViewHelper.getTextFromEditView(R.id.addPatientLastNameEditView, rootView);
+        String ageAsString = ViewHelper.getTextFromEditView(R.id.addPatientAgeEditText, rootView);
         int age = 0;
         if (ageAsString != null && !ageAsString.isEmpty()) {
             age = Integer.parseInt(ageAsString);
         }
-        String phone = Util.getTextFromEditView(R.id.addPatientPhoneEditText, rootView);
+        String phone = ViewHelper.getTextFromEditView(R.id.addPatientPhoneEditText, rootView);
 
         Patient newPatient = new Patient(firstName, lastName, age, phone);
         if (this.mPatientImagePath != null) {
@@ -114,7 +112,7 @@ public class AddPatientActivity extends Activity {
 
     private void doTakePicture() {
         try {
-            Uri photoFileUri = Util.getTimeStampPhotoUri(getApplicationContext());
+            Uri photoFileUri = ImageHelper.getTimeStampPhotoUri(getApplicationContext());
 
             mPatientImagePath = photoFileUri.getPath();
             Intent mediaIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -129,13 +127,13 @@ public class AddPatientActivity extends Activity {
     //<editor-fold desc="State save and restore">
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        String firstName = Util
+        String firstName = ViewHelper
                 .getTextFromEditView(R.id.addPatientFirstNameEditView, this);
-        String lastName = Util
+        String lastName = ViewHelper
                 .getTextFromEditView(R.id.addPatientLastNameEditView, this);
-        String age = Util
+        String age = ViewHelper
                 .getTextFromEditView(R.id.addPatientAgeEditText, this);
-        String phone = Util
+        String phone = ViewHelper
                 .getTextFromEditView(R.id.addPatientPhoneEditText, this);
 
         outState.putString(PICTURE_PATH_NAME, mPatientImagePath);

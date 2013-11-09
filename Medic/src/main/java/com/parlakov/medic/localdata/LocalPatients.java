@@ -30,8 +30,13 @@ public class LocalPatients {
         Patient patient = null;
 
         if(db != null){
-            cursor = db.rawQuery("SELECT * FROM " + MedicDbContract.Patient.TABLE_NAME,
-                    new String[]{MedicDbContract.Patient.COLUMN_NAME_ID + " = " + id});
+            cursor = db.query(MedicDbContract.Patient.TABLE_NAME,
+                    null,
+                    MedicDbContract.Patient.COLUMN_NAME_ID + " = " + id,
+                    null,
+                    null,
+                    null,
+                    null);
         }
         if(cursor != null){
             cursor.moveToFirst();

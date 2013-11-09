@@ -1,8 +1,5 @@
 package com.parlakov.medic;
 
-
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
@@ -12,7 +9,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.Toast;
 
 import com.parlakov.medic.activities.ChooseSaveDataLocationActivity;
 import com.parlakov.medic.fragments.LoginFragment;
@@ -22,18 +18,20 @@ import com.parlakov.medic.fragments.RegisterFragment;
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    private static final int HOME_DRAWER_POSITION = 0;
+    //TODO - refactor - extract a NavigationDrawerHelper class
+
+    private static final int PATIENTS_LIST_DRAWER_POSITION = 0;
     private static final int LOGIN_DRAWER_POSITION = 1;
     private static final int REGISTER_DRAWER_POSITION = 2;
 
+    private static final int CHOOSE_LOCATION_REQUEST_CODE = 1000;
+
+    public static final int NOT_CHOSEN_LOCATION = 0;
     public static final int SAVE_LOCATION_SD_CARD = 1;
     public static final int SAVE_LOCATION_DEVICE_MEMORY = 2;
-    public static final int NOT_CHOSEN_LOCATION = 0;
 
     public static final String APP_SAVE_DATA_LOCATION = "save data location";
     public static final String APP_SAVE_DATA_LOCATION_EXTRA = "save data location extra";
-
-    private static final int CHOOSE_LOCATION_REQUEST_CODE = 1000;
     public static final String PREFERENCES_NAME = "com.parlakov.medic.APP_PREFERENCES";
 
 
@@ -89,25 +87,15 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        SharedPreferences pref = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
-        int prefferedSaveDataLocation = pref.getInt(APP_SAVE_DATA_LOCATION, NOT_CHOSEN_LOCATION);
-        if (prefferedSaveDataLocation == NOT_CHOSEN_LOCATION){
-            Intent chooseIntent = new Intent(getApplicationContext(), ChooseSaveDataLocationActivity.class);
-            try{
-                startActivityForResult(chooseIntent, CHOOSE_LOCATION_REQUEST_CODE);
-            }
-            catch (Exception ex){
-                Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
-            }
-            return;
-        }
-
+        // if save data location is not chosen an activity
+        // will be started to get the user's preference
+        if (!isSaveDataLocationChosen()) return;
 
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         switch (position) {
-            case HOME_DRAWER_POSITION:
+            case PATIENTS_LIST_DRAWER_POSITION:
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, new PatientsListFragment())
                         .commit();
@@ -125,6 +113,18 @@ public class MainActivity extends ActionBarActivity
                         .commit();
                 break;
         }
+    }
+
+    private boolean isSaveDataLocationChosen() {
+        SharedPreferences pref = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
+        int prefferedSaveDataLocation = pref.getInt(APP_SAVE_DATA_LOCATION, NOT_CHOSEN_LOCATION);
+        if (prefferedSaveDataLocation == NOT_CHOSEN_LOCATION){
+            Intent chooseIntent = new Intent(getApplicationContext(),
+                    ChooseSaveDataLocationActivity.class);
+            startActivityForResult(chooseIntent, CHOOSE_LOCATION_REQUEST_CODE);
+            return false;
+        }
+        return true;
     }
 
     public void restoreActionBar() {

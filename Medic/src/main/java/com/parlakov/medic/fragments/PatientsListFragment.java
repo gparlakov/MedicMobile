@@ -8,19 +8,19 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.parlakov.medic.R;
 import com.parlakov.medic.activities.AddPatientActivity;
+import com.parlakov.medic.activities.PatientManagementActivity;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.localdata.MedicDbContract;
+import com.parlakov.medic.models.Patient;
 
 /**
  * Created by georgi on 13-11-5.
@@ -46,9 +46,9 @@ public class PatientsListFragment extends ListFragment {
     }
 
     private void handlePatientItemClicked(long id) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.container,
-                new PatientDetailsFragment(id)).commit();
+        Intent showPatientDetails = new Intent(getActivity(), PatientManagementActivity.class);
+        showPatientDetails.putExtra(PatientManagementActivity.PATIENT_ID_EXTRA, id);
+        startActivity(showPatientDetails);
     }
 
     private void initialize() {
@@ -128,18 +128,6 @@ public class PatientsListFragment extends ListFragment {
         }
 
         return handled;
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="Save/Restore instance">
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
     }
     //</editor-fold>
 }
