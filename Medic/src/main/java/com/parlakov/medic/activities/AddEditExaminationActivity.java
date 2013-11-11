@@ -10,14 +10,15 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 
 import com.parlakov.medic.R;
+import com.parlakov.medic.fragments.PatientDetailsFragment;
 import com.parlakov.medic.localdata.LocalData;
-import com.parlakov.medic.localdata.MedicDbContract;
 import com.parlakov.medic.models.Examination;
 import com.parlakov.medic.util.PatientsSimpleCursorAdapterSetterAsyncSetter;
 import com.parlakov.medic.util.ViewHelper;
 import com.parlakov.uow.IUowMedic;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -25,8 +26,11 @@ import java.util.Date;
  */
 public class AddEditExaminationActivity extends ActionBarActivity {
 
-    public IUowMedic mData;
     private Examination mExamination;
+
+    public IUowMedic mData;
+
+    public long mPatientId;
 
     public Examination getExamination() {
         if(mExamination == null){
@@ -39,6 +43,8 @@ public class AddEditExaminationActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_examination);
+
+        mPatientId = getIntent().getLongExtra(PatientDetailsFragment.PATIENT_ID_EXTRA, 0);
     }
 
     @Override
@@ -82,6 +88,8 @@ public class AddEditExaminationActivity extends ActionBarActivity {
         IUowMedic data = getData();
 
         data.getExaminations().add(examination);
+
+        finish();
     }
 
     private Examination getExaminationFromUi() {
@@ -106,7 +114,7 @@ public class AddEditExaminationActivity extends ActionBarActivity {
         examination.setConclusion(conclusion);
         examination.setTreatment(treatment);
         examination.setNotes(notes);
-        examination.setId(selectedPatientId);
+        examination.setPatientId(selectedPatientId);
         return examination;
     }
 
@@ -117,11 +125,14 @@ public class AddEditExaminationActivity extends ActionBarActivity {
         Date date = new Date();
 
         if(datePicker != null && timePicker != null){
-            date = new Date(datePicker.getYear(),
+            Calendar cal = Calendar.getInstance();
+            cal.set(datePicker.getYear(),
                     datePicker.getMonth(),
                     datePicker.getDayOfMonth(),
                     timePicker.getCurrentHour(),
                     timePicker.getCurrentMinute());
+
+            date = new Date(cal.getTimeInMillis());
         }
 
         return date;

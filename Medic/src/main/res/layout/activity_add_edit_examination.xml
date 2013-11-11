@@ -9,20 +9,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <DatePicker
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/datePicker_examinationDate"
+            style="@style/AppTheme"
+            android:clickable="false" />
+
+        <TimePicker
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/timePicker_examinationTime"
+            style="@style/AppTheme" />
+
         <Spinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/spinner_patients"/>
-
-        <DatePicker
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/datePicker_examinationDate"/>
-
-        <TimePicker
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/timePicker_examinationTime"/>
 
         <EditText
             android:layout_width="fill_parent"

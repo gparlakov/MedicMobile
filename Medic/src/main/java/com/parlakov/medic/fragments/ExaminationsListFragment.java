@@ -11,8 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.parlakov.medic.R;
@@ -86,7 +84,7 @@ public class ExaminationsListFragment extends ListFragment {
                             allExaminations,
                             fromColumns,
                             toViewIds,
-                            Adapter.NO_SELECTION);
+                            0);
 
                     adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
                         @Override
@@ -94,9 +92,13 @@ public class ExaminationsListFragment extends ListFragment {
                             if (colIndex == cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_DATE)){
                                 String stringDate = cursor.getString(colIndex);
                                 Date date = new Date(stringDate);
-                                String formated = new SimpleDateFormat("dd/mm/yyyy").format(date);
+                                String formated = new SimpleDateFormat("dd/MM/yyyy").format(date);
                                 ((TextView)view).setText(formated);
                                 return true;
+                            }
+
+                            if(colIndex == cursor.getColumnIndex(MedicDbContract.PATIENT_FULL_NAME)){
+                                String name = cursor.getString(colIndex);
                             }
 
                             return false;

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.View;
 import android.widget.Adapter;
 import android.widget.Spinner;
 
@@ -31,8 +32,21 @@ public class PatientsSimpleCursorAdapterSetterAsyncSetter extends AsyncTask<AddE
     @Override
     protected void onPostExecute(SimpleCursorAdapter adapter) {
         if(activity != null){
-            Spinner spinner = (Spinner) activity.findViewById(R.id.spinner_patients);
+            final Spinner spinner = (Spinner) activity.findViewById(R.id.spinner_patients);
             spinner.setAdapter(adapter);
+            adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+                @Override
+                public boolean setViewValue(View view, Cursor cursor, int colIndex) {
+                    if(colIndex == cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_PATIENT_ID)){
+                        long id = cursor.getLong(colIndex);
+                        if(id == activity.mPatientId){
+                            spinner.setSelection(cursor.getPosition());
+                        }
+                    }
+
+                    return false;
+                }
+            });
         }
     }
 
@@ -60,6 +74,6 @@ public class PatientsSimpleCursorAdapterSetterAsyncSetter extends AsyncTask<AddE
                 patients,
                 fromColumns,
                 toViewIds,
-                Adapter.NO_SELECTION);
+                0);
     }
 }

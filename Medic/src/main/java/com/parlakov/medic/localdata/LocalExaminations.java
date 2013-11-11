@@ -17,15 +17,19 @@ public class LocalExaminations implements IRepository<Examination> {
 
     //<editor-fold desc="Query examinations with patient full name">
     private String QUERY_EXAMINATIONS_WITH_PATIENT_NAMES =
-            " SELECT" +
+            " SELECT " +
             "    e.[" + MedicDbContract.Examination.COLUMN_NAME_ID + "]," +
             "    e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE + "]," +
-            "    firstName || ' ' || lastName as [" + MedicDbContract.PATIENT_FULL_NAME + "]," +
-            "    e.[" + MedicDbContract.Examination.COLUMN_NAME_COMPLAINTS + "]" +
-            "FROM examinations e LEFT JOIN patients p on e.[" +
+            "    p.[" + MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME + "] " +
+                    "|| ' ' || p.[" +
+                    MedicDbContract.Patient.COLUMN_NAME_LAST_NAME +"] " +
+                    "AS [" + MedicDbContract.PATIENT_FULL_NAME + "]," +
+            "    e.[" + MedicDbContract.Examination.COLUMN_NAME_COMPLAINTS + "] " +
+            "FROM " + MedicDbContract.Examination.TABLE_NAME + " e INNER JOIN " +
+                    MedicDbContract.Patient.TABLE_NAME + " p ON e.[" +
                     MedicDbContract.Examination.COLUMN_NAME_PATIENT_ID +
                     "] = p.[" + MedicDbContract.Patient.COLUMN_NAME_ID + "] " +
-            "ORDER BY e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE + "] DESC";
+            "ORDER BY e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE + "] DESC;";
     //</editor-fold>
 
     public LocalExaminations(SQLiteOpenHelper openDbHelper) {
@@ -46,7 +50,7 @@ public class LocalExaminations implements IRepository<Examination> {
 
     public Cursor getAllWithPatientNames(){
         SQLiteDatabase db = getDb();
-
+//        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         return db.rawQuery(QUERY_EXAMINATIONS_WITH_PATIENT_NAMES, null);
     }
 
@@ -75,7 +79,6 @@ public class LocalExaminations implements IRepository<Examination> {
         }
     }
 
-
     private ContentValues getContentValues(Examination entity) {
         ContentValues values = new ContentValues();
         values.put(MedicDbContract.Examination.COLUMN_NAME_PATIENT_ID, entity.getPatientId());
@@ -84,7 +87,6 @@ public class LocalExaminations implements IRepository<Examination> {
         values.put(MedicDbContract.Examination.COLUMN_NAME_CONCLUSION, entity.getConclusion());
         values.put(MedicDbContract.Examination.COLUMN_NAME_TREATMENT, entity.getTreatment());
         values.put(MedicDbContract.Examination.COLUMN_NAME_NOTES, entity.getNotes());
-        values.put(MedicDbContract.Examination.COLUMN_NAME_ID, entity.getId());
         values.put(MedicDbContract.Examination.COLUMN_NAME_CANCELED, entity.getCancelled());
         return values;
     }

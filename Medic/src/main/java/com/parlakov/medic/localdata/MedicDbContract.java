@@ -6,7 +6,7 @@ import android.provider.BaseColumns;
  * Created by georgi on 13-11-2.
  */
 public final class MedicDbContract {
-    public static final String PATIENT_FULL_NAME = "name";
+    public static final String PATIENT_FULL_NAME = "patient_full_name";
 
     public MedicDbContract(){
     }

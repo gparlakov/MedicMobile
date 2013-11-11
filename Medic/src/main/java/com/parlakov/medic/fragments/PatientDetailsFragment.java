@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.parlakov.medic.R;
+import com.parlakov.medic.activities.AddEditExaminationActivity;
 import com.parlakov.medic.activities.AddEditPatientActivity;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.models.Patient;
@@ -29,6 +30,7 @@ import com.parlakov.medic.util.ViewHelper;
 public class PatientDetailsFragment extends Fragment {
 
     public static final String PATIENT_TO_EDIT_EXTRA = "patient to edit";
+    public static final String PATIENT_ID_EXTRA = "patient id";
 
     private long mId;
     private String mPhotoPath;
@@ -91,12 +93,25 @@ public class PatientDetailsFragment extends Fragment {
             case R.id.action_callPatient:
                 handleCallPatient();
                 break;
+            case R.id.action_addAppointment:
+                handleAddExamination();
+                break;
             default:
                 handled = super.onOptionsItemSelected(item);
                 break;
         }
 
         return handled;
+    }
+
+    private void handleAddExamination() {
+        long id = mPatient.getId();
+
+        Intent addExaminationIntent = new Intent(getActivity(),
+                AddEditExaminationActivity.class);
+
+        addExaminationIntent.putExtra(PATIENT_ID_EXTRA, id);
+        startActivity(addExaminationIntent);
     }
 
     private void handleEditPatient() {
