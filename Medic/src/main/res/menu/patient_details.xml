@@ -19,17 +19,17 @@
     </item>
 
     <item
-        android:id="@+id/action_deletePatient"
-        app:showAsAction="ifRoom|withText"
-        android:title="@string/action_deletePatient"
-        android:icon="@android:drawable/ic_delete">
-    </item>
-
-
-    <item
         android:id="@+id/action_callPatient"
         app:showAsAction="withText|ifRoom"
         android:title="@string/action_callPatient"
         android:icon="@android:drawable/ic_menu_call">
+    </item>
+
+
+    <item
+        android:id="@+id/action_deletePatient"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/action_deletePatient"
+        android:icon="@android:drawable/ic_delete">
     </item>
 </menu>

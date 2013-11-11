@@ -5,13 +5,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.parlakov.medic.models.Patient;
+import com.parlakov.uow.IRepository;
 
 import java.io.File;
 
 /**
  * Created by georgi on 13-11-2.
  */
-public class LocalPatients {
+public class LocalPatients implements IRepository<Patient>{
     private final MedicDbHelper mDbHelper;
 
     private SQLiteDatabase db;
@@ -26,7 +27,12 @@ public class LocalPatients {
         mDbHelper = dbHelper;
     }
 
-    public Patient getById(long id) {
+    @Override
+    public Patient getById(Object id) {
+        if(id == null){
+            throw new NullPointerException("Empty patient id passed");
+        }
+        long idPat = Long.parseLong(String.valueOf(id));
         SQLiteDatabase db = getDb();
         Cursor cursor = null;
         Patient patient = null;
@@ -34,7 +40,7 @@ public class LocalPatients {
         if(db != null){
             cursor = db.query(MedicDbContract.Patient.TABLE_NAME,
                     null,
-                    MedicDbContract.Patient.COLUMN_NAME_ID + " = " + id,
+                    MedicDbContract.Patient.COLUMN_NAME_ID + " = " + idPat,
                     null,
                     null,
                     null,
@@ -59,7 +65,7 @@ public class LocalPatients {
             patient.setImagePath(cursor.getString(
                     cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_PHOTO_PATH)));
 
-            patient.setId(id);
+            patient.setId(idPat);
         }
 
         return patient;
@@ -67,7 +73,7 @@ public class LocalPatients {
 
     public Cursor getAll() {
         SQLiteDatabase db = getDb();
-        Cursor allPatients = db.rawQuery("Select * from " +
+        Cursor allPatients = db.rawQuery("SELECT * FROM " +
                 MedicDbContract.Patient.TABLE_NAME, null);
 
         return allPatients;
@@ -91,12 +97,18 @@ public class LocalPatients {
         db.close();
     }
 
-    public void delete(long id) {
+    public void delete(Patient entity) {
+        if(entity == null){
+            throw new NullPointerException("Null patient pointer passed!");
+        }
+
+        long id = entity.getId();
         SQLiteDatabase db = getDb();
 
         db.delete(MedicDbContract.Patient.TABLE_NAME,
                 MedicDbContract.Patient.COLUMN_NAME_ID + " = " + id,
                 null);
+
     }
 
     public void update(Patient entity) {
@@ -118,16 +130,6 @@ public class LocalPatients {
                 null);
 
         db.close();
-    }
-
-    public void deletePhoto(String photoPath) {
-        if(photoPath != null && !photoPath.isEmpty()){
-            File photo = new File(photoPath);
-
-            if(photo != null){
-                photo.delete();
-            }
-        }
     }
 
     public void close(){

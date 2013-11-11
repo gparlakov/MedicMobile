@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.parlakov.medic.MainActivity;
@@ -19,6 +20,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ImageHelper {
+
+    // Creates Uri for the new photo file using a time stamp to
+    // create unique file name.
     public static Uri getTimeStampPhotoUri(Context context) throws IOException {
         Uri photoFileUri;
 
@@ -32,6 +36,8 @@ public class ImageHelper {
         return photoFileUri;
     }
 
+    // Creates the file where the photo will be stored
+    // If the directories do not exist creates them too.
     public static File getOrCreatePicturesFolderAndFile(String appPicturesPath, String newPhotoName) throws IOException {
         File photosDir = new File(appPicturesPath);
 
@@ -47,6 +53,8 @@ public class ImageHelper {
         return photoFile;
     }
 
+    // According to user selection gets the pictures folder
+    // in which to save the patients photos.
     public static String getPicturesFolder(Context context) {
         SharedPreferences prefs = context
                 .getSharedPreferences(MainActivity.PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -75,6 +83,17 @@ public class ImageHelper {
         return appPicturesPath;
     }
 
+    public static void deletePhoto(String photoPath) {
+        if(photoPath != null && !photoPath.isEmpty()){
+            File photo = new File(photoPath);
+
+            if(photo != null){
+                photo.delete();
+            }
+        }
+    }
+
+    // Gets the bitmap from file downsized to fit the desired width height
     public static Bitmap decodeSampledBitmapFromFile(String file, int reqWidth, int reqHeight){
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -87,6 +106,8 @@ public class ImageHelper {
         return  BitmapFactory.decodeFile(file, options);
     }
 
+    // calculates the sample size from given required width/ height
+    // so 2800x1980 sized photo is downsized when used for thumbnail
     public static int calculateInSampleSize(
             BitmapFactory.Options options,
             int reqWidth, int reqHeight){
@@ -117,12 +138,15 @@ public class ImageHelper {
         }
     }
 
+    // Checks if this imageView has a bitmapWorkerTask already attached to it
+    // if so and the filename is different stops previous work
+    // if filename is the same - the same work is being done
     public static boolean cancelPotentialWork(String fileName, ImageView imageView) {
         final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
 
         if (bitmapWorkerTask != null) {
             final String bitmapFileName = bitmapWorkerTask.mFileName;
-            if (bitmapFileName != fileName) {
+            if (bitmapFileName != null && !bitmapFileName.equals(fileName)) {
                 // Cancel previous task
                 bitmapWorkerTask.cancel(true);
             } else {
@@ -134,6 +158,7 @@ public class ImageHelper {
         return true;
     }
 
+    // Gets the associated bitmapWorkerTask from an imageView (AsyncDrawable)
     public static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
         if (imageView != null) {
             final Drawable drawable = imageView.getDrawable();

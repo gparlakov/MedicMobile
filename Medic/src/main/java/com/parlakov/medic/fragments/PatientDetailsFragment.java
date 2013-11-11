@@ -2,7 +2,9 @@ package com.parlakov.medic.fragments;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteException;
+import android.drm.DrmStore;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ import com.parlakov.medic.R;
 import com.parlakov.medic.activities.AddEditPatientActivity;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.models.Patient;
+import com.parlakov.medic.util.ImageHelper;
 import com.parlakov.medic.util.ViewHelper;
 
 /**
@@ -66,25 +69,6 @@ public class PatientDetailsFragment extends Fragment {
         mPatient = data.getPatients().getById(mId);
     }
 
-    private void showPatientInfo(View view) {
-        String name = mPatient.getLastName();
-        String firstName = mPatient.getFirstName();
-        if(firstName != null && !firstName.isEmpty()){
-            name = firstName + " " + name;
-        }
-        ViewHelper.setTextToTextView(R.id.textViewPatientName, view, name);
-        ViewHelper.setTextToTextView(R.id.textViewPatientPhone, view,
-                mPatient.getPhone());
-        ViewHelper.setTextToTextView(R.id.textViewPatientAge, view,
-                String.valueOf(mPatient.getAge()));
-
-        mPhotoPath = mPatient.getPhotoPath();
-        if(mPhotoPath!= null && !mPhotoPath.isEmpty()){
-            ImageView patientPhotoView = (ImageView) view.findViewById(R.id.imageView_patientDetails_Photo);
-            patientPhotoView.setImageDrawable(Drawable.createFromPath(mPhotoPath));
-        }
-    }
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -103,6 +87,9 @@ public class PatientDetailsFragment extends Fragment {
                 break;
             case R.id.action_deletePatient:
                 handleDeletePatient();
+                break;
+            case R.id.action_callPatient:
+                handleCallPatient();
                 break;
             default:
                 handled = super.onOptionsItemSelected(item);
@@ -130,8 +117,8 @@ public class PatientDetailsFragment extends Fragment {
         }
         try{
             LocalData data = new LocalData(getView().getContext());
-            data.getPatients().delete(mId);
-            data.getPatients().deletePhoto(mPatient.getPhotoPath());
+            data.getPatients().delete(mPatient);
+            ImageHelper.deletePhoto(mPhotoPath);
             getActivity().finish();
         }
         catch(SQLiteException ex){
@@ -139,6 +126,42 @@ public class PatientDetailsFragment extends Fragment {
                     getString(R.string.exception_patientNotDeleted), Toast.LENGTH_LONG)
                     .show();
         }
+    }
+
+    private void showPatientInfo(View view) {
+        String name = mPatient.getLastName();
+        String firstName = mPatient.getFirstName();
+        if(firstName != null && !firstName.isEmpty()){
+            name = firstName + " " + name;
+        }
+        ViewHelper.setTextToTextView(R.id.textViewPatientName, view, name);
+        ViewHelper.setTextToTextView(R.id.textViewPatientPhone, view,
+                mPatient.getPhone());
+        ViewHelper.setTextToTextView(R.id.textViewPatientAge, view,
+                String.valueOf(mPatient.getAge()));
+
+        mPhotoPath = mPatient.getPhotoPath();
+        if(mPhotoPath!= null && !mPhotoPath.isEmpty()){
+            ImageView patientPhotoView = (ImageView) view.findViewById(R.id.imageView_patientDetails_Photo);
+            /*patientPhotoView.setImageDrawable(Drawable.createFromPath(mPhotoPath));*/
+            ImageHelper.loadImageFromFileAsync(mPhotoPath, patientPhotoView);
+        }
+    }
+
+    private void handleCallPatient() {
+        String patientPhoneNumber = mPatient.getPhone();
+        if(patientPhoneNumber == null || patientPhoneNumber.isEmpty()){
+            Toast.makeText(getActivity(),
+                    getString(R.string.toast_noPatientNumber),
+                    Toast.LENGTH_LONG)
+            .show();
+            return;
+        }
+
+        Intent callIntent = new Intent(Intent.ACTION_CALL,
+                Uri.parse("tel:" + patientPhoneNumber));
+
+        startActivity(callIntent);
     }
 
     private void showToastNotFound() {

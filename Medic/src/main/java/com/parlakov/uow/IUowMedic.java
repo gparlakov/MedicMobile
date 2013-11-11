@@ -7,7 +7,7 @@ import com.parlakov.medic.models.User;
 /**
  * Created by georgi on 13-10-31.
  */
-public interface IUow {
+public interface IUowMedic {
     IUsersRepository<User> getUsers();
 
     IRepository<Patient> getPatients();

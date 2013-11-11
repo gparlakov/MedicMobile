@@ -7,6 +7,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <uses-sdk
         android:maxSdkVersion="19"
@@ -56,6 +57,14 @@
             <meta-data android:name="android.support.UI_OPTIONS"
                 android:value="splitActionBarWhenNarrow" />
 
+        </activity>
+
+        <activity android:name=".activities.AddEditExaminationActivity"
+            android:label="@string/title_sectionExaminationsList"
+            android:uiOptions="splitActionBarWhenNarrow">
+
+            <meta-data android:name="android.support.UI_OPTIONS"
+                android:value="splitActionBarWhenNarrow" />
         </activity>
     </application>
 

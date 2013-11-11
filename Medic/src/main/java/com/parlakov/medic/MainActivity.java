@@ -9,20 +9,22 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
+import android.widget.Toast;
 
 import com.parlakov.medic.activities.ChooseSaveDataLocationActivity;
-import com.parlakov.medic.fragments.LoginFragment;
+import com.parlakov.medic.fragments.ExaminationsListFragment;
 import com.parlakov.medic.fragments.PatientsListFragment;
-import com.parlakov.medic.fragments.RegisterFragment;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     //TODO - refactor - extract a NavigationDrawerHelper class
 
-    private static final int PATIENTS_LIST_DRAWER_POSITION = 0;
-    private static final int LOGIN_DRAWER_POSITION = 1;
-    private static final int REGISTER_DRAWER_POSITION = 2;
+    public static final int TODAYS_APPOINTMENTS_DRAWER_POSITION = 0;
+    public static final int EXAMINATIONS_LIST_DRAWER_POSITION = 1;
+    public static final int PATIENTS_LIST_DRAWER_POSITION = 2;
+    public static final int LOGIN_DRAWER_POSITION = 5;
+    public static final int REGISTER_DRAWER_POSITION = 4;
 
     private static final int CHOOSE_LOCATION_REQUEST_CODE = 1000;
 
@@ -58,7 +60,7 @@ public class MainActivity extends ActionBarActivity
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layoutCustomMy));
+                (DrawerLayout) findViewById(R.id.drawer_layout_main));
 
     }
 
@@ -97,22 +99,28 @@ public class MainActivity extends ActionBarActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         switch (position) {
+            case TODAYS_APPOINTMENTS_DRAWER_POSITION:
+                Toast.makeText(getApplicationContext(),
+                        "Today's appointments",
+                        Toast.LENGTH_LONG).show();
+                break;
+
+            case EXAMINATIONS_LIST_DRAWER_POSITION:
+                Toast.makeText(getApplicationContext(),
+                        "Examinations_list",
+                        Toast.LENGTH_LONG).show();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, new ExaminationsListFragment())
+                        .commit();
+                break;
+
             case PATIENTS_LIST_DRAWER_POSITION:
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, new PatientsListFragment())
                         .commit();
                 break;
 
-            case LOGIN_DRAWER_POSITION:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, new LoginFragment())
-                        .commit();
-                break;
-
-            case REGISTER_DRAWER_POSITION:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, new RegisterFragment())
-                        .commit();
+            default:
                 break;
         }
     }

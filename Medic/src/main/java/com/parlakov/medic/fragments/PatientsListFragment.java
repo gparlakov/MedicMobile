@@ -1,11 +1,8 @@
 package com.parlakov.medic.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -21,15 +18,18 @@ import com.parlakov.medic.activities.AddEditPatientActivity;
 import com.parlakov.medic.activities.PatientManagementActivity;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.localdata.MedicDbContract;
-import com.parlakov.medic.util.BitmapWorkerTask;
+import com.parlakov.medic.localdata.MedicDbHelper;
 import com.parlakov.medic.util.ImageHelper;
+import com.parlakov.uow.IUowMedic;
 
 /**
  * Created by georgi on 13-11-5.
  */
 public class PatientsListFragment extends ListFragment {
 
-    private LocalData mData;
+    private IUowMedic mData;
+    private MedicDbHelper mDbHelper;
+    private Cursor mPatients;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -51,10 +51,14 @@ public class PatientsListFragment extends ListFragment {
 
     private void initialize() {
         Context context = getListView().getContext();
-        mData = new LocalData(context);
-        Cursor patients = mData.getPatients().getAll();
+        mDbHelper = new MedicDbHelper(context,
+                LocalData.getDbLocationPathFromPreferences(context));
 
-        SimpleCursorAdapter adapter = getPatiensSimpleCursorAdapter(context, patients);
+        mData = new LocalData(mDbHelper);
+
+        mPatients = (Cursor) mData.getPatients().getAll();
+
+        SimpleCursorAdapter adapter = getPatiensSimpleCursorAdapter(context, mPatients);
 
         this.setListAdapter(adapter);
 
@@ -93,6 +97,8 @@ public class PatientsListFragment extends ListFragment {
                     ImageView patientPicture = (ImageView) view;
 
                     if (picturePath != null && !picturePath.isEmpty()) {
+                        // reads the bitmap and image view size and calculates size of bitmap
+                        // to return
                         ImageHelper.loadImageFromFileAsync(picturePath, patientPicture);
                     }
                     else {
@@ -111,7 +117,7 @@ public class PatientsListFragment extends ListFragment {
     //<editor-fold desc="action bar management">
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.addpatientmenu, menu);
+        inflater.inflate(R.menu.add_patient_menu, menu);
     }
 
     @Override
@@ -134,14 +140,25 @@ public class PatientsListFragment extends ListFragment {
     //</editor-fold>
 
     @Override
-    public void onStop() {
-        super.onStop();
-        mData.getPatients().close();
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
         initialize();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(mData != null){
+            mData.getPatients().close();
+        }
+
+
+        if(mPatients != null){
+            mPatients.close();
+        }
+
+        if(mDbHelper != null){
+            mDbHelper.close();
+        }
     }
 }

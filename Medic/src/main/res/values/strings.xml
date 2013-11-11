@@ -4,9 +4,14 @@
     <string name="app_name">Medic</string>
     <string name="app_sd_card_folder">medic</string>
     <string name="app_pictures_folder">pictures</string>
-    <string name="title_sectionHome">Home</string>
+
+    <string name="title_sectionTodaysAppointments">Todays appointments</string>
+    <string name="title_sectionExaminationsList">Examinations</string>
+    <string name="title_sectionPatientsList">Patients List</string>
     <string name="title_sectionLogin">Login</string>
     <string name="title_sectionRegister">Register</string>
+    <string name="title_sectionSettings">Settings</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="add_patient">Add</string>
@@ -52,5 +57,12 @@
     <string name="exception_unableToOpenDb">Could not open database</string>
     <string name="exception_unknownException">Error occured. Please try again.</string>
     <string name="accessibility_patientPhoto">Patient Photo</string>
+    <string name="toast_noPatientNumber">This patient has no number associated with. Please edit patient</string>
+    <string name="action_title_addExamination">Add Examination</string>
+    <string name="hint_examination_patientComplaints">Patient complaints...</string>
+    <string name="hint_examination_treatment">Treatment...</string>
+    <string name="hint_examination_conclusion">Conclusion...</string>
+    <string name="hint_examination_note">Notes...</string>
+    <string name="button_examination_save">Save Examination</string>
 
 </resources>

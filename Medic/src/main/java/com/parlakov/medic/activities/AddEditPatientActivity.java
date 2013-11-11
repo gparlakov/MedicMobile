@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.parlakov.medic.R;
 import com.parlakov.medic.fragments.PatientDetailsFragment;
 import com.parlakov.medic.localdata.LocalData;
+import com.parlakov.medic.localdata.LocalPatients;
 import com.parlakov.medic.models.Patient;
 import com.parlakov.medic.util.ImageHelper;
 import com.parlakov.medic.util.ViewHelper;
@@ -155,7 +156,7 @@ public class AddEditPatientActivity extends Activity {
 
     private void deleteCurrentPhoto() {
         LocalData data = getLocalData();
-        data.getPatients().deletePhoto(mPhotoPath);
+        ImageHelper.deletePhoto(mPhotoPath);
     }
     //</editor-fold>
 

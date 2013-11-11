@@ -9,16 +9,18 @@ import com.parlakov.medic.models.Examination;
 import com.parlakov.medic.models.Patient;
 import com.parlakov.medic.models.User;
 import com.parlakov.uow.IRepository;
-import com.parlakov.uow.IUow;
+import com.parlakov.uow.IUowMedic;
 import com.parlakov.uow.IUsersRepository;
 
 /**
  * Created by georgi on 13-11-2.
  */
-public class LocalData {
+public class LocalData implements IUowMedic {
 
     private IUsersRepository<User> mUsers;
-    private LocalPatients mPatients;
+    private IRepository<Patient> mPatients;
+    private IRepository<Examination> mExaminations;
+
     private SQLiteOpenHelper mDbHelper;
 
     public LocalData(Context context){
@@ -29,7 +31,7 @@ public class LocalData {
         mDbHelper = dbHelper;
     }
 
-    private String getDbLocationPathFromPreferences(Context context) {
+    public static String getDbLocationPathFromPreferences(Context context) {
         SharedPreferences prefs = context
                 .getSharedPreferences(MainActivity.PREFERENCES_NAME, Context.MODE_PRIVATE);
 
@@ -51,8 +53,6 @@ public class LocalData {
         mDbHelper = dbHelper;
     }
 
-
-
     public IUsersRepository<User> getUsers() {
         if(mUsers == null){
             mUsers = new LocalUsers();
@@ -61,7 +61,7 @@ public class LocalData {
     }
 
 
-    public LocalPatients getPatients() {
+    public IRepository<Patient> getPatients() {
         if(mPatients == null){
             mPatients = new LocalPatients((MedicDbHelper)mDbHelper);
         }
@@ -70,6 +70,9 @@ public class LocalData {
 
 
     public IRepository<Examination> getExaminations() {
-        return null;
+        if(mExaminations == null){
+            mExaminations = new LocalExaminations(mDbHelper);
+        }
+        return mExaminations;
     }
 }

@@ -1,5 +1,7 @@
 package com.parlakov.uow;
 
+import com.parlakov.medic.models.Examination;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -8,16 +10,16 @@ import java.util.List;
  */
 public interface IRepository<T> {
 
-    public T getById(int id);
+    T getById(Object id);
 
-    public Collection<T> getAll();
+    public Object getAll();
 
     public void add(T entity);
 
-    public Boolean delete(T entity);
+    public void delete(T entity);
 
-    public Boolean delete(int id);
+    public void update(T entity);
 
-    public T update(T entity);
+    public void close();
 
 }

@@ -21,8 +21,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.parlakov.medic.R;
-
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
@@ -96,15 +94,13 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
+        String[] titles = getResources().getStringArray(R.array.navigationDrawerTitles);
+        mDrawerListView.setAdapter(
+                new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_1,
                 android.R.id.text1,
-                new String[]{
-                        getString(R.string.title_sectionHome),
-                        getString(R.string.title_sectionLogin),
-                        getString(R.string.title_sectionRegister),
-                }));
+                titles));
 
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 
