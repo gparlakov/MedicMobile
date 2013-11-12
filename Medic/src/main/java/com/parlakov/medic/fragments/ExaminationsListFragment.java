@@ -80,7 +80,7 @@ public class ExaminationsListFragment extends ListFragment {
 
                     SimpleCursorAdapter adapter = new SimpleCursorAdapter(
                             context,
-                            R.layout.cursor_item_examination,
+                            R.layout.item_examination,
                             allExaminations,
                             fromColumns,
                             toViewIds,
@@ -92,7 +92,7 @@ public class ExaminationsListFragment extends ListFragment {
                             if (colIndex == cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_DATE)){
                                 String stringDate = cursor.getString(colIndex);
                                 Date date = new Date(stringDate);
-                                String formated = new SimpleDateFormat("dd/MM/yyyy").format(date);
+                                String formated = new SimpleDateFormat("HH:mm EEE\ndd/MM/yyyy").format(date);
                                 ((TextView)view).setText(formated);
                                 return true;
                             }
@@ -122,7 +122,7 @@ public class ExaminationsListFragment extends ListFragment {
     //<editor-fold desc="Action menu">
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.examinations_list, menu);
+        inflater.inflate(R.menu.at_examinations_list, menu);
     }
 
     @Override

@@ -7,20 +7,30 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="@dimen/medium_padding">
 
-        <DatePicker
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/datePicker_examinationDate"
-            style="@style/AppTheme"
-            android:clickable="false" />
+        <!--<TextView-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/addEditExamination_chosenDate"/>-->
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
 
-        <TimePicker
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/timePicker_examinationTime"
-            style="@style/AppTheme" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/button_setExaminationDate"
+                android:text="@string/button_setExaminationDate" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/button_setExaminationHour"
+                android:text="@string/button_setExaminationTime"
+                android:layout_toRightOf="@+id/button_setExaminationDate"/>
+        </RelativeLayout>
 
         <Spinner
             android:layout_width="wrap_content"

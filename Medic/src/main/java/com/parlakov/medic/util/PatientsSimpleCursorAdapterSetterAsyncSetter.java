@@ -4,8 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.view.View;
-import android.widget.Adapter;
 import android.widget.Spinner;
 
 import com.parlakov.medic.R;
@@ -20,6 +18,7 @@ import com.parlakov.uow.IUowMedic;
 public class PatientsSimpleCursorAdapterSetterAsyncSetter extends AsyncTask<AddEditExaminationActivity, Void, SimpleCursorAdapter> {
     private IUowMedic mData;
     private AddEditExaminationActivity activity;
+    private int mPatientPosition;
 
     @Override
     protected SimpleCursorAdapter doInBackground(AddEditExaminationActivity... params) {
@@ -34,19 +33,7 @@ public class PatientsSimpleCursorAdapterSetterAsyncSetter extends AsyncTask<AddE
         if(activity != null){
             final Spinner spinner = (Spinner) activity.findViewById(R.id.spinner_patients);
             spinner.setAdapter(adapter);
-            adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-                @Override
-                public boolean setViewValue(View view, Cursor cursor, int colIndex) {
-                    if(colIndex == cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_PATIENT_ID)){
-                        long id = cursor.getLong(colIndex);
-                        if(id == activity.mPatientId){
-                            spinner.setSelection(cursor.getPosition());
-                        }
-                    }
-
-                    return false;
-                }
-            });
+            spinner.setSelection(mPatientPosition, true);
         }
     }
 
@@ -55,6 +42,10 @@ public class PatientsSimpleCursorAdapterSetterAsyncSetter extends AsyncTask<AddE
         mData = new LocalData(context);
 
         Cursor patients = (Cursor) mData.getPatients().getAll();
+
+        if(activity.mPatientId != 0){
+            findPatientPosition(patients);
+        }
 
         String[] fromColumns = new String[]
                 {
@@ -70,10 +61,23 @@ public class PatientsSimpleCursorAdapterSetterAsyncSetter extends AsyncTask<AddE
 
         return new SimpleCursorAdapter(
                 context,
-                R.layout.cursor_item_patient,
+                R.layout.item_patient_spinner_in_new_examination,
                 patients,
                 fromColumns,
                 toViewIds,
                 0);
+    }
+
+    private void findPatientPosition(Cursor patients) {
+        if(patients != null){
+            do{
+                patients.moveToNext();
+                int idIndex = patients.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_ID);
+                if(activity.mPatientId == patients.getLong(idIndex)){
+                    mPatientPosition = patients.getPosition();
+                    break;
+                }
+            }while(!patients.isLast());
+        }
     }
 }

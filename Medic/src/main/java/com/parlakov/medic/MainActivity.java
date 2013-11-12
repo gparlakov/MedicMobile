@@ -1,5 +1,6 @@
 package com.parlakov.medic;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.parlakov.medic.activities.ChooseSaveDataLocationActivity;
 import com.parlakov.medic.fragments.ExaminationsListFragment;
 import com.parlakov.medic.fragments.PatientsListFragment;
+import com.parlakov.medic.fragments.TodaysAppointmentsFragment;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -21,8 +23,8 @@ public class MainActivity extends ActionBarActivity
     //TODO - refactor - extract a NavigationDrawerHelper class
 
     public static final int TODAYS_APPOINTMENTS_DRAWER_POSITION = 0;
-    public static final int EXAMINATIONS_LIST_DRAWER_POSITION = 1;
-    public static final int PATIENTS_LIST_DRAWER_POSITION = 2;
+    public static final int PATIENTS_LIST_DRAWER_POSITION = 1;
+    public static final int EXAMINATIONS_LIST_DRAWER_POSITION = 2;
     public static final int LOGIN_DRAWER_POSITION = 5;
     public static final int REGISTER_DRAWER_POSITION = 4;
 
@@ -46,6 +48,16 @@ public class MainActivity extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    private String mQuery;
+    private FragmentManager fragmentManager;
+
+    private FragmentManager getFragmentManagerLazy(){
+        if(fragmentManager == null){
+            fragmentManager = getSupportFragmentManager();
+        }
+
+        return fragmentManager;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +66,7 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+                getFragmentManagerLazy().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
         // Set up the drawer.
@@ -62,6 +74,15 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout_main));
 
+
+        Intent startingIntent = getIntent();
+        if(Intent.ACTION_SEARCH.equals(startingIntent.getAction())){
+            mQuery = startingIntent.getStringExtra(SearchManager.QUERY);
+
+            getFragmentManagerLazy().beginTransaction()
+                    .replace(R.id.container_medic_main, new PatientsListFragment(mQuery))
+                    .commit();
+        }
     }
 
     @Override
@@ -95,28 +116,28 @@ public class MainActivity extends ActionBarActivity
         // will be started to get the user's preference
         if (!isSaveDataLocationChosen()) return;
 
+        //stop the default choice if there is a query
+        if(mQuery != null) return;
+
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         switch (position) {
             case TODAYS_APPOINTMENTS_DRAWER_POSITION:
-                Toast.makeText(getApplicationContext(),
-                        "Today's appointments",
-                        Toast.LENGTH_LONG).show();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container_medic_main, new TodaysAppointmentsFragment())
+                        .commit();
                 break;
 
             case EXAMINATIONS_LIST_DRAWER_POSITION:
-                Toast.makeText(getApplicationContext(),
-                        "Examinations_list",
-                        Toast.LENGTH_LONG).show();
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, new ExaminationsListFragment())
+                        .replace(R.id.container_medic_main, new ExaminationsListFragment())
                         .commit();
                 break;
 
             case PATIENTS_LIST_DRAWER_POSITION:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, new PatientsListFragment())
+                        .replace(R.id.container_medic_main, new PatientsListFragment())
                         .commit();
                 break;
 
@@ -145,27 +166,36 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (mNavigationDrawerFragment != null && !mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.global, menu);
-            restoreActionBar();
-            return true;
-        }
-        return super.onCreateOptionsMenu(menu);
+ public boolean onCreateOptionsMenu(Menu menu) {
+    if (mNavigationDrawerFragment != null && !mNavigationDrawerFragment.isDrawerOpen()) {
+        // Only show items in the action bar relevant to this screen
+        // if the drawer is not showing. Otherwise, let the drawer
+        // decide what to show in the action bar.
+        getMenuInflater().inflate(R.menu.global, menu);
+        restoreActionBar();
+        return true;
     }
+    return super.onCreateOptionsMenu(menu);
+}
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Boolean handled = true;
+
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
+            case R.id.action_search_patients:
+                onSearchRequested();
+                break;
             case R.id.action_settings:
-                return true;
+                break;
+            default:
+                handled = super.onOptionsItemSelected(item);
+                break;
         }
-        return super.onOptionsItemSelected(item);
+
+        return handled;
     }
 }

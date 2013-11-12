@@ -1,10 +1,16 @@
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_search_patients"
+        android:title="@string/action_search_patients"
+        app:showAsAction="withText|always"
+        android:icon="@android:drawable/ic_menu_search"/>
     <item android:id="@+id/action_addPatient"
-        android:title="@string/add_patient"
+        android:title="@string/action_add_patient"
         app:showAsAction="withText|ifRoom"
-        android:icon="@android:drawable/ic_input_add"/>
+        android:icon="@android:drawable/ic_input_add">
+    </item>
+
     <!--<item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"

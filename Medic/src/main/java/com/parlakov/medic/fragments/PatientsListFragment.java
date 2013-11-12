@@ -3,9 +3,11 @@ package com.parlakov.medic.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,8 +19,8 @@ import com.parlakov.medic.R;
 import com.parlakov.medic.activities.AddEditPatientActivity;
 import com.parlakov.medic.activities.PatientManagementActivity;
 import com.parlakov.medic.localdata.LocalData;
+import com.parlakov.medic.localdata.LocalPatients;
 import com.parlakov.medic.localdata.MedicDbContract;
-import com.parlakov.medic.localdata.MedicDbHelper;
 import com.parlakov.medic.util.ImageHelper;
 import com.parlakov.uow.IUowMedic;
 
@@ -27,15 +29,37 @@ import com.parlakov.uow.IUowMedic;
  */
 public class PatientsListFragment extends ListFragment {
 
+    private final String mQuery;
+
     private IUowMedic mData;
-    private MedicDbHelper mDbHelper;
-    private Cursor mPatients;
+    private Cursor mPatientsCursor;
+
+    public PatientsListFragment() {
+        this(null);
+    }
+
+    public String getQuery() {
+        return mQuery;
+    }
+
+    public IUowMedic getData() {
+        if(mData == null){
+            mData = new LocalData(getActivity());
+        }
+        return mData;
+    }
+
+    public PatientsListFragment(String query) {
+        mQuery = query;
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         setHasOptionsMenu(true);
+
+        setEmptyText(getString(R.string.emptyPatientsList));
     }
 
     @Override
@@ -50,23 +74,44 @@ public class PatientsListFragment extends ListFragment {
     }
 
     private void initialize() {
-        Context context = getListView().getContext();
-        mDbHelper = new MedicDbHelper(context,
-                LocalData.getDbLocationPathFromPreferences(context));
+        final Context context = getListView().getContext();
+        Log.i("Start from thread", String.valueOf(Thread.currentThread().getId()));
+        new AsyncTask<Void, Void, SimpleCursorAdapter>() {
+            @Override
+            protected SimpleCursorAdapter doInBackground(Void... params) {
 
-        mData = new LocalData(mDbHelper);
+                Log.i("Manage cursor from", String.valueOf(Thread.currentThread().getId()));
 
-        mPatients = (Cursor) mData.getPatients().getAll();
+                if(getQuery() == null){
+                    mPatientsCursor = (Cursor) getData().getPatients().getAll();
+                }
+                else{
+                    LocalPatients patientsData = (LocalPatients) getData().getPatients();
+                    mPatientsCursor = patientsData.searchByName(getQuery());
+                }
 
-        SimpleCursorAdapter adapter = getPatiensSimpleCursorAdapter(context, mPatients);
+                SimpleCursorAdapter adapter =
+                        getPatiensSimpleCursorAdapter(context, mPatientsCursor);
 
-        this.setListAdapter(adapter);
+                return  adapter;
+            }
 
-        this.setEmptyText(getString(R.string.emptyPatientsList));
+            @Override
+            protected void onPostExecute(SimpleCursorAdapter adapter) {
+                setListAdapter(adapter);
+                if(mQuery != null){
+                    setEmptyText(context.getString(R.string.search_nothing_found)
+                            + "\"" + mQuery + "\"");
+                }
+            }
+        }.execute();
     }
 
     private SimpleCursorAdapter getPatiensSimpleCursorAdapter(
             Context context, Cursor patients) {
+
+        Log.i("Manage adapter cration from thread", String.valueOf(Thread.currentThread().getId()));
+
         String[] from = new String[]
                 {
                         MedicDbContract.Patient.COLUMN_NAME_PHOTO_PATH,
@@ -87,6 +132,7 @@ public class PatientsListFragment extends ListFragment {
                 from,
                 to,
                 0);
+
 
         adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
             @Override
@@ -117,7 +163,7 @@ public class PatientsListFragment extends ListFragment {
     //<editor-fold desc="action bar management">
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.add_patient_menu, menu);
+        inflater.inflate(R.menu.at_patients_list, menu);
     }
 
     @Override
@@ -152,13 +198,9 @@ public class PatientsListFragment extends ListFragment {
             mData.getPatients().close();
         }
 
-
-        if(mPatients != null){
-            mPatients.close();
-        }
-
-        if(mDbHelper != null){
-            mDbHelper.close();
+        if(mPatientsCursor != null){
+            mPatientsCursor.close();
         }
     }
+
 }

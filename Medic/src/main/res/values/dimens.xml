@@ -15,4 +15,6 @@
     <dimen name="patient_details_wide_text_margin_vertical">16dp</dimen>
     <dimen name="textView_verticalMargin">16dp</dimen>
     <dimen name="list_item_padding_wide">32dp</dimen>
+    <dimen name="small_padding">5dp</dimen>
+    <dimen name="medium_padding">10dp</dimen>
 </resources>

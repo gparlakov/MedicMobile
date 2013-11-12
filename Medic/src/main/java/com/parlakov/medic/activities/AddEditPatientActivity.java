@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.parlakov.medic.R;
 import com.parlakov.medic.fragments.PatientDetailsFragment;
 import com.parlakov.medic.localdata.LocalData;
-import com.parlakov.medic.localdata.LocalPatients;
 import com.parlakov.medic.models.Patient;
 import com.parlakov.medic.util.ImageHelper;
 import com.parlakov.medic.util.ViewHelper;
@@ -87,6 +86,11 @@ public class AddEditPatientActivity extends Activity {
 
         try{
             LocalData data = getLocalData();
+
+            if (!isPatientValid()){
+               return;
+            }
+
             if(mPatient.getId() != 0){
                 data.getPatients().update(mPatient);
             }
@@ -106,6 +110,19 @@ public class AddEditPatientActivity extends Activity {
         }
 
         finish();
+    }
+
+    private Boolean isPatientValid() {
+        Boolean valid = true;
+
+        String lastName = mPatient.getLastName();
+        if( lastName == null || lastName.isEmpty() ){
+            Toast.makeText(this, "Last name can not be empty", Toast.LENGTH_LONG)
+                    .show();
+            valid = false;
+        }
+
+        return valid;
     }
 
     private void doPhoto() {

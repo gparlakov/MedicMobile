@@ -2,8 +2,6 @@ package com.parlakov.medic.fragments;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteException;
-import android.drm.DrmStore;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -75,7 +73,7 @@ public class PatientDetailsFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
-        inflater.inflate(R.menu.patient_details, menu);
+        inflater.inflate(R.menu.at_patient_details, menu);
     }
 
     @Override

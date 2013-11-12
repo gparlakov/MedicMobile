@@ -2,8 +2,8 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:textColor">#bbccbb</item>
-        <item name="android:background">#222622</item>
+        <!--<item name="android:textColor">#dddddd</item>-->
+        <!--<item name="android:background">#333333</item>-->
     </style>
 
 </resources>

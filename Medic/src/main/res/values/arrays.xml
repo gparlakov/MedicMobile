@@ -1,8 +1,8 @@
 <resources>
     <string-array name="navigationDrawerTitles">
         <item>@string/title_sectionTodaysAppointments</item>
-        <item>@string/title_sectionExaminationsList</item>
         <item>@string/title_sectionPatientsList</item>
+        <item>@string/title_sectionExaminationsList</item>
         <!--<item>@string/title_sectionLogin</item>-->
         <!--<item>@string/title_sectionRegister</item>-->
         <!--<item>@string/title_sectionSettings</item>-->
