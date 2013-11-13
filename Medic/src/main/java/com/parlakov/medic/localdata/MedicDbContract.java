@@ -33,7 +33,7 @@ public final class MedicDbContract {
 
         public static final String COLUMN_NAME_ID = "_id";
         public static final String COLUMN_NAME_PATIENT_ID = "patientId";
-        public static final String COLUMN_NAME_DATE = "date";
+        public static final String COLUMN_NAME_DATE_IN_MILLIS = "date";
         public static final String COLUMN_NAME_COMPLAINTS = "complaints";
         public static final String COLUMN_NAME_CONCLUSION = "conclusion";
         public static final String COLUMN_NAME_TREATMENT = "treatment";

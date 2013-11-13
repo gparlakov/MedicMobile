@@ -9,7 +9,7 @@ import java.util.Date;
 public class Examination implements Serializable {
     private long mId;
     private long mPatientId;
-    private Date mDate;
+    private long mDate;
     private String mComplaints;
     private String mConclusion;
     private String mTreatment;
@@ -24,11 +24,11 @@ public class Examination implements Serializable {
         mPatientId = patientId;
     }
 
-    public Date getDate() {
+    public long getDateInMillis() {
         return mDate;
     }
 
-    public void setDate(Date date) {
+    public void setDateInMillis(long date) {
         mDate = date;
     }
 

@@ -13,7 +13,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/title_addPatient"
+            android:text="@string/title_activity_addEditPatient"
             android:id="@+id/addPatientTitle"
             style="g"
             android:gravity="center_horizontal" />

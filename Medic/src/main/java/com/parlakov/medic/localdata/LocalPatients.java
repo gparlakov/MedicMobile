@@ -80,12 +80,10 @@ public class LocalPatients implements IRepository<Patient> {
                 MedicDbContract.Patient.COLUMN_NAME_PHOTO_PATH
         };
 
-        String groupBy = MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME;
-
         String orderBy = MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME;
 
         Cursor allPatients = db.query(MedicDbContract.Patient.TABLE_NAME,
-                columns, null, null, groupBy, null, orderBy);
+                columns, null, null, null, null, orderBy);
 
         return allPatients;
     }
@@ -99,7 +97,7 @@ public class LocalPatients implements IRepository<Patient> {
         ContentValues values = getContentValuesFromEntity(entity);
 
         db.insert(MedicDbContract.Patient.TABLE_NAME, null, values);
-        db.close();
+        close();
     }
 
     public void delete(Patient entity) {
@@ -129,18 +127,17 @@ public class LocalPatients implements IRepository<Patient> {
                 MedicDbContract.Patient.COLUMN_NAME_ID + " = " + entity.getId(),
                 null);
 
-        db.close();
+        close();
     }
 
-
     public void close() {
-        if (db != null)
+        if (db != null){
             db.close();
+            db = null;
+        }
     }
 
     public Cursor searchByName(String query) {
-        String queryLowercased = query.toLowerCase();
-
         SQLiteDatabase db = getDb();
 
         String[] columns = {

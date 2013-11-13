@@ -60,7 +60,7 @@
 
         <activity
             android:name=".activities.PatientManagementActivity"
-            android:label="@string/app_patients_activity"
+            android:label="@string/title_activity_patient"
             android:uiOptions="splitActionBarWhenNarrow">
 
             <meta-data android:name="android.support.UI_OPTIONS"

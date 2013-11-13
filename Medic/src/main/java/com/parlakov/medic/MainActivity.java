@@ -10,12 +10,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.Toast;
 
 import com.parlakov.medic.activities.ChooseSaveDataLocationActivity;
 import com.parlakov.medic.fragments.ExaminationsListFragment;
 import com.parlakov.medic.fragments.PatientsListFragment;
-import com.parlakov.medic.fragments.TodaysAppointmentsFragment;
+
+import java.util.Calendar;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -67,7 +67,7 @@ public class MainActivity extends ActionBarActivity
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManagerLazy().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
+        //mTitle = getTitle();
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -121,24 +121,31 @@ public class MainActivity extends ActionBarActivity
 
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
-
+        ActionBar actionBar = getSupportActionBar();
         switch (position) {
             case TODAYS_APPOINTMENTS_DRAWER_POSITION:
+                /* gives the current date to the instance so that
+                *  only appointments/examinations from today are shown*/
+
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container_medic_main, new TodaysAppointmentsFragment())
+                        .replace(R.id.container_medic_main,
+                                new ExaminationsListFragment(Calendar.getInstance()))
                         .commit();
+                mTitle = getString(R.string.title_sectionTodaysAppointments);
                 break;
 
             case EXAMINATIONS_LIST_DRAWER_POSITION:
                 fragmentManager.beginTransaction()
                         .replace(R.id.container_medic_main, new ExaminationsListFragment())
                         .commit();
+                mTitle = getString(R.string.title_sectionExaminationsList);
                 break;
 
             case PATIENTS_LIST_DRAWER_POSITION:
                 fragmentManager.beginTransaction()
                         .replace(R.id.container_medic_main, new PatientsListFragment())
                         .commit();
+                mTitle = getString(R.string.title_sectionPatientsList);
                 break;
 
             default:
@@ -166,7 +173,7 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
- public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
     if (mNavigationDrawerFragment != null && !mNavigationDrawerFragment.isDrawerOpen()) {
         // Only show items in the action bar relevant to this screen
         // if the drawer is not showing. Otherwise, let the drawer

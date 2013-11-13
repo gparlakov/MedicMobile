@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.parlakov.medic.R;
@@ -18,15 +19,21 @@ import com.parlakov.medic.activities.AddEditExaminationActivity;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.localdata.LocalExaminations;
 import com.parlakov.medic.localdata.MedicDbContract;
+import com.parlakov.medic.models.Examination;
 import com.parlakov.uow.IUowMedic;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created by georgi on 13-11-11.
  */
 public class ExaminationsListFragment extends ListFragment {
+    public static final String EXAMINATION_TO_EDIT_ID_EXTRA = "edit examination id";
+
+    //<editor-fold desc="members and getters">
+    private final Calendar mCurrentDate;
     private IUowMedic mData;
 
     public IUowMedic getData() {
@@ -35,6 +42,17 @@ public class ExaminationsListFragment extends ListFragment {
         }
         return mData;
     }
+    //</editor-fold>
+
+    //<editor-fold desc="constructors">
+    public ExaminationsListFragment(){
+        this(null);
+    }
+
+    public ExaminationsListFragment(Calendar date){
+        mCurrentDate = date;
+    }
+    //</editor-fold>
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,80 +62,103 @@ public class ExaminationsListFragment extends ListFragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onListItemClick(ListView listView, View v, int position, long id) {
+        super.onListItemClick(listView, v, position, id);
 
-        initialize();
+        Intent editExaminationIntent = new Intent(getActivity(), AddEditExaminationActivity.class);
+        editExaminationIntent.putExtra(EXAMINATION_TO_EDIT_ID_EXTRA, id);
+        startActivity(editExaminationIntent);
     }
 
+    //<editor-fold desc="data loading async">
     private void initialize() {
-        try {
-            final IUowMedic data = getData();
-            final Context context = getActivity().getApplicationContext();
-            final ListFragment that = this;
 
-            // will do the database read on a background thread
-            // and add the list view adapter afterwards
-            new AsyncTask<Void, Void, SimpleCursorAdapter>() {
-                @Override
-                protected SimpleCursorAdapter doInBackground(Void... params) {
-                    LocalExaminations examinations = (LocalExaminations) data.getExaminations();
-                    Cursor allExaminations = examinations.getAllWithPatientNames();
+        final Context context = getActivity().getApplicationContext();
+        final ListFragment that = this;
 
-                    String[] fromColumns =
-                            {
-                                    MedicDbContract.Examination.COLUMN_NAME_DATE,
-                                    MedicDbContract.PATIENT_FULL_NAME,
-                                    MedicDbContract.Examination.COLUMN_NAME_COMPLAINTS
-                            };
+        // will do the database read on a background thread
+        // and add the list view adapter afterwards
+        new AsyncTask<Void, Void, SimpleCursorAdapter>() {
+            @Override
+            protected SimpleCursorAdapter doInBackground(Void... params) {
+                Cursor allExaminations = getCursorExaminations();
 
-                    int[] toViewIds =
-                            {
-                                    R.id.cursor_item_examination_date,
-                                    R.id.cursor_item_examination_patientFullName,
-                                    R.id.cursor_item_examination_complaints
-                            };
+                String[] fromColumns =
+                        {
+                                MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS,
+                                MedicDbContract.PATIENT_FULL_NAME,
+                                MedicDbContract.Examination.COLUMN_NAME_COMPLAINTS
+                        };
 
-                    SimpleCursorAdapter adapter = new SimpleCursorAdapter(
-                            context,
-                            R.layout.item_examination,
-                            allExaminations,
-                            fromColumns,
-                            toViewIds,
-                            0);
+                int[] toViewIds =
+                        {
+                                R.id.cursor_item_examination_date,
+                                R.id.cursor_item_examination_patientFullName,
+                                R.id.cursor_item_examination_complaints
+                        };
 
-                    adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-                        @Override
-                        public boolean setViewValue(View view, Cursor cursor, int colIndex) {
-                            if (colIndex == cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_DATE)){
-                                String stringDate = cursor.getString(colIndex);
-                                Date date = new Date(stringDate);
-                                String formated = new SimpleDateFormat("HH:mm EEE\ndd/MM/yyyy").format(date);
-                                ((TextView)view).setText(formated);
-                                return true;
-                            }
+                SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+                        context,
+                        R.layout.item_examination,
+                        allExaminations,
+                        fromColumns,
+                        toViewIds,
+                        0);
 
-                            if(colIndex == cursor.getColumnIndex(MedicDbContract.PATIENT_FULL_NAME)){
-                                String name = cursor.getString(colIndex);
-                            }
+                adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+                    @Override
+                    public boolean setViewValue(View view, Cursor cursor, int colIndex) {
+                        if (colIndex == cursor.getColumnIndex(
+                                MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS)){
 
-                            return false;
+                            long milliseconds = cursor.getLong(colIndex);
+                            Date date = new Date(milliseconds);
+
+                            String formated = new SimpleDateFormat("HH:mm EEE\ndd/MM/yyyy")
+                                    .format(date);
+                            ((TextView)view).setText(formated);
+                            return true;
                         }
-                    });
 
-                    return adapter;
-                }
+                        return false;
+                    }
+                });
 
-                @Override
-                protected void onPostExecute(SimpleCursorAdapter simpleCursorAdapter) {
-                    that.setListAdapter(simpleCursorAdapter);
-                }
-            }.execute();
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
+                return adapter;
+            }
+
+            @Override
+            protected void onPostExecute(SimpleCursorAdapter simpleCursorAdapter) {
+                setListAdapter(simpleCursorAdapter);
+                closeDataConnection();
+            }
+        }.execute();
     }
+
+    // if a currentDate is set finds the examinations in 24 hour interval
+    // else gives zeroes and the data method returns all of them
+    private Cursor getCursorExaminations() {
+        LocalExaminations examinations =
+                (LocalExaminations) getData().getExaminations();
+
+        long zeroZeroHoursInMillis = 0;
+        long zeroZeroHoursNextDayInMillis = 0;
+        if(mCurrentDate != null){
+            Calendar workingDate = Calendar.getInstance();
+
+            workingDate.set(Calendar.HOUR_OF_DAY, 0);
+            workingDate.set(Calendar.MINUTE, 0);
+            workingDate.set(Calendar.MILLISECOND, 0);
+            zeroZeroHoursInMillis = workingDate.getTimeInMillis();
+
+            workingDate.add(Calendar.HOUR_OF_DAY, 24);
+            zeroZeroHoursNextDayInMillis = workingDate.getTimeInMillis();
+        }
+
+        return examinations.getAllWithPatientNames(zeroZeroHoursInMillis,
+                zeroZeroHoursNextDayInMillis);
+    }
+    //</editor-fold>
 
     //<editor-fold desc="Action menu">
     @Override
@@ -150,5 +191,25 @@ public class ExaminationsListFragment extends ListFragment {
     }
     //</editor-fold>
 
+    //<editor-fold desc="life-cycle management">
+    @Override
+    public void onStart() {
+        super.onStart();
 
+        initialize();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        closeDataConnection();
+    }
+    //</editor-fold>
+
+    private void closeDataConnection(){
+        if(mData!= null){
+            mData.closeDb();
+            mData = null;
+        }
+    }
 }

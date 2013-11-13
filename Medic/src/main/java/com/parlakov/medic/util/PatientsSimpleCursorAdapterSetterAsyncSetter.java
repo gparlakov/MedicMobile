@@ -21,7 +21,7 @@ public class PatientsSimpleCursorAdapterSetterAsyncSetter extends AsyncTask<AddE
     private int mPatientPosition;
 
     @Override
-    protected SimpleCursorAdapter doInBackground(AddEditExaminationActivity... params) {
+     protected SimpleCursorAdapter doInBackground(AddEditExaminationActivity... params) {
         activity = params[0];
         mData = activity.getData();
 
@@ -34,12 +34,12 @@ public class PatientsSimpleCursorAdapterSetterAsyncSetter extends AsyncTask<AddE
             final Spinner spinner = (Spinner) activity.findViewById(R.id.spinner_patients);
             spinner.setAdapter(adapter);
             spinner.setSelection(mPatientPosition, true);
+            activity.setExaminationData();
         }
     }
 
     private SimpleCursorAdapter getPatientsCursorAdapter() {
         Context context = activity.getApplicationContext();
-        mData = new LocalData(context);
 
         Cursor patients = (Cursor) mData.getPatients().getAll();
 

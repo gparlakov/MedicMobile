@@ -28,7 +28,7 @@
     <string name="register_doRegisterText">Register</string>
     <string name="home_welcomeGreeting">Welcome to MEDIC. Your helper in the practice...</string>
     <string name="create_tables">Create tables</string>
-    <string name="title_addPatient">Add patient</string>
+    <string name="title_activity_addEditPatient">Edit Patient</string>
     <string name="hint_patientFirstName">First Name...</string>
     <string name="hint_patientLastName">Last Name...</string>
     <string name="hint_patientPhone">Phone...</string>
@@ -50,7 +50,7 @@
     <string name="label_patientName">Name</string>
     <string name="label_patientAge">Age</string>
     <string name="label_patientPhone">Phone</string>
-    <string name="app_patients_activity">Patients</string>
+    <string name="title_activity_patient">Patient</string>
     <string name="exception_patientNotDeleted">Could not delete patient from db - please try again</string>
     <string name="error_patientIdCanNotBeFound">No patient selected - go back and try again</string>
     <string name="action_addAppointment">Add Appointment</string>
@@ -70,5 +70,6 @@
     <string name="emptyText_todaysAppointments">Today\'s examinations are nil!</string>
     <string name="button_setExaminationDate">Set Date</string>
     <string name="button_setExaminationTime">Set Time</string>
+    <string name="toast_dateMustBeLaterThanNow">Date and time must be later than now.</string>
 
 </resources>

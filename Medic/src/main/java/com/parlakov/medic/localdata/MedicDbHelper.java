@@ -15,7 +15,7 @@ public class MedicDbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_FOLDER = "medic";
     public static final String DATABASE_NAME = "Medic.db";
 
-    public static int DATABASE_VERSION = 5;
+    public static int DATABASE_VERSION = 6;
 
     //<editor-fold desc="SQL_QUERIES">
     public static final String FIRST_NAME_INDEX = "firstName_idx";
@@ -63,8 +63,8 @@ public class MedicDbHelper extends SQLiteOpenHelper {
                     " NVARCHAR(100), " +
                     MedicDbContract.Examination.COLUMN_NAME_CANCELED +
                     " BOOLEAN, " +
-                    MedicDbContract.Examination.COLUMN_NAME_DATE +
-                    " NVARCHAR(50) NOT NULL, " +
+                    MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS +
+                    " NUMBER NOT NULL, " +
                     "CONSTRAINT FK_PATIENT_ID FOREIGN KEY (" +
                         MedicDbContract.Examination.COLUMN_NAME_PATIENT_ID + ") " +
                     "REFERENCES " + MedicDbContract.Patient.TABLE_NAME + "(" +

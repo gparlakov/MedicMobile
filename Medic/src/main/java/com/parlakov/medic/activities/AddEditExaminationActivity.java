@@ -1,9 +1,10 @@
 package com.parlakov.medic.activities;
 
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
@@ -12,9 +13,11 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.parlakov.medic.R;
 import com.parlakov.medic.fragments.DatePickerFragment;
+import com.parlakov.medic.fragments.ExaminationsListFragment;
 import com.parlakov.medic.fragments.PatientDetailsFragment;
 import com.parlakov.medic.fragments.TimePickerFragment;
 import com.parlakov.medic.localdata.LocalData;
@@ -25,7 +28,6 @@ import com.parlakov.uow.IUowMedic;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by georgi on 13-11-11.
@@ -33,15 +35,16 @@ import java.util.Date;
 public class AddEditExaminationActivity extends ActionBarActivity
         implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
-    private Examination mExamination;
-
+    private static final String EXAMINATION_SAVE = "selected date";
+    //<editor-fold desc="members and getters">
     public IUowMedic mData;
-
     public long mPatientId;
+
     private FragmentManager mFragmentManager;
     private Button mSetDateButton;
     private Button mSetTimeButton;
     private Calendar mCalendar;
+    private Examination mExamination;
 
     public Examination getExamination() {
         if(mExamination == null){
@@ -80,29 +83,44 @@ public class AddEditExaminationActivity extends ActionBarActivity
         return mCalendar;
     }
 
+    public IUowMedic getData() {
+        if(mData == null){
+            mData = new LocalData(getApplicationContext());
+        }
+        return mData;
+    }
+    //</editor-fold>
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_examination);
 
-        mPatientId = getIntent().getLongExtra(PatientDetailsFragment.PATIENT_ID_EXTRA, 0);
+        // if a patient was selected to add examination for sets his id
+        Intent intent = getIntent();
+
+        mPatientId = intent
+                .getLongExtra(PatientDetailsFragment.PATIENT_ID_EXTRA, 0);
+
+        if(savedInstanceState == null){
+               getExaminationFromDbAsync(intent);
+        }
+        else{
+            // take examination data from savedInstance
+            mExamination = (Examination)
+                    savedInstanceState.getSerializable(EXAMINATION_SAVE);
+        }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void getExaminationFromDbAsync(Intent intent) {
+        long examinationId = intent
+                .getLongExtra(ExaminationsListFragment.EXAMINATION_TO_EDIT_ID_EXTRA, 0);
 
-        initialize();
-
-        initializeUi();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        if(mData != null){
-            mData.getPatients().close();
+        // do this in main tread because patient id is needed to set the spinner position
+        // if done async maybe the position won't be available at needed time
+        if(examinationId != 0){
+            mExamination = getData().getExaminations().getById(examinationId);
+            mPatientId = mExamination.getPatientId();
         }
     }
 
@@ -114,28 +132,20 @@ public class AddEditExaminationActivity extends ActionBarActivity
     }
 
     private void initializeUi() {
-        final Activity that = this;
 
         getButtonSetDate().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerFragment datePickerFragment =
-                        new DatePickerFragment((DatePickerDialog.OnDateSetListener) that);
-
-                datePickerFragment.show(getFragmentManagerLazy(), "datePickerDialog");
+                doSetDate();
             }
         });
 
         getButtonSetTime().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TimePickerFragment timePickerFragment =
-                        new TimePickerFragment((TimePickerDialog.OnTimeSetListener) that);
-
-                timePickerFragment.show(getFragmentManagerLazy(), "timePickerDialog");
+                doSetTime();
             }
         });
-
 
         Button saveExamination = (Button) findViewById(R.id.button_examination_save);
         saveExamination.setOnClickListener(new View.OnClickListener() {
@@ -146,14 +156,44 @@ public class AddEditExaminationActivity extends ActionBarActivity
         });
     }
 
+    private void doSetDate() {
+        DatePickerFragment datePickerFragment =
+                new DatePickerFragment(this, getCalendar());
+
+        datePickerFragment.show(getFragmentManagerLazy(), "datePickerDialog");
+    }
+
+    private void doSetTime() {
+        TimePickerFragment timePickerFragment =
+                new TimePickerFragment(this, getCalendar());
+
+        timePickerFragment.show(getFragmentManagerLazy(), "datePickerDialog");
+    }
+
     private void doSaveExamination() {
         Examination examination = getExaminationFromUi();
-
+        if(!isValidExamination(examination)){
+            return;
+        }
         IUowMedic data = getData();
 
         data.getExaminations().add(examination);
 
         finish();
+    }
+
+    private boolean isValidExamination(Examination examination) {
+        Boolean isValid = true;
+        if(getCalendar().compareTo(Calendar.getInstance()) <= 0){
+            Toast.makeText(this, getString(R.string.toast_dateMustBeLaterThanNow),
+                    Toast.LENGTH_LONG).show();
+
+            isValid = false;
+        }
+
+        //TODO - check for overlapping of dates
+
+        return isValid;
     }
 
     private Examination getExaminationFromUi() {
@@ -162,7 +202,7 @@ public class AddEditExaminationActivity extends ActionBarActivity
         Spinner patientSpinner = (Spinner) findViewById(R.id.spinner_patients);
         long selectedPatientId = patientSpinner.getSelectedItemId();
 
-        Date examDate = getCalendar().getTime();
+        long examDate = getCalendar().getTimeInMillis();
 
         String complaints = ViewHelper
                 .getTextFromEditView(R.id.editText_examination_complaints, this);
@@ -173,7 +213,7 @@ public class AddEditExaminationActivity extends ActionBarActivity
         String treatment = ViewHelper
                 .getTextFromEditView(R.id.editText_examination_treatment, this);
 
-        examination.setDate(examDate);
+        examination.setDateInMillis(examDate);
         examination.setComplaints(complaints);
         examination.setConclusion(conclusion);
         examination.setTreatment(treatment);
@@ -182,17 +222,15 @@ public class AddEditExaminationActivity extends ActionBarActivity
         return examination;
     }
 
-    public IUowMedic getData() {
-        if(mData == null){
-            mData = new LocalData(getApplicationContext());
-        }
-        return mData;
-    }
-
+    //<editor-fold desc="Date and Time set listener implementation">
     @Override
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         getCalendar().set(year, monthOfYear, dayOfMonth);
 
+        updateUiDate();
+    }
+
+    private void updateUiDate() {
         String dateString = new SimpleDateFormat("EEE dd/MM/yyyy")
                 .format(getCalendar().getTime());
 
@@ -204,9 +242,63 @@ public class AddEditExaminationActivity extends ActionBarActivity
         getCalendar().set(Calendar.HOUR_OF_DAY, hourOfDay);
         getCalendar().set(Calendar.MINUTE, minute);
 
+        updateUiTime();
+    }
+
+    private void updateUiTime() {
         String timeString = new SimpleDateFormat("HH:mm")
                 .format(getCalendar().getTime());
 
         getButtonSetTime().setText(timeString);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="lifecycle management">
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        initialize();
+
+        initializeUi();
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if(mData != null){
+            mData.closeDb();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(EXAMINATION_SAVE, mExamination);
+    }
+
+    public void setExaminationData() {
+        if(mExamination != null){
+            ViewHelper.setTextToEditView(R.id.editText_examination_complaints, this,
+                    mExamination.getComplaints());
+
+            ViewHelper.setTextToEditView(R.id.editText_examination_treatment, this,
+                    mExamination.getTreatment());
+
+            ViewHelper.setTextToEditView(R.id.editText_examination_conclusion, this,
+                    mExamination.getConclusion());
+
+            ViewHelper.setTextToEditView(R.id.editText_examination_notes, this,
+                    mExamination.getNotes());
+
+            getCalendar().setTimeInMillis(mExamination.getDateInMillis());
+            updateUiDate();
+            updateUiTime();
+        }
+    }
+
+    //</editor-fold>
 }

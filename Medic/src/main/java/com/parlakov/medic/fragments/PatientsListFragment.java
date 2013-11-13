@@ -34,10 +34,6 @@ public class PatientsListFragment extends ListFragment {
     private IUowMedic mData;
     private Cursor mPatientsCursor;
 
-    public PatientsListFragment() {
-        this(null);
-    }
-
     public String getQuery() {
         return mQuery;
     }
@@ -47,6 +43,10 @@ public class PatientsListFragment extends ListFragment {
             mData = new LocalData(getActivity());
         }
         return mData;
+    }
+
+    public PatientsListFragment() {
+        this(null);
     }
 
     public PatientsListFragment(String query) {
@@ -75,23 +75,20 @@ public class PatientsListFragment extends ListFragment {
 
     private void initialize() {
         final Context context = getListView().getContext();
-        Log.i("Start from thread", String.valueOf(Thread.currentThread().getId()));
         new AsyncTask<Void, Void, SimpleCursorAdapter>() {
             @Override
             protected SimpleCursorAdapter doInBackground(Void... params) {
-
-                Log.i("Manage cursor from", String.valueOf(Thread.currentThread().getId()));
-
+                Cursor patientsCursor = null;
                 if(getQuery() == null){
-                    mPatientsCursor = (Cursor) getData().getPatients().getAll();
+                    patientsCursor = (Cursor) getData().getPatients().getAll();
                 }
                 else{
                     LocalPatients patientsData = (LocalPatients) getData().getPatients();
-                    mPatientsCursor = patientsData.searchByName(getQuery());
+                    patientsCursor = patientsData.searchByName(getQuery());
                 }
 
                 SimpleCursorAdapter adapter =
-                        getPatiensSimpleCursorAdapter(context, mPatientsCursor);
+                        getPatiensSimpleCursorAdapter(context, patientsCursor);
 
                 return  adapter;
             }
@@ -103,6 +100,8 @@ public class PatientsListFragment extends ListFragment {
                     setEmptyText(context.getString(R.string.search_nothing_found)
                             + "\"" + mQuery + "\"");
                 }
+
+                closeDataConnection();
             }
         }.execute();
     }
@@ -110,7 +109,7 @@ public class PatientsListFragment extends ListFragment {
     private SimpleCursorAdapter getPatiensSimpleCursorAdapter(
             Context context, Cursor patients) {
 
-        Log.i("Manage adapter cration from thread", String.valueOf(Thread.currentThread().getId()));
+        Log.i("Manage adapter creation from thread", String.valueOf(Thread.currentThread().getId()));
 
         String[] from = new String[]
                 {
@@ -192,15 +191,21 @@ public class PatientsListFragment extends ListFragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
+
+        closeDataConnection();
+    }
+
+    private void closeDataConnection() {
         if(mData != null){
-            mData.getPatients().close();
+            mData.closeDb();
+            mData = null;
         }
 
         if(mPatientsCursor != null){
             mPatientsCursor.close();
+            mPatientsCursor = null;
         }
     }
-
 }

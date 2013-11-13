@@ -29,6 +29,11 @@ public class Data implements IUowMedic {
         return null;
     }
 
+    @Override
+    public void closeDb() {
+        //nothing to close here
+    }
+
     Users mDoctors;
 
     public Data(){

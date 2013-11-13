@@ -13,4 +13,6 @@ public interface IUowMedic {
     IRepository<Patient> getPatients();
 
     IRepository<Examination> getExaminations();
+
+    void closeDb();
 }

@@ -45,7 +45,7 @@ public class ViewHelper {
     public static void setTextToEditView(int id, Activity activity, String text){
         EditText view = (EditText) activity.findViewById(id);
 
-        if (view != null){
+        if (view != null && text != null){
             view.setText(text);
         }
     }
@@ -53,7 +53,7 @@ public class ViewHelper {
     public static void setTextToTextView(int id, View view, String text){
         TextView textView = (TextView) view.findViewById(id);
 
-        if (textView != null){
+        if (textView != null && text != null){
             textView.setText(text);
         }
     }

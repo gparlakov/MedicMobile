@@ -75,4 +75,10 @@ public class LocalData implements IUowMedic {
         }
         return mExaminations;
     }
+
+
+    public void closeDb(){
+        getPatients().close();
+        getExaminations().close();
+    }
 }
