@@ -1,4 +1,4 @@
-package com.parlakov.medic.data;
+package com.parlakov.medic.remotedata;
 
 /**
  * Created by georgi on 13-10-30.

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="@dimen/image_examinationDetails_patientPhoto"
+            android:layout_height="@dimen/image_examinationDetails_patientPhoto"
+            android:id="@+id/image_examinationDetails_patientPhoto"
+            android:src="@drawable/ic_default_picture"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Date Placeholder"
+            android:id="@+id/textView_examinationDetails_date"
+            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@+id/image_examinationDetails_patientPhoto"
+            android:layout_marginTop="@dimen/textView_verticalMargin"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Patient Name Placeholder"
+            android:id="@+id/textView_examinationDetails_patientName"
+            android:layout_below="@+id/image_examinationDetails_patientPhoto"
+            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@+id/image_examinationDetails_patientPhoto"
+            android:layout_marginTop="@dimen/textView_verticalMargin"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Complaints placeholder"
+            android:id="@+id/textView_examinationDetails_complaints"
+            android:layout_below="@+id/textView_examinationDetails_patientName"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentEnd="false"
+            android:layout_marginTop="@dimen/textView_verticalMargin"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Conclusions placeholder"
+            android:id="@+id/textView_examinationDetails_conclusions"
+            android:layout_below="@+id/textView_examinationDetails_complaints"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentEnd="false"
+            android:layout_marginTop="@dimen/textView_verticalMargin"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Treatment placeholder"
+            android:id="@+id/textView_examinationDetails_treatment"
+            android:layout_below="@+id/textView_examinationDetails_conclusions"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentEnd="false"
+            android:layout_marginTop="@dimen/textView_verticalMargin"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Notes placeholder"
+            android:id="@+id/textView_examinationDetails_notes"
+            android:layout_below="@+id/textView_examinationDetails_treatment"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentEnd="false"
+            android:layout_marginTop="@dimen/textView_verticalMargin"/>
+
+    </RelativeLayout>
+</ScrollView>

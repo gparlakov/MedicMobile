@@ -57,6 +57,10 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
+    public int getmCurrentSelectedPosition() {
+        return mCurrentSelectedPosition;
+    }
+
     public NavigationDrawerFragment() {
     }
 

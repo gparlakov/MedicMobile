@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_setResults"
+        app:showAsAction="always|withText"
+        android:title="@string/action_title_results"
+        android:icon="@android:drawable/ic_menu_edit" />
+
+    <item
+        android:id="@+id/action_returnToMain"
+        app:showAsAction="always|withText"
+        android:title="@string/action_title_back"
+        android:icon="@android:drawable/ic_menu_revert" />
+
+    <item
+        android:id="@+id/action_changeDate"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/action_title_changeDate">
+    </item>
+
+    <item
+        android:id="@+id/action_cancelAppointment"
+        android:title="@string/action_title_cancelAppointment"
+        app:showAsAction="ifRoom|withText"
+        android:icon="@android:drawable/ic_delete" />
+
+
+
+
+</menu>

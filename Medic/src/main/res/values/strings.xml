@@ -39,8 +39,8 @@
     <string name="newPatientPicture">Patient picture</string>
     <string name="emptyPatientsList">Add patients - click + on action bar</string>
     <string name="title_activity_patients_list">Patients List</string>
-    <string name="radio_button_use_sd_card">Use SD Card</string>
-    <string name="radio_button_use_device_storage">Use device storage</string>
+    <string name="radio_button_use_sd_card">Use SD Card - data is public and remains after uninstall in your SD memory card</string>
+    <string name="radio_button_use_device_storage">Use device storage - data is private (cant be seen from outside the app) and is deleted upon uninstall</string>
     <string name="title_saveLocation">Choose where to save your data</string>
     <string name="button_saveLocationChosen">Done</string>
     <string name="action_callPatient">Call Patient</string>
@@ -73,5 +73,9 @@
     <string name="toast_dateMustBeLaterThanNow">Date and time must be later than now.</string>
     <string name="toast_exception_dbNoFoundMaybeSDMissing">Could not connect to db. If the data is on the SD card, maybe the SD card is not mounted?</string>
     <string name="toast_exception_examination_not_found_id_db">Could not find examination to edit in database.</string>
-
+    <string name="action_returnToPatientsList">Back to list</string>
+    <string name="action_title_changeDate">Reschedule</string>
+    <string name="action_title_cancelAppointment">Cancel appointment</string>
+    <string name="action_title_results">Results</string>
+    <string name="action_title_back">Back</string>
 </resources>

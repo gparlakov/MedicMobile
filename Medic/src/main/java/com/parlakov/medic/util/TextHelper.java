@@ -8,7 +8,7 @@ import android.widget.TextView;
 /**
  * Created by georgi on 13-11-6.
  */
-public class TextGetHelper {
+public class TextHelper {
     public static String getTextFromEditView(int id, View rootView){
         EditText view = (EditText) rootView.findViewById(id);
         String text = null;
@@ -20,7 +20,7 @@ public class TextGetHelper {
         return text;
     }
 
-    public static String getTextFromTextView(int id, View rootView){
+    /*public static String getTextFromTextView(int id, View rootView){
         TextView view = (TextView) rootView.findViewById(id);
         String text = null;
 
@@ -29,7 +29,7 @@ public class TextGetHelper {
         }
 
         return text;
-    }
+    }*/
 
     public static String getTextFromEditView(int id, Activity activity){
         EditText view = (EditText) activity.findViewById(id);

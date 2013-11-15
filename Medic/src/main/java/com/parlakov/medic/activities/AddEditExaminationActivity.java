@@ -1,6 +1,5 @@
 package com.parlakov.medic.activities;
 
-
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -17,14 +16,14 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.parlakov.medic.R;
+import com.parlakov.medic.async.PatientsAdapterWorker;
 import com.parlakov.medic.fragments.DatePickerFragment;
 import com.parlakov.medic.fragments.ExaminationsListFragment;
 import com.parlakov.medic.fragments.PatientDetailsFragment;
 import com.parlakov.medic.fragments.TimePickerFragment;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.models.Examination;
-import com.parlakov.medic.util.PatientsSimpleCursorAdapterSetterAsync;
-import com.parlakov.medic.util.TextGetHelper;
+import com.parlakov.medic.util.TextHelper;
 import com.parlakov.uow.IUowMedic;
 
 import java.text.SimpleDateFormat;
@@ -170,8 +169,8 @@ public class AddEditExaminationActivity extends ActionBarActivity
     private void initialize() {
         try{
             // will call setExaminationData when finished to put data on Ui
-            PatientsSimpleCursorAdapterSetterAsync getter =
-                    new PatientsSimpleCursorAdapterSetterAsync();
+            PatientsAdapterWorker getter =
+                    new PatientsAdapterWorker();
 
             getter.execute(this);
         }
@@ -243,7 +242,9 @@ public class AddEditExaminationActivity extends ActionBarActivity
             isValid = false;
         }
 
-        //TODO - check for overlapping of dates
+        //TODO - check for overlapping of dates/appointments
+
+        //TODO - check if a patient is present
 
         return isValid;
     }
@@ -256,13 +257,13 @@ public class AddEditExaminationActivity extends ActionBarActivity
 
         long examDate = getCalendar().getTimeInMillis();
 
-        String complaints = TextGetHelper
+        String complaints = TextHelper
                 .getTextFromEditView(R.id.editText_examination_complaints, this);
-        String conclusion = TextGetHelper
+        String conclusion = TextHelper
                 .getTextFromEditView(R.id.editText_examination_conclusion, this);
-        String notes = TextGetHelper
+        String notes = TextHelper
                 .getTextFromEditView(R.id.editText_examination_notes, this);
-        String treatment = TextGetHelper
+        String treatment = TextHelper
                 .getTextFromEditView(R.id.editText_examination_treatment, this);
 
         examination.setDateInMillis(examDate);
@@ -334,16 +335,16 @@ public class AddEditExaminationActivity extends ActionBarActivity
 
     public void setExaminationData() {
         if(mExamination != null){
-            TextGetHelper.setTextToEditView(R.id.editText_examination_complaints, this,
+            TextHelper.setTextToEditView(R.id.editText_examination_complaints, this,
                     mExamination.getComplaints());
 
-            TextGetHelper.setTextToEditView(R.id.editText_examination_treatment, this,
+            TextHelper.setTextToEditView(R.id.editText_examination_treatment, this,
                     mExamination.getTreatment());
 
-            TextGetHelper.setTextToEditView(R.id.editText_examination_conclusion, this,
+            TextHelper.setTextToEditView(R.id.editText_examination_conclusion, this,
                     mExamination.getConclusion());
 
-            TextGetHelper.setTextToEditView(R.id.editText_examination_notes, this,
+            TextHelper.setTextToEditView(R.id.editText_examination_notes, this,
                     mExamination.getNotes());
 
             getCalendar().setTimeInMillis(mExamination.getDateInMillis());

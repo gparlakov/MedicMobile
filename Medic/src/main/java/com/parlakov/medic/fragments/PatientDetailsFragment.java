@@ -20,7 +20,7 @@ import com.parlakov.medic.activities.AddEditPatientActivity;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.models.Patient;
 import com.parlakov.medic.util.ImageHelper;
-import com.parlakov.medic.util.TextGetHelper;
+import com.parlakov.medic.util.TextHelper;
 
 /**
  * Created by georgi on 13-11-8.
@@ -105,6 +105,7 @@ public class PatientDetailsFragment extends Fragment {
     private void handleAddExamination() {
         long id = mPatient.getId();
 
+        // TODO - make ManageExainationActivity use implicit intents
         Intent addExaminationIntent = new Intent(getActivity(),
                 AddEditExaminationActivity.class);
 
@@ -147,10 +148,10 @@ public class PatientDetailsFragment extends Fragment {
         if(firstName != null && !firstName.isEmpty()){
             name = firstName + " " + name;
         }
-        TextGetHelper.setTextToTextView(R.id.textViewPatientName, view, name);
-        TextGetHelper.setTextToTextView(R.id.textViewPatientPhone, view,
+        TextHelper.setTextToTextView(R.id.textViewPatientName, view, name);
+        TextHelper.setTextToTextView(R.id.textViewPatientPhone, view,
                 mPatient.getPhone());
-        TextGetHelper.setTextToTextView(R.id.textViewPatientAge, view,
+        TextHelper.setTextToTextView(R.id.textViewPatientAge, view,
                 String.valueOf(mPatient.getAge()));
 
         mPhotoPath = mPatient.getPhotoPath();

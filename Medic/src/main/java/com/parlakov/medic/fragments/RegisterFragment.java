@@ -9,7 +9,7 @@ import android.widget.Button;
 
 import com.parlakov.medic.R;
 import com.parlakov.medic.models.User;
-import com.parlakov.medic.util.TextGetHelper;
+import com.parlakov.medic.util.TextHelper;
 
 /**
  * Created by georgi on 13-11-1.
@@ -54,10 +54,10 @@ public class RegisterFragment extends Fragment {
     }
 
     private User getUserInfo(View view) {
-        String username = TextGetHelper.getTextFromEditView(R.id.register_usernameEditText, view);
-        String password = TextGetHelper.getTextFromEditView(R.id.register_passwordEditText, view);
-        String email = TextGetHelper.getTextFromEditView(R.id.register_emailEditText, view);
-        String displayName = TextGetHelper.getTextFromEditView(R.id.register_displayNameEditText, view);
+        String username = TextHelper.getTextFromEditView(R.id.register_usernameEditText, view);
+        String password = TextHelper.getTextFromEditView(R.id.register_passwordEditText, view);
+        String email = TextHelper.getTextFromEditView(R.id.register_emailEditText, view);
+        String displayName = TextHelper.getTextFromEditView(R.id.register_displayNameEditText, view);
 
         User newUser = new User();
         newUser.setUsername(username);

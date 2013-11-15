@@ -3,6 +3,7 @@ package com.parlakov.medic.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -12,19 +13,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.parlakov.medic.R;
 import com.parlakov.medic.activities.AddEditExaminationActivity;
+import com.parlakov.medic.interfaces.ChildFragmentListener;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.localdata.LocalExaminations;
 import com.parlakov.medic.localdata.MedicDbContract;
-import com.parlakov.medic.models.Examination;
+import com.parlakov.medic.viewbinders.ExaminationsListViewBinder;
 import com.parlakov.uow.IUowMedic;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by georgi on 13-11-11.
@@ -62,26 +61,38 @@ public class ExaminationsListFragment extends ListFragment {
     }
 
     @Override
-    public void onListItemClick(ListView listView, View v, int position, long id) {
+    public void onListItemClick(ListView listView, View v,
+                                int position, long id) {
         super.onListItemClick(listView, v, position, id);
 
-        Intent editExaminationIntent = new Intent(getActivity(), AddEditExaminationActivity.class);
-        editExaminationIntent.putExtra(EXAMINATION_TO_EDIT_ID_EXTRA, id);
-        startActivity(editExaminationIntent);
+//        Intent editExaminationIntent = new Intent(getActivity(), AddEditExaminationActivity.class);
+//        editExaminationIntent.putExtra(EXAMINATION_TO_EDIT_ID_EXTRA, id);
+//        startActivity(editExaminationIntent);
+
+        getFragmentManager().beginTransaction()
+                .replace(R.id.container_medic_main,
+                        new ExaminationDetailsFragment(id))
+                .commit();
     }
 
     //<editor-fold desc="data loading async">
     private void initialize() {
 
         final Context context = getActivity().getApplicationContext();
-        final ListFragment that = this;
 
         // will do the database read on a background thread
         // and add the list view adapter afterwards
         new AsyncTask<Void, Void, SimpleCursorAdapter>() {
             @Override
             protected SimpleCursorAdapter doInBackground(Void... params) {
-                Cursor allExaminations = getCursorExaminations();
+
+                Cursor allExaminations;
+                try {
+                    allExaminations = getCursorExaminations();
+                } catch (SQLiteException ex) {
+                    ex.printStackTrace();
+                    return null;
+                }
 
                 String[] fromColumns =
                         {
@@ -105,30 +116,26 @@ public class ExaminationsListFragment extends ListFragment {
                         toViewIds,
                         0);
 
-                adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-                    @Override
-                    public boolean setViewValue(View view, Cursor cursor, int colIndex) {
-                        if (colIndex == cursor.getColumnIndex(
-                                MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS)){
-
-                            long milliseconds = cursor.getLong(colIndex);
-                            Date date = new Date(milliseconds);
-
-                            String formated = new SimpleDateFormat("HH:mm EEE\ndd/MM/yyyy")
-                                    .format(date);
-                            ((TextView)view).setText(formated);
-                            return true;
-                        }
-
-                        return false;
-                    }
-                });
+                adapter.setViewBinder(new ExaminationsListViewBinder());
 
                 return adapter;
             }
 
             @Override
             protected void onPostExecute(SimpleCursorAdapter simpleCursorAdapter) {
+                if(simpleCursorAdapter == null){
+                    ChildFragmentListener parentActivity =
+                            (ChildFragmentListener) getActivity();
+
+                    if(parentActivity != null){
+                        parentActivity.showErrorMessageAndExit(
+                            R.string.toast_exception_dbNoFoundMaybeSDMissing);
+                    }
+                    else{
+                        getActivity().finish();
+                    }
+                    return;
+                }
                 setListAdapter(simpleCursorAdapter);
                 closeDataConnection();
             }

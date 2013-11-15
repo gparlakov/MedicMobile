@@ -1,9 +1,13 @@
-package com.parlakov.medic.util;
+package com.parlakov.medic.async;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.parlakov.medic.util.ImageHelper;
+import com.parlakov.medic.async.BitmapWorkerTask;
+
 
 import java.lang.ref.WeakReference;
 

@@ -1,4 +1,4 @@
-package com.parlakov.medic.util;
+package com.parlakov.medic.async;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -15,7 +15,7 @@ import com.parlakov.uow.IUowMedic;
 /**
  * Created by georgi on 13-11-11.
  */
-public class PatientsSimpleCursorAdapterSetterAsync
+public class PatientsAdapterWorker
         extends AsyncTask<AddEditExaminationActivity, Void, SimpleCursorAdapter> {
     private IUowMedic mData;
     private AddEditExaminationActivity activity;

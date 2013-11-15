@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.parlakov.medic.R;
@@ -19,7 +18,7 @@ import com.parlakov.medic.fragments.PatientDetailsFragment;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.models.Patient;
 import com.parlakov.medic.util.ImageHelper;
-import com.parlakov.medic.util.TextGetHelper;
+import com.parlakov.medic.util.TextHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -157,7 +156,7 @@ public class AddEditPatientActivity extends Activity {
     //<editor-fold desc="photo handling">
     private void handlePhotoResult(int resultCode) {
         if (resultCode == RESULT_OK) {
-            showTakenPhotoOnView();
+            showTakenPhotoInView();
         }
         else{
             File newImageFile = new File(mPhotoPath);
@@ -166,7 +165,7 @@ public class AddEditPatientActivity extends Activity {
         }
     }
 
-    private void showTakenPhotoOnView() {
+    private void showTakenPhotoInView() {
         ImageView view = (ImageView) findViewById(R.id.newPatientImage);
 
         view.setImageDrawable(Drawable.createFromPath(mPhotoPath));
@@ -194,24 +193,24 @@ public class AddEditPatientActivity extends Activity {
 
         mPatient = (Patient) savedInstanceState.getSerializable(PATIENT_SAVE_STATE);
         mPhotoPath = mPatient.getPhotoPath();
-        showTakenPhotoOnView();
+        showTakenPhotoInView();
 
         setPatientInfoToEditFields();
     }
     //</editor-fold>
 
     private void putEditDataInObject() {
-        String firstName = TextGetHelper
+        String firstName = TextHelper
                 .getTextFromEditView(R.id.addPatientFirstNameEditView, this);
-        String lastName = TextGetHelper
+        String lastName = TextHelper
                 .getTextFromEditView(R.id.addPatientLastNameEditView, this);
-        String ageString = TextGetHelper
+        String ageString = TextHelper
                 .getTextFromEditView(R.id.addPatientAgeEditText, this);
         int age = 0;
         if(ageString != null && !ageString.isEmpty()){
             age = Integer.parseInt(ageString);
         }
-        String phone = TextGetHelper
+        String phone = TextHelper
                 .getTextFromEditView(R.id.addPatientPhoneEditText, this);
 
         mPatient.setFirstName(firstName);
@@ -240,7 +239,7 @@ public class AddEditPatientActivity extends Activity {
         phoneEditText.setText(phone);
 
         mPhotoPath = mPatient.getPhotoPath();
-        showTakenPhotoOnView();
+        showTakenPhotoInView();
     }
 
     private Patient getPatientFromIntentExtra() {

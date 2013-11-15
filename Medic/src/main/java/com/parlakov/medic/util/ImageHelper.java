@@ -8,11 +8,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 import android.widget.ImageView;
 
-import com.parlakov.medic.MainActivity;
+import com.parlakov.medic.Global;
 import com.parlakov.medic.R;
+import com.parlakov.medic.async.AsyncDrawable;
+import com.parlakov.medic.async.BitmapWorkerTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +50,6 @@ public class ImageHelper {
         }
 
         File photoFile = new File(photosDir, newPhotoName);
-
         return photoFile;
     }
 
@@ -57,18 +57,21 @@ public class ImageHelper {
     // in which to save the patients photos.
     public static String getPicturesFolder(Context context) {
         SharedPreferences prefs = context
-                .getSharedPreferences(MainActivity.PREFERENCES_NAME, Context.MODE_PRIVATE);
+                .getSharedPreferences(Global.PROPERTYS_NAME, Context.MODE_PRIVATE);
+
         int saveDataLocation = prefs
-                .getInt(MainActivity.APP_SAVE_DATA_LOCATION, MainActivity.NOT_CHOSEN_LOCATION);
+                .getInt(Global.PROPERTY_SAVE_LOCATION,
+                        Global.NOT_CHOSEN_LOCATION);
 
         Resources resources = context.getResources();
 
         String mainPath;
-        if (saveDataLocation == MainActivity.SAVE_LOCATION_SD_CARD) {
+        if (saveDataLocation == Global.SAVE_LOCATION_SD_CARD) {
             mainPath = Environment.getExternalStorageDirectory().getPath();
-        } else {
+        }
+        else { // Global.SAVE_LOCATION_DEVICE_MEMORY
             mainPath = Environment
-                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                    .getExternalStorageDirectory()
                     .getPath();
         }
 

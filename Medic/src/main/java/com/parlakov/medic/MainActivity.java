@@ -10,18 +10,21 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
+import android.widget.Toast;
 
-import com.parlakov.medic.activities.ChooseSaveDataLocationActivity;
 import com.parlakov.medic.fragments.ExaminationsListFragment;
 import com.parlakov.medic.fragments.PatientsListFragment;
+import com.parlakov.medic.interfaces.ChildFragmentListener;
 
 import java.util.Calendar;
 
 public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+        ChildFragmentListener {
 
     //TODO - refactor - extract a NavigationDrawerHelper class
 
+    //<editor-fold desc="Constants">
     public static final int TODAYS_APPOINTMENTS_DRAWER_POSITION = 0;
     public static final int PATIENTS_LIST_DRAWER_POSITION = 1;
     public static final int EXAMINATIONS_LIST_DRAWER_POSITION = 2;
@@ -30,15 +33,10 @@ public class MainActivity extends ActionBarActivity
 
     private static final int CHOOSE_LOCATION_REQUEST_CODE = 1000;
 
-    public static final int NOT_CHOSEN_LOCATION = 0;
-    public static final int SAVE_LOCATION_SD_CARD = 1;
-    public static final int SAVE_LOCATION_DEVICE_MEMORY = 2;
+    private static final String SETTINGS_ACTION = "com.parlakov.medic.ACTION_SETTINGS";
+    //</editor-fold>
 
-    public static final String APP_SAVE_DATA_LOCATION = "save data location";
-    public static final String APP_SAVE_DATA_LOCATION_EXTRA = "save data location extra";
-    public static final String PREFERENCES_NAME = "com.parlakov.medic.APP_PREFERENCES";
-
-
+    //<editor-fold desc="memebers and getters">
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -48,7 +46,6 @@ public class MainActivity extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
-    private String mQuery;
     private FragmentManager fragmentManager;
 
     private FragmentManager getFragmentManagerLazy(){
@@ -58,6 +55,7 @@ public class MainActivity extends ActionBarActivity
 
         return fragmentManager;
     }
+    //</editor-fold>
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,44 +67,24 @@ public class MainActivity extends ActionBarActivity
                 getFragmentManagerLazy().findFragmentById(R.id.navigation_drawer);
         //mTitle = getTitle();
 
-        // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout_main));
-
-
-        Intent startingIntent = getIntent();
-        if(Intent.ACTION_SEARCH.equals(startingIntent.getAction())){
-            mQuery = startingIntent.getStringExtra(SearchManager.QUERY);
-
-            getFragmentManagerLazy().beginTransaction()
-                    .replace(R.id.container_medic_main, new PatientsListFragment(mQuery))
-                    .commit();
-        }
     }
 
+    // handles new intents (not the initially creating but successive)
+    // in this case intents by search invokation
+    @Override
+    protected void onNewIntent(Intent intent) {
+        handleSearchIntent(intent);    }
+
+    // handles the return from settings data save location
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == CHOOSE_LOCATION_REQUEST_CODE ){
-            switch (resultCode){
-                case RESULT_OK:
-                    int chosenLocation = data
-                            .getIntExtra(APP_SAVE_DATA_LOCATION_EXTRA, NOT_CHOSEN_LOCATION);
-
-                    if (chosenLocation == NOT_CHOSEN_LOCATION){
-                        finish();
-                        return;
-                    }
-                    SharedPreferences pref = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
-                    SharedPreferences.Editor edit = pref.edit();
-                    edit.putInt(APP_SAVE_DATA_LOCATION, chosenLocation).commit();
-
-                    break;
-                case RESULT_CANCELED:
-                    // if user has not chosen location end the main activity and exit
-                    finish();
-                    break;
-            }
+        if(requestCode == CHOOSE_LOCATION_REQUEST_CODE &&
+                resultCode == RESULT_CANCELED){
+            // if user has not chosen location end the main activity and exit
+            finish();
         }
     }
 
@@ -116,12 +94,8 @@ public class MainActivity extends ActionBarActivity
         // will be started to get the user's preference
         if (!isSaveDataLocationChosen()) return;
 
-        //stop the default choice if there is a query
-        if(mQuery != null) return;
-
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
-        ActionBar actionBar = getSupportActionBar();
         switch (position) {
             case TODAYS_APPOINTMENTS_DRAWER_POSITION:
                 /* gives the current date to the instance so that
@@ -153,18 +127,7 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-    private boolean isSaveDataLocationChosen() {
-        SharedPreferences pref = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
-        int prefferedSaveDataLocation = pref.getInt(APP_SAVE_DATA_LOCATION, NOT_CHOSEN_LOCATION);
-        if (prefferedSaveDataLocation == NOT_CHOSEN_LOCATION){
-            Intent chooseIntent = new Intent(getApplicationContext(),
-                    ChooseSaveDataLocationActivity.class);
-            startActivityForResult(chooseIntent, CHOOSE_LOCATION_REQUEST_CODE);
-            return false;
-        }
-        return true;
-    }
-
+    //<editor-fold desc="Action bar menu">
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
@@ -197,6 +160,8 @@ public class MainActivity extends ActionBarActivity
                 onSearchRequested();
                 break;
             case R.id.action_settings:
+                Intent settingsIntent = new Intent(SETTINGS_ACTION);
+                startActivity(settingsIntent);
                 break;
             default:
                 handled = super.onOptionsItemSelected(item);
@@ -205,4 +170,49 @@ public class MainActivity extends ActionBarActivity
 
         return handled;
     }
+    //</editor-fold>
+
+    private void handleSearchIntent(Intent startingIntent) {
+        if(Intent.ACTION_SEARCH.equals(startingIntent.getAction())){
+            String query = startingIntent.getStringExtra(SearchManager.QUERY);
+
+            getFragmentManagerLazy().beginTransaction()
+                    .replace(R.id.container_medic_main,
+                            new PatientsListFragment(query))
+                    .commit();
+        }
+    }
+
+    private boolean isSaveDataLocationChosen() {
+        SharedPreferences pref = getSharedPreferences(Global.PROPERTYS_NAME,
+                MODE_PRIVATE);
+        int prefferedSaveDataLocation = pref.getInt(Global.PROPERTY_SAVE_LOCATION,
+                Global.NOT_CHOSEN_LOCATION);
+
+        if (prefferedSaveDataLocation == Global.NOT_CHOSEN_LOCATION){
+            Intent chooseIntent = new Intent(SETTINGS_ACTION);
+            startActivityForResult(chooseIntent, CHOOSE_LOCATION_REQUEST_CODE);
+            return false;
+        }
+        return true;
+    }
+
+    //<editor-fold desc="Child fragments listener implementation">
+    @Override
+    public void onChildFragmentClose() {
+        onNavigationDrawerItemSelected(
+            mNavigationDrawerFragment.getmCurrentSelectedPosition());
+    }
+
+    @Override
+    public void showErrorMessageAndExit(int resourceId) {
+
+        Toast.makeText(this,
+                getString(resourceId),
+                Toast.LENGTH_LONG)
+                .show();
+
+        finish();
+    }
+    //</editor-fold>
 }

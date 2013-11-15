@@ -1,4 +1,4 @@
-package com.parlakov.medic.data;
+package com.parlakov.medic.remotedata;
 
 import com.parlakov.medic.models.Examination;
 import com.parlakov.medic.models.Patient;

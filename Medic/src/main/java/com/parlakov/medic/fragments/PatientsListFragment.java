@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,6 +16,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.parlakov.medic.interfaces.ChildFragmentListener;
 import com.parlakov.medic.R;
 import com.parlakov.medic.activities.AddEditPatientActivity;
 import com.parlakov.medic.activities.PatientManagementActivity;
@@ -31,8 +31,8 @@ import com.parlakov.uow.IUowMedic;
  */
 public class PatientsListFragment extends ListFragment {
 
+    //<editor-fold desc="members and getters">
     private final String mQuery;
-
     private IUowMedic mData;
     private Cursor mPatientsCursor;
 
@@ -46,7 +46,9 @@ public class PatientsListFragment extends ListFragment {
         }
         return mData;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="constructors">
     public PatientsListFragment() {
         this(null);
     }
@@ -54,6 +56,7 @@ public class PatientsListFragment extends ListFragment {
     public PatientsListFragment(String query) {
         mQuery = query;
     }
+    //</editor-fold>
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -81,7 +84,9 @@ public class PatientsListFragment extends ListFragment {
     }
 
     private void initialize() {
+
         final Context context = getListView().getContext();
+
         new AsyncTask<Void, Void, SimpleCursorAdapter>() {
             @Override
             protected SimpleCursorAdapter doInBackground(Void... params) {
@@ -109,30 +114,24 @@ public class PatientsListFragment extends ListFragment {
             @Override
             protected void onPostExecute(SimpleCursorAdapter adapter) {
                 if(adapter == null){
-                    showErrorMessageAndFinish();
+                    ChildFragmentListener parentActivity =
+                            (ChildFragmentListener) getActivity();
+                    if(parentActivity != null){
+                        parentActivity.showErrorMessageAndExit(
+                                R.string.toast_exception_dbNoFoundMaybeSDMissing);
+                    } else {
+                        getActivity().finish();
+                    }
                     return;
                 }
                 setListAdapter(adapter);
             }
         }.execute();
-    }
-
-    private void showErrorMessageAndFinish() {
-
-        Activity parentActivity = getActivity();
-
-        Toast.makeText(parentActivity, getString(R.string.exception_unableToOpenDb),
-                Toast.LENGTH_LONG)
-                .show();
-
-        parentActivity.finish();
 
     }
 
     private SimpleCursorAdapter getPatientsSimpleCursorAdapter(
             Context context, Cursor patients) {
-
-        Log.i("Manage adapter creation from thread", String.valueOf(Thread.currentThread().getId()));
 
         String[] from = new String[]
                 {
@@ -163,7 +162,12 @@ public class PatientsListFragment extends ListFragment {
     //<editor-fold desc="action bar management">
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.at_patients_list, menu);
+        if(mQuery != null){
+            inflater.inflate(R.menu.at_patients_search_result, menu);
+
+        } else {
+            inflater.inflate(R.menu.at_patients_list, menu);
+        }
     }
 
     @Override
@@ -176,6 +180,10 @@ public class PatientsListFragment extends ListFragment {
                 Intent newPatientIntent = new Intent(getActivity(), AddEditPatientActivity.class);
                 startActivity(newPatientIntent);
                 break;
+            case R.id.action_returnToPatientsList:
+                ChildFragmentListener listener = (ChildFragmentListener) getActivity();
+                listener.onChildFragmentClose();
+                break;
             default:
                 handled = super.onOptionsItemSelected(item);
                 break;
@@ -185,6 +193,7 @@ public class PatientsListFragment extends ListFragment {
     }
     //</editor-fold>
 
+    //<editor-fold desc="life-cycle management">
     @Override
     public void onStart() {
         super.onStart();
@@ -197,6 +206,7 @@ public class PatientsListFragment extends ListFragment {
 
         closeDataConnection();
     }
+    //</editor-fold>
 
     private void closeDataConnection() {
         if(mData != null){

@@ -1,14 +1,14 @@
 package com.parlakov.medic.activities;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 
-import com.parlakov.medic.MainActivity;
+import com.parlakov.medic.Global;
 import com.parlakov.medic.R;
 
 /**
@@ -16,8 +16,10 @@ import com.parlakov.medic.R;
  */
 public class ChooseSaveDataLocationActivity extends Activity{
     RadioButton mUseSdCardChoiceRadioButton;
+    RadioButton mUseDeviceMemoryChoiceButton;
+    private SharedPreferences mPrefs;
 
-    public RadioButton getUseSdCardChoiceRadioButton() {
+    private RadioButton getUseSdCardChoiceRadioButton() {
         if(mUseSdCardChoiceRadioButton == null){
             mUseSdCardChoiceRadioButton = (RadioButton)
                     findViewById(R.id.radioButton_use_sd_card);
@@ -25,13 +27,36 @@ public class ChooseSaveDataLocationActivity extends Activity{
         return mUseSdCardChoiceRadioButton;
     }
 
+    private RadioButton getUseDeviceMemoryChoiceRadioButton(){
+        if(mUseDeviceMemoryChoiceButton == null){
+            mUseDeviceMemoryChoiceButton = (RadioButton)
+                    findViewById(R.id.radioButton_useDeviceStorage);
+        }
+        return mUseDeviceMemoryChoiceButton;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_save_data_location);
 
+        mPrefs = getSharedPreferences(Global.PROPERTYS_NAME, MODE_PRIVATE);
+
         initUi();
+
+        setChosenPreferenceIfAny();
+    }
+
+    private void setChosenPreferenceIfAny() {
+        int saveLocation = mPrefs.getInt(Global.PROPERTY_SAVE_LOCATION,
+                Global.NOT_CHOSEN_LOCATION);
+
+        if (Global.SAVE_LOCATION_DEVICE_MEMORY == saveLocation) {
+            getUseDeviceMemoryChoiceRadioButton().setChecked(true);
+        }
+        if(Global.SAVE_LOCATION_SD_CARD == saveLocation){
+            getUseSdCardChoiceRadioButton().setChecked(true);
+        }
     }
 
     private void initUi() {
@@ -51,29 +76,32 @@ public class ChooseSaveDataLocationActivity extends Activity{
     }
 
     private void doSaveLocationChosen() {
-        RadioButton deviceStorageChoise = (RadioButton)
-                findViewById(R.id.radioButton_useDeviceStorage);
-        Boolean useDeviceStorage = deviceStorageChoise.isChecked();
+        Boolean useDeviceStorage = getUseDeviceMemoryChoiceRadioButton()
+                .isChecked();
 
-        Boolean useSDCardStorage = getUseSdCardChoiceRadioButton().isChecked();
+        Boolean useSDCardStorage = getUseSdCardChoiceRadioButton()
+                .isChecked();
 
-        Intent chosenSaveLocationIntent = new Intent();
 
-        String saveLocationExtra = MainActivity.APP_SAVE_DATA_LOCATION_EXTRA;
-        if(useDeviceStorage){
-            chosenSaveLocationIntent.putExtra(saveLocationExtra,
-                    MainActivity.SAVE_LOCATION_DEVICE_MEMORY);
+        // if the action is started for result will return OK
+        // only if a location is not chosen will return canceled
+        setResult(RESULT_OK);
+
+        SharedPreferences.Editor editor = mPrefs.edit();
+        if(useDeviceStorage) {
+            editor.putInt(Global.PROPERTY_SAVE_LOCATION,
+                    Global.SAVE_LOCATION_DEVICE_MEMORY);
         }
         else if(useSDCardStorage){
-            chosenSaveLocationIntent.putExtra(saveLocationExtra,
-                    MainActivity.SAVE_LOCATION_SD_CARD);
+            editor.putInt(Global.PROPERTY_SAVE_LOCATION,
+                    Global.SAVE_LOCATION_SD_CARD);
         }
         else{
-            chosenSaveLocationIntent.putExtra(saveLocationExtra,
-                    MainActivity.NOT_CHOSEN_LOCATION);
+            // not chosen location
+            setResult(RESULT_CANCELED);
         }
+        editor.commit();
 
-        setResult(RESULT_OK, chosenSaveLocationIntent);
         finish();
     }
 }
