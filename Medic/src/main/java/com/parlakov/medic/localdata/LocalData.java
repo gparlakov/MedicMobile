@@ -17,7 +17,7 @@ import com.parlakov.uow.IUsersRepository;
  */
 public class LocalData implements IUowMedic {
 
-    private IUsersRepository<User> mUsers;
+    private IUsersRepository<User> mUsers; //TODO - remove if not used
     private IRepository<Patient> mPatients;
     private IRepository<Examination> mExaminations;
 
@@ -28,28 +28,6 @@ public class LocalData implements IUowMedic {
 
         MedicDbHelper dbHelper = new MedicDbHelper(context, dbPath);
 
-        mDbHelper = dbHelper;
-    }
-
-    public static String getDbLocationPathFromPreferences(Context context) {
-        SharedPreferences prefs = context
-                .getSharedPreferences(MainActivity.PREFERENCES_NAME, Context.MODE_PRIVATE);
-
-        int saveDataLocation = prefs
-                .getInt(MainActivity.APP_SAVE_DATA_LOCATION, MainActivity.NOT_CHOSEN_LOCATION);
-
-        String dbPath = null;
-
-        if (saveDataLocation != MainActivity.SAVE_LOCATION_SD_CARD){
-            dbPath = context.getDatabasePath(MedicDbHelper.DATABASE_NAME).getAbsolutePath();
-        }
-        else{
-            dbPath = MedicDbHelper.getSDDatabasePath();
-        }
-        return dbPath;
-    }
-
-    public LocalData(SQLiteOpenHelper dbHelper){
         mDbHelper = dbHelper;
     }
 
@@ -80,5 +58,24 @@ public class LocalData implements IUowMedic {
     public void closeDb(){
         getPatients().close();
         getExaminations().close();
+    }
+
+    public static String getDbLocationPathFromPreferences(Context context) {
+        SharedPreferences prefs = context
+                .getSharedPreferences(MainActivity.PREFERENCES_NAME, Context.MODE_PRIVATE);
+
+        int saveDataLocation = prefs
+                .getInt(MainActivity.APP_SAVE_DATA_LOCATION,
+                        MainActivity.NOT_CHOSEN_LOCATION);
+
+        String dbPath;
+
+        if (saveDataLocation != MainActivity.SAVE_LOCATION_SD_CARD){
+            dbPath = context.getDatabasePath(MedicDbHelper.DATABASE_NAME).getAbsolutePath();
+        }
+        else{
+            dbPath = MedicDbHelper.getSDDatabasePath();
+        }
+        return dbPath;
     }
 }

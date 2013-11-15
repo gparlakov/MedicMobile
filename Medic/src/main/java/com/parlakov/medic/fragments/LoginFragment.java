@@ -18,7 +18,7 @@ import java.io.IOException;
 /**
  * Created by georgi on 13-11-1.
  */
-public class LoginFragment extends BaseFragment {
+public class LoginFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

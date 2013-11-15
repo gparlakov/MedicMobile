@@ -1,21 +1,20 @@
 package com.parlakov.medic.fragments;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.parlakov.medic.R;
-import com.parlakov.medic.data.Data;
 import com.parlakov.medic.models.User;
-
-import java.io.IOException;
+import com.parlakov.medic.util.TextGetHelper;
 
 /**
  * Created by georgi on 13-11-1.
  */
-public class RegisterFragment extends BaseFragment {
+public class RegisterFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,10 +54,10 @@ public class RegisterFragment extends BaseFragment {
     }
 
     private User getUserInfo(View view) {
-        String username = getTextFromEditView(R.id.register_usernameEditText, view);
-        String password = getTextFromEditView(R.id.register_passwordEditText, view);
-        String email = getTextFromEditView(R.id.register_emailEditText, view);
-        String displayName = getTextFromEditView(R.id.register_displayNameEditText, view);
+        String username = TextGetHelper.getTextFromEditView(R.id.register_usernameEditText, view);
+        String password = TextGetHelper.getTextFromEditView(R.id.register_passwordEditText, view);
+        String email = TextGetHelper.getTextFromEditView(R.id.register_emailEditText, view);
+        String displayName = TextGetHelper.getTextFromEditView(R.id.register_displayNameEditText, view);
 
         User newUser = new User();
         newUser.setUsername(username);

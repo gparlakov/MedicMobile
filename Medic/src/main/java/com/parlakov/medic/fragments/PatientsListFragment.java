@@ -1,8 +1,10 @@
 package com.parlakov.medic.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -12,8 +14,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.parlakov.medic.R;
 import com.parlakov.medic.activities.AddEditPatientActivity;
@@ -21,7 +23,7 @@ import com.parlakov.medic.activities.PatientManagementActivity;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.localdata.LocalPatients;
 import com.parlakov.medic.localdata.MedicDbContract;
-import com.parlakov.medic.util.ImageHelper;
+import com.parlakov.medic.viewbinders.PatientsListViewBinder;
 import com.parlakov.uow.IUowMedic;
 
 /**
@@ -59,7 +61,12 @@ public class PatientsListFragment extends ListFragment {
 
         setHasOptionsMenu(true);
 
-        setEmptyText(getString(R.string.emptyPatientsList));
+        if(mQuery != null){
+            setEmptyText(getString(R.string.search_nothing_found)
+                    + "\"" + mQuery + "\"");
+        }else{
+            setEmptyText(getString(R.string.emptyPatientsList));
+        }
     }
 
     @Override
@@ -78,35 +85,51 @@ public class PatientsListFragment extends ListFragment {
         new AsyncTask<Void, Void, SimpleCursorAdapter>() {
             @Override
             protected SimpleCursorAdapter doInBackground(Void... params) {
-                Cursor patientsCursor = null;
-                if(getQuery() == null){
-                    patientsCursor = (Cursor) getData().getPatients().getAll();
-                }
-                else{
-                    LocalPatients patientsData = (LocalPatients) getData().getPatients();
-                    patientsCursor = patientsData.searchByName(getQuery());
-                }
+                Cursor patientsCursor;
+                try{
+                    if(getQuery() == null){
+                        patientsCursor = (Cursor) getData().getPatients().getAll();
+                    }
+                    else{
+                        LocalPatients patientsData = (LocalPatients) getData().getPatients();
+                        patientsCursor = patientsData.searchByName(getQuery());
+                    }
 
-                SimpleCursorAdapter adapter =
-                        getPatiensSimpleCursorAdapter(context, patientsCursor);
+                    SimpleCursorAdapter adapter =
+                            getPatientsSimpleCursorAdapter(context, patientsCursor);
 
-                return  adapter;
+                    return  adapter;
+                }
+                catch(SQLiteException ex){
+                    ex.printStackTrace();
+                    return null;
+                }
             }
 
             @Override
             protected void onPostExecute(SimpleCursorAdapter adapter) {
-                setListAdapter(adapter);
-                if(mQuery != null){
-                    setEmptyText(context.getString(R.string.search_nothing_found)
-                            + "\"" + mQuery + "\"");
+                if(adapter == null){
+                    showErrorMessageAndFinish();
+                    return;
                 }
-
-                closeDataConnection();
+                setListAdapter(adapter);
             }
         }.execute();
     }
 
-    private SimpleCursorAdapter getPatiensSimpleCursorAdapter(
+    private void showErrorMessageAndFinish() {
+
+        Activity parentActivity = getActivity();
+
+        Toast.makeText(parentActivity, getString(R.string.exception_unableToOpenDb),
+                Toast.LENGTH_LONG)
+                .show();
+
+        parentActivity.finish();
+
+    }
+
+    private SimpleCursorAdapter getPatientsSimpleCursorAdapter(
             Context context, Cursor patients) {
 
         Log.i("Manage adapter creation from thread", String.valueOf(Thread.currentThread().getId()));
@@ -132,29 +155,7 @@ public class PatientsListFragment extends ListFragment {
                 to,
                 0);
 
-
-        adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-                if (columnIndex ==
-                        cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_PHOTO_PATH)) {
-                    String picturePath = cursor.getString(columnIndex);
-                    ImageView patientPicture = (ImageView) view;
-
-                    if (picturePath != null && !picturePath.isEmpty()) {
-                        // reads the bitmap and image view size and calculates size of bitmap
-                        // to return
-                        ImageHelper.loadImageFromFileAsync(picturePath, patientPicture);
-                    }
-                    else {
-                        patientPicture.setImageResource(R.drawable.ic_default_picture);
-                    }
-                    return true;
-                }
-
-                return false;
-            }
-        });
+        adapter.setViewBinder(new PatientsListViewBinder());
 
         return adapter;
     }

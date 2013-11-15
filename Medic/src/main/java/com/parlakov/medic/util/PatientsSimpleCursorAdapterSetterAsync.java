@@ -15,13 +15,14 @@ import com.parlakov.uow.IUowMedic;
 /**
  * Created by georgi on 13-11-11.
  */
-public class PatientsSimpleCursorAdapterSetterAsyncSetter extends AsyncTask<AddEditExaminationActivity, Void, SimpleCursorAdapter> {
+public class PatientsSimpleCursorAdapterSetterAsync
+        extends AsyncTask<AddEditExaminationActivity, Void, SimpleCursorAdapter> {
     private IUowMedic mData;
     private AddEditExaminationActivity activity;
     private int mPatientPosition;
 
     @Override
-     protected SimpleCursorAdapter doInBackground(AddEditExaminationActivity... params) {
+    protected SimpleCursorAdapter doInBackground(AddEditExaminationActivity... params) {
         activity = params[0];
         mData = activity.getData();
 
@@ -31,7 +32,7 @@ public class PatientsSimpleCursorAdapterSetterAsyncSetter extends AsyncTask<AddE
     @Override
     protected void onPostExecute(SimpleCursorAdapter adapter) {
         if(activity != null){
-            final Spinner spinner = (Spinner) activity.findViewById(R.id.spinner_patients);
+            Spinner spinner = activity.getPatientsSpinner();
             spinner.setAdapter(adapter);
             spinner.setSelection(mPatientPosition, true);
             activity.setExaminationData();
@@ -41,10 +42,10 @@ public class PatientsSimpleCursorAdapterSetterAsyncSetter extends AsyncTask<AddE
     private SimpleCursorAdapter getPatientsCursorAdapter() {
         Context context = activity.getApplicationContext();
 
-        Cursor patients = (Cursor) mData.getPatients().getAll();
+        Cursor patientsCursor = (Cursor) mData.getPatients().getAll();
 
         if(activity.mPatientId != 0){
-            findPatientPosition(patients);
+            findPatientPosition(patientsCursor);
         }
 
         String[] fromColumns = new String[]
@@ -62,7 +63,7 @@ public class PatientsSimpleCursorAdapterSetterAsyncSetter extends AsyncTask<AddE
         return new SimpleCursorAdapter(
                 context,
                 R.layout.item_patient_spinner_in_new_examination,
-                patients,
+                patientsCursor,
                 fromColumns,
                 toViewIds,
                 0);

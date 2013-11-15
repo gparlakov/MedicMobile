@@ -15,16 +15,16 @@ import com.parlakov.medic.R;
  * Created by georgi on 13-11-8.
  */
 public class ChooseSaveDataLocationActivity extends Activity{
+    RadioButton mUseSdCardChoiceRadioButton;
 
-    public RadioButton getUseSdCardChoiseRadioButton() {
-        if(mUseSdCardChoiseRadioButton == null){
-            mUseSdCardChoiseRadioButton = (RadioButton) findViewById(R.id.radioButton_use_sd_card);
+    public RadioButton getUseSdCardChoiceRadioButton() {
+        if(mUseSdCardChoiceRadioButton == null){
+            mUseSdCardChoiceRadioButton = (RadioButton)
+                    findViewById(R.id.radioButton_use_sd_card);
         }
-
-        return mUseSdCardChoiseRadioButton;
+        return mUseSdCardChoiceRadioButton;
     }
 
-    RadioButton mUseSdCardChoiseRadioButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,26 +46,31 @@ public class ChooseSaveDataLocationActivity extends Activity{
         String state = Environment.getExternalStorageState();
 
         if(!state.equals(Environment.MEDIA_MOUNTED)){
-            getUseSdCardChoiseRadioButton().setEnabled(false);
+            getUseSdCardChoiceRadioButton().setEnabled(false);
         }
     }
 
     private void doSaveLocationChosen() {
-        RadioButton deviceStorageChoise = (RadioButton) findViewById(R.id.radioButton_useDeviceStorage);
+        RadioButton deviceStorageChoise = (RadioButton)
+                findViewById(R.id.radioButton_useDeviceStorage);
         Boolean useDeviceStorage = deviceStorageChoise.isChecked();
 
-        Boolean useSDCardStorage = getUseSdCardChoiseRadioButton().isChecked();
+        Boolean useSDCardStorage = getUseSdCardChoiceRadioButton().isChecked();
 
         Intent chosenSaveLocationIntent = new Intent();
+
         String saveLocationExtra = MainActivity.APP_SAVE_DATA_LOCATION_EXTRA;
         if(useDeviceStorage){
-            chosenSaveLocationIntent.putExtra(saveLocationExtra, MainActivity.SAVE_LOCATION_DEVICE_MEMORY);
+            chosenSaveLocationIntent.putExtra(saveLocationExtra,
+                    MainActivity.SAVE_LOCATION_DEVICE_MEMORY);
         }
         else if(useSDCardStorage){
-            chosenSaveLocationIntent.putExtra(saveLocationExtra, MainActivity.SAVE_LOCATION_SD_CARD);
+            chosenSaveLocationIntent.putExtra(saveLocationExtra,
+                    MainActivity.SAVE_LOCATION_SD_CARD);
         }
         else{
-            chosenSaveLocationIntent.putExtra(saveLocationExtra, MainActivity.NOT_CHOSEN_LOCATION);
+            chosenSaveLocationIntent.putExtra(saveLocationExtra,
+                    MainActivity.NOT_CHOSEN_LOCATION);
         }
 
         setResult(RESULT_OK, chosenSaveLocationIntent);

@@ -15,7 +15,7 @@ public class PatientManagementActivity extends ActionBarActivity {
 
     public static final String PATIENT_ID_EXTRA = "patient id extra";
 
-    private long mId;
+    private long mPatientId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,17 +24,17 @@ public class PatientManagementActivity extends ActionBarActivity {
 
         Intent intent = getIntent();
         if(intent != null){
-            mId = intent.getLongExtra(PATIENT_ID_EXTRA, 0);
+            mPatientId = intent.getLongExtra(PATIENT_ID_EXTRA, 0);
         }
 
         visualizePatientDetailsFragment();
     }
 
     private void visualizePatientDetailsFragment() {
-        if(mId != 0){
+        if(mPatientId != 0){
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container_patient_details, new PatientDetailsFragment(mId))
+                    .replace(R.id.container_patient_details, new PatientDetailsFragment(mPatientId))
                     .commit();
         }
     }

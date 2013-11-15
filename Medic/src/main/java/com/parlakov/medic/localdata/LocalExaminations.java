@@ -177,6 +177,4 @@ public class LocalExaminations implements IRepository<Examination> {
         }
         return examination;
     }
-
-
 }

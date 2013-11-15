@@ -71,5 +71,7 @@
     <string name="button_setExaminationDate">Set Date</string>
     <string name="button_setExaminationTime">Set Time</string>
     <string name="toast_dateMustBeLaterThanNow">Date and time must be later than now.</string>
+    <string name="toast_exception_dbNoFoundMaybeSDMissing">Could not connect to db. If the data is on the SD card, maybe the SD card is not mounted?</string>
+    <string name="toast_exception_examination_not_found_id_db">Could not find examination to edit in database.</string>
 
 </resources>

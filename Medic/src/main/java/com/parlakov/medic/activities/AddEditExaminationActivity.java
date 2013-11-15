@@ -4,6 +4,7 @@ package com.parlakov.medic.activities;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -22,8 +23,8 @@ import com.parlakov.medic.fragments.PatientDetailsFragment;
 import com.parlakov.medic.fragments.TimePickerFragment;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.models.Examination;
-import com.parlakov.medic.util.PatientsSimpleCursorAdapterSetterAsyncSetter;
-import com.parlakov.medic.util.ViewHelper;
+import com.parlakov.medic.util.PatientsSimpleCursorAdapterSetterAsync;
+import com.parlakov.medic.util.TextGetHelper;
 import com.parlakov.uow.IUowMedic;
 
 import java.text.SimpleDateFormat;
@@ -45,6 +46,7 @@ public class AddEditExaminationActivity extends ActionBarActivity
     private Button mSetTimeButton;
     private Calendar mCalendar;
     private Examination mExamination;
+    private Spinner mPatientsSpinner;
 
     public Examination getExamination() {
         if(mExamination == null){
@@ -89,6 +91,14 @@ public class AddEditExaminationActivity extends ActionBarActivity
         }
         return mData;
     }
+
+    public Spinner getPatientsSpinner(){
+        if(mPatientsSpinner == null){
+            mPatientsSpinner = (Spinner) findViewById(R.id.spinner_patients);
+        }
+
+        return mPatientsSpinner;
+    }
     //</editor-fold>
 
     @Override
@@ -115,20 +125,62 @@ public class AddEditExaminationActivity extends ActionBarActivity
     private void getExaminationFromDbAsync(Intent intent) {
         long examinationId = intent
                 .getLongExtra(ExaminationsListFragment.EXAMINATION_TO_EDIT_ID_EXTRA, 0);
-
-        // do this in main tread because patient id is needed to set the spinner position
-        // if done async maybe the position won't be available at needed time
+        // TODO - check for possible concurrency with other method that uses the DB
+        // but how?
         if(examinationId != 0){
-            mExamination = getData().getExaminations().getById(examinationId);
-            mPatientId = mExamination.getPatientId();
+            new AsyncTask<Long, Void, Examination>() {
+                @Override
+                protected Examination doInBackground(Long... params) {
+                    long examinationId = params[0];
+
+                    Examination examination;
+                    try{
+                        examination = getData().getExaminations()
+                                .getById(examinationId);
+
+                        return examination;
+                    }
+                    catch (SQLiteException ex){
+                        ex.printStackTrace();
+                        return null;
+                    }
+                }
+
+                @Override
+                protected void onPostExecute(Examination examination) {
+                    if(examination == null){
+                        showExaminationNotFoundAndFinish();
+                        return;
+                    }
+                    mExamination = examination;
+                    mPatientId = mExamination.getPatientId();
+                    setExaminationData();
+                }
+            }.execute(examinationId);
         }
     }
 
-    private void initialize() {
-        PatientsSimpleCursorAdapterSetterAsyncSetter getter =
-                new PatientsSimpleCursorAdapterSetterAsyncSetter();
+    private void showExaminationNotFoundAndFinish() {
+        Toast.makeText(this,
+                getString(R.string.toast_exception_examination_not_found_id_db),
+                Toast.LENGTH_LONG).show();
+        finish();
+    }
 
-        getter.execute(this);
+    private void initialize() {
+        try{
+            // will call setExaminationData when finished to put data on Ui
+            PatientsSimpleCursorAdapterSetterAsync getter =
+                    new PatientsSimpleCursorAdapterSetterAsync();
+
+            getter.execute(this);
+        }
+        catch (SQLiteException ex) {
+            Toast.makeText(this,
+                    getString(R.string.toast_exception_dbNoFoundMaybeSDMissing),
+                    Toast.LENGTH_LONG)
+                    .show();
+        }
     }
 
     private void initializeUi() {
@@ -204,13 +256,13 @@ public class AddEditExaminationActivity extends ActionBarActivity
 
         long examDate = getCalendar().getTimeInMillis();
 
-        String complaints = ViewHelper
+        String complaints = TextGetHelper
                 .getTextFromEditView(R.id.editText_examination_complaints, this);
-        String conclusion = ViewHelper
+        String conclusion = TextGetHelper
                 .getTextFromEditView(R.id.editText_examination_conclusion, this);
-        String notes = ViewHelper
+        String notes = TextGetHelper
                 .getTextFromEditView(R.id.editText_examination_notes, this);
-        String treatment = ViewHelper
+        String treatment = TextGetHelper
                 .getTextFromEditView(R.id.editText_examination_treatment, this);
 
         examination.setDateInMillis(examDate);
@@ -282,16 +334,16 @@ public class AddEditExaminationActivity extends ActionBarActivity
 
     public void setExaminationData() {
         if(mExamination != null){
-            ViewHelper.setTextToEditView(R.id.editText_examination_complaints, this,
+            TextGetHelper.setTextToEditView(R.id.editText_examination_complaints, this,
                     mExamination.getComplaints());
 
-            ViewHelper.setTextToEditView(R.id.editText_examination_treatment, this,
+            TextGetHelper.setTextToEditView(R.id.editText_examination_treatment, this,
                     mExamination.getTreatment());
 
-            ViewHelper.setTextToEditView(R.id.editText_examination_conclusion, this,
+            TextGetHelper.setTextToEditView(R.id.editText_examination_conclusion, this,
                     mExamination.getConclusion());
 
-            ViewHelper.setTextToEditView(R.id.editText_examination_notes, this,
+            TextGetHelper.setTextToEditView(R.id.editText_examination_notes, this,
                     mExamination.getNotes());
 
             getCalendar().setTimeInMillis(mExamination.getDateInMillis());

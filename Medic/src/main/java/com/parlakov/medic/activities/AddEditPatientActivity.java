@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.parlakov.medic.R;
@@ -18,7 +19,7 @@ import com.parlakov.medic.fragments.PatientDetailsFragment;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.models.Patient;
 import com.parlakov.medic.util.ImageHelper;
-import com.parlakov.medic.util.ViewHelper;
+import com.parlakov.medic.util.TextGetHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,7 +89,7 @@ public class AddEditPatientActivity extends Activity {
             LocalData data = getLocalData();
 
             if (!isPatientValid()){
-               return;
+                return;
             }
 
             if(mPatient.getId() != 0){
@@ -200,17 +201,17 @@ public class AddEditPatientActivity extends Activity {
     //</editor-fold>
 
     private void putEditDataInObject() {
-        String firstName = ViewHelper
+        String firstName = TextGetHelper
                 .getTextFromEditView(R.id.addPatientFirstNameEditView, this);
-        String lastName = ViewHelper
+        String lastName = TextGetHelper
                 .getTextFromEditView(R.id.addPatientLastNameEditView, this);
-        String ageString = ViewHelper
+        String ageString = TextGetHelper
                 .getTextFromEditView(R.id.addPatientAgeEditText, this);
         int age = 0;
         if(ageString != null && !ageString.isEmpty()){
             age = Integer.parseInt(ageString);
         }
-        String phone = ViewHelper
+        String phone = TextGetHelper
                 .getTextFromEditView(R.id.addPatientPhoneEditText, this);
 
         mPatient.setFirstName(firstName);

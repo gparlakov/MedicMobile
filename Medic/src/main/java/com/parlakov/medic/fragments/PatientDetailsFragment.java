@@ -20,7 +20,7 @@ import com.parlakov.medic.activities.AddEditPatientActivity;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.models.Patient;
 import com.parlakov.medic.util.ImageHelper;
-import com.parlakov.medic.util.ViewHelper;
+import com.parlakov.medic.util.TextGetHelper;
 
 /**
  * Created by georgi on 13-11-8.
@@ -147,10 +147,10 @@ public class PatientDetailsFragment extends Fragment {
         if(firstName != null && !firstName.isEmpty()){
             name = firstName + " " + name;
         }
-        ViewHelper.setTextToTextView(R.id.textViewPatientName, view, name);
-        ViewHelper.setTextToTextView(R.id.textViewPatientPhone, view,
+        TextGetHelper.setTextToTextView(R.id.textViewPatientName, view, name);
+        TextGetHelper.setTextToTextView(R.id.textViewPatientPhone, view,
                 mPatient.getPhone());
-        ViewHelper.setTextToTextView(R.id.textViewPatientAge, view,
+        TextGetHelper.setTextToTextView(R.id.textViewPatientAge, view,
                 String.valueOf(mPatient.getAge()));
 
         mPhotoPath = mPatient.getPhotoPath();

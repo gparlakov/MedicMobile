@@ -8,7 +8,7 @@ import android.widget.TextView;
 /**
  * Created by georgi on 13-11-6.
  */
-public class ViewHelper {
+public class TextGetHelper {
     public static String getTextFromEditView(int id, View rootView){
         EditText view = (EditText) rootView.findViewById(id);
         String text = null;
