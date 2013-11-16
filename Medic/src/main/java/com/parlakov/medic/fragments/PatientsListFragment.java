@@ -1,6 +1,5 @@
 package com.parlakov.medic.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,7 +13,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.parlakov.medic.interfaces.ChildFragmentListener;
 import com.parlakov.medic.R;
@@ -68,7 +66,7 @@ public class PatientsListFragment extends ListFragment {
             setEmptyText(getString(R.string.search_nothing_found)
                     + "\"" + mQuery + "\"");
         }else{
-            setEmptyText(getString(R.string.emptyPatientsList));
+            setEmptyText(getString(R.string.emptyText_patientsList));
         }
     }
 

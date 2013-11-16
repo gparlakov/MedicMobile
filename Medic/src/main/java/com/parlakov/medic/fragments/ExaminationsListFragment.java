@@ -57,17 +57,25 @@ public class ExaminationsListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setEmptyTextOnTodaysOrAllExaminations();
+
         setHasOptionsMenu(true);
+    }
+
+    // if a current date is present means that it is today's
+    // examinations/appointments and sets the text accordingly
+    private void setEmptyTextOnTodaysOrAllExaminations() {
+        if(mCurrentDate != null){
+            setEmptyText(getString(R.string.emptyText_todaysAppointments));
+        } else {
+            setEmptyText(getString(R.string.emptyText_examinations));
+        }
     }
 
     @Override
     public void onListItemClick(ListView listView, View v,
                                 int position, long id) {
         super.onListItemClick(listView, v, position, id);
-
-//        Intent editExaminationIntent = new Intent(getActivity(), AddEditExaminationActivity.class);
-//        editExaminationIntent.putExtra(EXAMINATION_TO_EDIT_ID_EXTRA, id);
-//        startActivity(editExaminationIntent);
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.container_medic_main,

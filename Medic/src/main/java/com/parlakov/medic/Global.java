@@ -1,6 +1,7 @@
 package com.parlakov.medic;
 
 import android.app.Application;
+import android.content.Context;
 
 /**
  * Created by georgi on 13-11-15.

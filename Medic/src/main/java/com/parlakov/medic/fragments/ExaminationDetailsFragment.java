@@ -10,7 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.parlakov.medic.R;
+import com.parlakov.medic.async.CancelAppointmentWorker;
+import com.parlakov.medic.dto.CancelAppointmentDTO;
 import com.parlakov.medic.interfaces.ChildFragmentListener;
+import com.parlakov.medic.localdata.LocalData;
 
 /**
  * Created by georgi on 13-11-15.
@@ -18,6 +21,18 @@ import com.parlakov.medic.interfaces.ChildFragmentListener;
 public class ExaminationDetailsFragment extends Fragment {
 
     private final long mExaminationId;
+    private LocalData mData;
+
+    public LocalData getData() {
+        if(mData == null){
+            mData = new LocalData(getActivity());
+        }
+        return mData;
+    }
+
+    public void setData(LocalData data) {
+        this.mData = data;
+    }
 
     public ExaminationDetailsFragment(long examinationId) {
         mExaminationId = examinationId;
@@ -60,7 +75,7 @@ public class ExaminationDetailsFragment extends Fragment {
 
         switch (itemId) {
             case R.id.action_cancelAppointment:
-                //TODO
+                cancelAppointment(mExaminationId);
                 break;
             case R.id.action_setResults:
                 //TODO
@@ -80,4 +95,14 @@ public class ExaminationDetailsFragment extends Fragment {
 
         return handled;
     }
+
+    private void cancelAppointment(long examinationId) {
+        CancelAppointmentDTO cancelAppointmentDTO =
+                new CancelAppointmentDTO(getData(), examinationId);
+
+        new CancelAppointmentWorker().execute(cancelAppointmentDTO);
+
+        //TODO - do stuff on successful finish or failure
+    }
+
 }

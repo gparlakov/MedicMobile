@@ -37,7 +37,7 @@
     <string name="button_takeNewPatientPicture">Take picture</string>
     <string name="contentDescription_patientImage">Patient image</string>
     <string name="newPatientPicture">Patient picture</string>
-    <string name="emptyPatientsList">Add patients - click + on action bar</string>
+    <string name="emptyText_patientsList">Add patients - click + on action bar</string>
     <string name="title_activity_patients_list">Patients List</string>
     <string name="radio_button_use_sd_card">Use SD Card - data is public and remains after uninstall in your SD memory card</string>
     <string name="radio_button_use_device_storage">Use device storage - data is private (cant be seen from outside the app) and is deleted upon uninstall</string>
@@ -78,4 +78,5 @@
     <string name="action_title_cancelAppointment">Cancel appointment</string>
     <string name="action_title_results">Results</string>
     <string name="action_title_back">Back</string>
+    <string name="emptyText_examinations">Empty examinations list</string>
 </resources>

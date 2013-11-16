@@ -31,7 +31,6 @@ public class LocalExaminations implements IRepository<Examination> {
         }
     }
 
-
     //<editor-fold desc="Query examinations with patient full name">
     private String QUERY_EXAMINATIONS_WITH_PATIENT_NAMES =
             " SELECT " +
@@ -42,28 +41,30 @@ public class LocalExaminations implements IRepository<Examination> {
                     MedicDbContract.Patient.COLUMN_NAME_LAST_NAME + "] " +
                     "AS [" + MedicDbContract.PATIENT_FULL_NAME + "]," +
                     "    e.[" + MedicDbContract.Examination.COLUMN_NAME_COMPLAINTS + "] " +
-                    "FROM " + MedicDbContract.Examination.TABLE_NAME + " e INNER JOIN " +
+                "FROM " + MedicDbContract.Examination.TABLE_NAME + " e INNER JOIN " +
                     MedicDbContract.Patient.TABLE_NAME + " p ON e.[" +
                     MedicDbContract.Examination.COLUMN_NAME_PATIENT_ID +
                     "] = p.[" + MedicDbContract.Patient.COLUMN_NAME_ID + "] " +
-                    "ORDER BY e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS + "] DESC;";
+                " WHERE "+ MedicDbContract.Examination.COLUMN_NAME_CANCELED + " IS NULL " +
+                "ORDER BY e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS + "] DESC;";
 
     private String QUERY_EXAMINATIONS_WITH_PATIENT_NAMES_TIME_WITHIN_TIME_PERIOD =
             " SELECT " +
-                    "    e.[" + MedicDbContract.Examination.COLUMN_NAME_ID + "]," +
-                    "    e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS + "]," +
-                    "    p.[" + MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME + "] " +
+                    " e.[" + MedicDbContract.Examination.COLUMN_NAME_ID + "]," +
+                    " e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS + "]," +
+                    " p.[" + MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME + "] " +
                     "|| ' ' || p.[" +
                     MedicDbContract.Patient.COLUMN_NAME_LAST_NAME + "] " +
-                    "AS [" + MedicDbContract.PATIENT_FULL_NAME + "]," +
-                    "    e.[" + MedicDbContract.Examination.COLUMN_NAME_COMPLAINTS + "] " +
-                    "FROM " + MedicDbContract.Examination.TABLE_NAME + " e INNER JOIN " +
+                        "AS [" + MedicDbContract.PATIENT_FULL_NAME + "]," +
+                    " e.[" + MedicDbContract.Examination.COLUMN_NAME_COMPLAINTS + "] " +
+                "FROM " + MedicDbContract.Examination.TABLE_NAME + " e INNER JOIN " +
                     MedicDbContract.Patient.TABLE_NAME + " p ON e.[" +
                     MedicDbContract.Examination.COLUMN_NAME_PATIENT_ID +
                     "] = p.[" + MedicDbContract.Patient.COLUMN_NAME_ID + "] " +
-                    " WHERE e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS + "] > ? AND " +
-                    "e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS + "] < ? " +
-                    "ORDER BY e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS + "];";
+                " WHERE e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS + "] > ? AND " +
+                    "e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS + "] < ? AND "+
+                    MedicDbContract.Examination.COLUMN_NAME_CANCELED + " IS NULL " +
+                "ORDER BY e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS + "];";
     //</editor-fold>
 
     public LocalExaminations(SQLiteOpenHelper openDbHelper) {
