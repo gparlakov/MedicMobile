@@ -14,7 +14,7 @@ import com.parlakov.medic.R;
 /**
  * Created by georgi on 13-11-8.
  */
-public class ChooseSaveDataLocationActivity extends Activity{
+public class SettingsActivity extends Activity{
     RadioButton mUseSdCardChoiceRadioButton;
     RadioButton mUseDeviceMemoryChoiceButton;
     private SharedPreferences mPrefs;

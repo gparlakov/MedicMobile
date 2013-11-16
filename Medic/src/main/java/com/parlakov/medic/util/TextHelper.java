@@ -20,17 +20,6 @@ public class TextHelper {
         return text;
     }
 
-    /*public static String getTextFromTextView(int id, View rootView){
-        TextView view = (TextView) rootView.findViewById(id);
-        String text = null;
-
-        if (view != null){
-            text = view.getText().toString();
-        }
-
-        return text;
-    }*/
-
     public static String getTextFromEditView(int id, Activity activity){
         EditText view = (EditText) activity.findViewById(id);
         String text = null;
@@ -58,4 +47,11 @@ public class TextHelper {
         }
     }
 
+    public static void setTextToTextView(int id, Activity activity, String text){
+        TextView textView = (TextView) activity.findViewById(id);
+
+        if (textView != null && text != null){
+            textView.setText(text);
+        }
+    }
 }

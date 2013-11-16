@@ -5,6 +5,8 @@ package com.parlakov.medic.interfaces;
  */
 public interface ChildFragmentListener {
 
+    // when a child fragment that is not in the navigation drawer
+    // is closed this enables the parent activity to react
     void onChildFragmentClose();
 
     void showErrorMessageAndExit(int resourceId);
