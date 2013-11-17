@@ -1,5 +1,6 @@
 package com.parlakov.uow;
 
+import com.parlakov.medic.exceptions.MedicException;
 import com.parlakov.medic.models.Examination;
 
 import java.util.Collection;
@@ -14,12 +15,11 @@ public interface IRepository<T> {
 
     public Object getAll();
 
-    public void add(T entity);
+    public void add(T entity) throws MedicException;
 
     public void delete(T entity);
 
-    public void update(T entity);
+    public void update(T entity) throws MedicException;
 
     public void close();
-
 }

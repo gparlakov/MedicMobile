@@ -57,8 +57,6 @@ public class ExaminationsListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setEmptyTextOnTodaysOrAllExaminations();
-
         setHasOptionsMenu(true);
     }
 
@@ -79,8 +77,20 @@ public class ExaminationsListFragment extends ListFragment {
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.container_medic_main,
-                        new ExaminationDetailsFragment(id))
+                        new ExaminationDetailsFragment(id, getIdsArray()))
                 .commit();
+    }
+
+    private long[] getIdsArray() {
+
+        int count = getListAdapter().getCount();
+        long[] idsList = new long[count];
+
+        for (int i = 0; i < count; i++) {
+            idsList[i] = getListAdapter().getItemId(i);
+        }
+
+        return idsList;
     }
 
     //<editor-fold desc="data loading async">
@@ -148,6 +158,8 @@ public class ExaminationsListFragment extends ListFragment {
                 closeDataConnection();
             }
         }.execute();
+
+        setEmptyTextOnTodaysOrAllExaminations();
     }
 
     // if a currentDate is set finds the examinations in 24 hour interval

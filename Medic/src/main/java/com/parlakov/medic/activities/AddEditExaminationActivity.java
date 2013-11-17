@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.parlakov.medic.R;
 import com.parlakov.medic.async.PatientsAdapterWorker;
+import com.parlakov.medic.exceptions.MedicException;
 import com.parlakov.medic.fragments.DatePickerFragment;
 import com.parlakov.medic.fragments.ExaminationsListFragment;
 import com.parlakov.medic.fragments.PatientDetailsFragment;
@@ -222,15 +223,52 @@ public class AddEditExaminationActivity extends ActionBarActivity
     }
 
     private void doSaveExamination() {
-        Examination examination = getExaminationFromUi();
+        final Examination examination = getExaminationFromUi();
         if(!isValidExamination(examination)){
             return;
         }
-        IUowMedic data = getData();
+        final IUowMedic data = getData();
 
-        data.getExaminations().add(examination);
+        new AsyncTask<Object, Void, Boolean>() {
+            private String MEDIC_TYPE_EXCEPTION = "overlapping exception";
+            private String SQLITE_TYPE_EXCEPTION = "SQLite db exception";
 
-        finish();
+            public String mExceptionType;
+
+            @Override
+            protected Boolean doInBackground(Object... params) {
+                try{
+                    data.getExaminations().add(examination);
+                    return true;
+                }
+                catch (MedicException e) {
+                    e.printStackTrace();
+                    mExceptionType = MEDIC_TYPE_EXCEPTION;
+                    return false;
+                }
+                catch (SQLiteException e){
+                    e.printStackTrace();
+                    mExceptionType = SQLITE_TYPE_EXCEPTION;
+                    return false;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Boolean createdSuccessfully) {
+                if(!createdSuccessfully){
+                    String message = getString(R.string.exception_overlapping_examination);
+                    if(mExceptionType == SQLITE_TYPE_EXCEPTION){
+                        message = getString(R.string.exception_unableToOpenDb);
+                    }
+
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG)
+                            .show();
+                    return;
+                }
+
+                finish();
+            }
+        }.execute();
     }
 
     private boolean isValidExamination(Examination examination) {
@@ -242,9 +280,12 @@ public class AddEditExaminationActivity extends ActionBarActivity
             isValid = false;
         }
 
-        //TODO - check for overlapping of dates/appointments
-
-        //TODO - check if a patient is present
+        // check if a patient is present
+        if(examination.getPatientId() == 0){
+            Toast.makeText(this, getString(R.string.toast_missingPatient),
+                    Toast.LENGTH_LONG).show();
+            isValid = false;
+        }
 
         return isValid;
     }

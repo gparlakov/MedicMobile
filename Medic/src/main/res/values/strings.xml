@@ -86,7 +86,7 @@
     <string name="toast_exception_examination_not_found_id_db">
         Could not find examination to edit in database.</string>
     <string name="action_returnToPatientsList">Back to list</string>
-    <string name="action_title_changeDate">Reschedule</string>
+    <string name="action_title_changeDate">Change Date</string>
     <string name="action_title_cancelAppointment">Cancel appointment</string>
     <string name="action_title_results">Results</string>
     <string name="action_title_back">Back</string>
@@ -96,4 +96,13 @@
         Examination could not be canceled due to problems in
         database connection</string>
     <string name="toast_exception_examinationNotFound">Examination not found</string>
+    <string name="exception_overlapping_examination">Existing ovarlapping appointment found.</string>
+    <string name="toast_missingPatient">Missing patient info!</string>
+    <string name="action_title_changeTime">Change Time</string>
+    <string name="label_complaints">Complaints</string>
+    <string name="label_conclusions">Conclusions</string>
+    <string name="label_treatment">Treatment</string>
+    <string name="label_notes">Notes</string>
+    <string name="none_placeholder">none</string>
+    <string name="no_more_examinations">no more</string>
 </resources>

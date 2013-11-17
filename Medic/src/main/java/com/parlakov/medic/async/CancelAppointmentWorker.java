@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.parlakov.medic.dto.CancelAppointmentDTO;
+import com.parlakov.medic.exceptions.MedicException;
 import com.parlakov.medic.interfaces.ChildFragmentListener;
 import com.parlakov.medic.interfaces.OnCancelResultListener;
 import com.parlakov.medic.localdata.LocalData;
@@ -35,6 +36,9 @@ public class CancelAppointmentWorker
 
             return true;
         } catch (SQLiteException e) {
+            e.printStackTrace();
+            return false;
+        } catch (MedicException e) {
             e.printStackTrace();
             return false;
         }
