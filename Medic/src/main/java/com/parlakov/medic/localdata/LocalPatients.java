@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import com.parlakov.medic.models.Patient;
 import com.parlakov.uow.IRepository;
 
+import static com.parlakov.medic.util.PatientDataHelper.getContentValuesFromEntity;
+import static com.parlakov.medic.util.PatientDataHelper.getPatient;
+
 /**
  * Created by georgi on 13-11-2.
  */
@@ -15,13 +18,21 @@ public class LocalPatients implements IRepository<Patient> {
 
     private SQLiteDatabase db;
 
-    private SQLiteDatabase getDb() {
+    private SQLiteDatabase open() {
         if (db == null) {
             db = mDbHelper.getWritableDatabase();
         }
         return db;
     }
 
+    public void close() {
+        if (db != null){
+            db.close();
+            db = null;
+        }
+    }
+
+    //constructor
     public LocalPatients(MedicDbHelper dbHelper) {
         mDbHelper = dbHelper;
     }
@@ -32,46 +43,22 @@ public class LocalPatients implements IRepository<Patient> {
             throw new NullPointerException("Empty patient id passed");
         }
         long idPat = Long.parseLong(String.valueOf(id));
-        SQLiteDatabase db = getDb();
+        SQLiteDatabase db = open();
         Cursor cursor = null;
-        Patient patient = null;
 
         if (db != null) {
             cursor = db.query(MedicDbContract.Patient.TABLE_NAME,
-                    null,
-                    MedicDbContract.Patient.COLUMN_NAME_ID + " = " + idPat,
-                    null,
-                    null,
-                    null,
-                    null);
+                    null, MedicDbContract.Patient.COLUMN_NAME_ID + " = " + idPat,
+                    null, null, null, null);
         }
 
-        if (cursor != null) {
-            cursor.moveToFirst();
-            patient = new Patient();
-            patient.setFirstName(cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME)));
-
-            patient.setLastName(cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_LAST_NAME)));
-
-            patient.setAge(cursor.getInt(
-                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_AGE)));
-
-            patient.setPhone(cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_PHONE)));
-
-            patient.setImagePath(cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_PHOTO_PATH)));
-
-            patient.setId(idPat);
-        }
+        Patient patient = getPatient(idPat, cursor);
 
         return patient;
     }
 
     public Cursor getAll() {
-        SQLiteDatabase db = getDb();
+        SQLiteDatabase db = open();
 
         String[] columns = {
                 MedicDbContract.Patient.COLUMN_NAME_ID,
@@ -92,12 +79,17 @@ public class LocalPatients implements IRepository<Patient> {
         if (entity == null)
             throw new NullPointerException("Passed entity is null");
 
-        SQLiteDatabase db = getDb();
+        SQLiteDatabase db = open();
 
         ContentValues values = getContentValuesFromEntity(entity);
 
         db.insert(MedicDbContract.Patient.TABLE_NAME, null, values);
         close();
+    }
+
+    @Override
+    public void deleteOnId(Object id) {
+
     }
 
     public void delete(Patient entity) {
@@ -106,7 +98,7 @@ public class LocalPatients implements IRepository<Patient> {
         }
 
         long id = entity.getId();
-        SQLiteDatabase db = getDb();
+        SQLiteDatabase db = open();
 
         db.delete(MedicDbContract.Patient.TABLE_NAME,
                 MedicDbContract.Patient.COLUMN_NAME_ID + " = " + id,
@@ -130,15 +122,8 @@ public class LocalPatients implements IRepository<Patient> {
         close();
     }
 
-    public void close() {
-        if (db != null){
-            db.close();
-            db = null;
-        }
-    }
-
     public Cursor searchByName(String query) {
-        SQLiteDatabase db = getDb();
+        SQLiteDatabase db = open();
 
         String[] columns = {
                 MedicDbContract.Patient.COLUMN_NAME_ID,
@@ -159,18 +144,5 @@ public class LocalPatients implements IRepository<Patient> {
                 columns, selection, args, null, null, orderBy);
 
         return cursor;
-    }
-
-
-    private ContentValues getContentValuesFromEntity(Patient entity) {
-        ContentValues values = new ContentValues();
-
-        values.put(MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME, entity.getFirstName());
-        values.put(MedicDbContract.Patient.COLUMN_NAME_LAST_NAME, entity.getLastName());
-        values.put(MedicDbContract.Patient.COLUMN_NAME_AGE, entity.getAge());
-        values.put(MedicDbContract.Patient.COLUMN_NAME_PHONE, entity.getPhone());
-        values.put(MedicDbContract.Patient.COLUMN_NAME_PHOTO_PATH, entity.getPhotoPath());
-
-        return values;
     }
 }

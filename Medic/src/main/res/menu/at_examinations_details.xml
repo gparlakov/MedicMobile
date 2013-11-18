@@ -11,10 +11,10 @@
         android:icon="@android:drawable/ic_menu_edit" />
 
     <item
-        android:id="@+id/action_returnToMain"
+        android:id="@+id/action_patientHistory"
         app:showAsAction="always|withText"
-        android:title="@string/action_title_back"
-        android:icon="@android:drawable/ic_menu_revert" />
+        android:title="@string/action_title_patientHistory"
+        android:icon="@android:drawable/ic_menu_recent_history" />
 
     <item
         android:id="@+id/action_changeDate"
@@ -30,14 +30,10 @@
         android:icon="@android:drawable/ic_menu_rotate">
     </item>
 
-
     <item
         android:id="@+id/action_cancelAppointment"
         android:title="@string/action_title_cancelAppointment"
         app:showAsAction="ifRoom|withText"
         android:icon="@android:drawable/ic_delete" />
-
-
-
 
 </menu>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/small_padding">
+
+        <TextView
+            android:id="@+id/textView_date_patientHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:background="#00bb00"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/label_complaints"
+            android:id="@+id/textView_label_complaints_item_patientHistory"
+            android:layout_below="@+id/textView_date_patientHistory"
+            android:layout_alignParentLeft="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/textView_complaints_patientHistory"
+            android:layout_below="@+id/textView_label_complaints_item_patientHistory"
+            android:layout_alignParentLeft="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/label_treatment"
+            android:id="@+id/textView_label_treatment_item_patientHistory"
+            android:layout_below="@+id/textView_complaints_patientHistory"
+            android:layout_alignParentLeft="true" />
+
+        <TextView
+            android:id="@+id/textView_treatment_patientHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_below="@+id/textView_label_treatment_item_patientHistory"
+            android:layout_alignParentLeft="true" />
+
+        <TextView
+            android:id="@+id/textView_label_conclusion_item_patientHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/label_conclusions"
+            android:layout_below="@+id/textView_treatment_patientHistory"
+            android:layout_alignParentLeft="true" />
+
+        <TextView
+            android:id="@+id/textView_conclusion_patientHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_below="@+id/textView_label_conclusion_item_patientHistory"
+            android:layout_alignParentLeft="true" />
+
+        <TextView
+            android:id="@+id/textView_label_notes_item_patientHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/label_conclusions"
+            android:layout_below="@+id/textView_conclusion_patientHistory"
+            android:layout_alignParentLeft="true" />
+
+        <TextView
+            android:id="@+id/textView_notes_patientHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_below="@+id/textView_label_notes_item_patientHistory"
+            android:layout_alignParentLeft="true" />
+
+    </RelativeLayout>
+</ScrollView>

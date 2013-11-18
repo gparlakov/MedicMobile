@@ -27,18 +27,9 @@ public class CancelAppointmentWorker
         mListener = dataTransferObject.getListener();
 
         try {
-            Examination examination = data.getExaminations()
-                    .getById(examinationId);
-
-            examination.setCancelled(true);
-
-            data.getExaminations().update(examination);
-
+            data.getExaminations().deleteOnId(examinationId);
             return true;
         } catch (SQLiteException e) {
-            e.printStackTrace();
-            return false;
-        } catch (MedicException e) {
             e.printStackTrace();
             return false;
         }

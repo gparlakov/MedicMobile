@@ -11,6 +11,10 @@ import com.parlakov.medic.models.Examination;
 import com.parlakov.medic.viewModels.ExaminationDetails;
 import com.parlakov.uow.IRepository;
 
+import static com.parlakov.medic.util.ExaminationDataHelper.getContentValues;
+import static com.parlakov.medic.util.ExaminationDataHelper.getExamination;
+import static com.parlakov.medic.util.ExaminationDataHelper.getExaminationDetails;
+
 /**
  * Created by georgi on 13-11-11.
  */
@@ -19,7 +23,7 @@ public class LocalExaminations implements IRepository<Examination> {
     private final SQLiteOpenHelper mDbHelper;
     private SQLiteDatabase mDb;
 
-    private SQLiteDatabase openDb() {
+    private SQLiteDatabase open() {
         if (mDb == null) {
             mDb = mDbHelper.getWritableDatabase();
         }
@@ -87,20 +91,21 @@ public class LocalExaminations implements IRepository<Examination> {
                     "] = p.[" + MedicDbContract.Patient.COLUMN_NAME_ID + "] " +
                 "WHERE e.[" + MedicDbContract.Examination._ID + "] = ? ;";
 
-    public static final String QUERY_COUNT_OF_EXAMINATIONS_IN_GIVEN_TIME_PERIOD =
+    public static final String QUERY_COUNT_OF_EXAMINATIONS_IN_GIVEN_TIME_PERIOD_EXCLUDING_CURRENT =
             "SELECT COUNT(" + MedicDbContract.Examination._ID + ")" +
                     "FROM " + MedicDbContract.Examination.TABLE_NAME +" " +
                     "WHERE " + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS +
                         " > ? AND " + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS +
-                        " < ?";
+                        " < ? AND " + MedicDbContract.Examination._ID + " != ?";
     //</editor-fold>
 
+    // constructor
     public LocalExaminations(SQLiteOpenHelper openDbHelper) {
         mDbHelper = openDbHelper;
     }
 
     public ExaminationDetails getDetailsById(long mExaminationId) {
-        SQLiteDatabase db = openDb();
+        SQLiteDatabase db = open();
         Cursor examinationDetailsCursor = db
                 .rawQuery(QUERY_EXAMINATIONS_BY_ID_WITH_PATIENT_NAMES_AND_PHOTO,
                         new String[]{String.valueOf(mExaminationId)});
@@ -108,9 +113,32 @@ public class LocalExaminations implements IRepository<Examination> {
         return getExaminationDetails(examinationDetailsCursor);
     }
 
+    public Cursor getByPatientId(long patientId){
+        SQLiteDatabase db = open();
+
+        String[] columns =
+                {
+                        MedicDbContract.Examination._ID,
+                        MedicDbContract.Examination.COLUMN_NAME_COMPLAINTS,
+                        MedicDbContract.Examination.COLUMN_NAME_TREATMENT,
+                        MedicDbContract.Examination.COLUMN_NAME_CONCLUSION,
+                        MedicDbContract.Examination.COLUMN_NAME_NOTES,
+                        MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS,
+                };
+
+        String selection = MedicDbContract.Examination.COLUMN_NAME_PATIENT_ID + " = ? AND " +
+                MedicDbContract.Examination.COLUMN_NAME_CANCELED + " IS NULL";
+        String[] args = { String.valueOf(patientId) };
+
+        String orderby =  MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS + " DESC";
+
+        return db.query(MedicDbContract.Examination.TABLE_NAME, columns,
+                selection, args, null, null, orderby);
+    }
+
     @Override
     public Examination getById(Object id) {
-        SQLiteDatabase db = openDb();
+        SQLiteDatabase db = open();
 
         String query = "SELECT * FROM " + MedicDbContract.Examination.TABLE_NAME + " WHERE " +
                 MedicDbContract.Examination.COLUMN_NAME_ID + " = ?";
@@ -127,7 +155,7 @@ public class LocalExaminations implements IRepository<Examination> {
     }
 
     public Cursor getAllWithPatientNames(long startInMillis, long endInMillis) {
-        SQLiteDatabase db = openDb();
+        SQLiteDatabase db = open();
         Cursor result;
 
         if (startInMillis != 0 && endInMillis != 0) {
@@ -149,7 +177,7 @@ public class LocalExaminations implements IRepository<Examination> {
     public void add(Examination entity) throws MedicException {
         checkForOverlappingExaminations(entity);
 
-        SQLiteDatabase db = openDb();
+        SQLiteDatabase db = open();
 
         ContentValues values = getContentValues(entity);
 
@@ -157,112 +185,38 @@ public class LocalExaminations implements IRepository<Examination> {
     }
 
     @Override
-    public void delete(Examination entity) {
+    public void deleteOnId(Object id) {
+        SQLiteDatabase db = open();
+        String[] args = {String.valueOf(id)};
+        db.delete(MedicDbContract.Examination.TABLE_NAME,
+                MedicDbContract.Examination.COLUMN_NAME_ID + " = ?", args);
+    }
 
+    @Override
+    public void delete(Examination entity) {
+        SQLiteDatabase db = open();
+        String[] args = {String.valueOf(entity.getPatientId())};
+        db.delete(MedicDbContract.Examination.TABLE_NAME,
+                MedicDbContract.Examination.COLUMN_NAME_ID + " = ?", args);
     }
 
     @Override
     public void update(Examination entity) throws MedicException {
-        checkForOverlappingExaminations(entity);
+        // if examination is not cancelled check for overlapping
+        if(entity.getCancelled() == null || !entity.getCancelled()){
+            // will throw MedicException to be intercepted by calling method
+            checkForOverlappingExaminations(entity);
+        }
 
         long id = entity.getId();
         ContentValues values = getContentValues(entity);
-        SQLiteDatabase db = openDb();
+        SQLiteDatabase db = open();
 
         String where = MedicDbContract.Examination._ID + " = ?";
         String[] args = {String.valueOf(id)};
 
         db.update(MedicDbContract.Examination.TABLE_NAME,
                 values, where, args);
-    }
-
-    private ContentValues getContentValues(Examination entity) {
-        ContentValues values = new ContentValues();
-        values.put(MedicDbContract.Examination.COLUMN_NAME_PATIENT_ID, entity.getPatientId());
-        values.put(MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS, entity.getDateInMillis());
-        values.put(MedicDbContract.Examination.COLUMN_NAME_COMPLAINTS, entity.getComplaints());
-        values.put(MedicDbContract.Examination.COLUMN_NAME_CONCLUSION, entity.getConclusion());
-        values.put(MedicDbContract.Examination.COLUMN_NAME_TREATMENT, entity.getTreatment());
-        values.put(MedicDbContract.Examination.COLUMN_NAME_NOTES, entity.getNotes());
-        values.put(MedicDbContract.Examination.COLUMN_NAME_CANCELED, entity.getCancelled());
-        return values;
-    }
-
-    private Examination getExamination(Cursor cursor) {
-        Examination examination = new Examination();
-        if (cursor != null) {
-            cursor.moveToFirst();
-
-            long patientId = cursor.getLong(
-                    cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_PATIENT_ID));
-            long examinationId = cursor.getLong(
-                    cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_ID));
-            long dateInMillis = cursor.getLong(
-                    cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS));
-
-            String complaints = cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_COMPLAINTS));
-            String notes = cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_NOTES));
-            String treatment = cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_TREATMENT));
-            String conclusion = cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_CONCLUSION));
-
-            examination.setId(examinationId);
-            examination.setPatientId(patientId);
-            examination.setDateInMillis(dateInMillis);
-            examination.setComplaints(complaints);
-            examination.setNotes(notes);
-            examination.setTreatment(treatment);
-            examination.setConclusion(conclusion);
-        }
-        return examination;
-    }
-
-    private ExaminationDetails getExaminationDetails(Cursor cursor) {
-//        ExaminationDetails details = (ExaminationDetails) getExamination(cursor);
-        ExaminationDetails details = new ExaminationDetails();
-
-        if (cursor != null) {
-            cursor.moveToFirst();
-
-            long patientId = cursor.getLong(
-                    cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_PATIENT_ID));
-            long examinationId = cursor.getLong(
-                    cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_ID));
-            long dateInMillis = cursor.getLong(
-                    cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS));
-
-            String complaints = cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_COMPLAINTS));
-            String notes = cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_NOTES));
-            String treatment = cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_TREATMENT));
-            String conclusion = cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Examination.COLUMN_NAME_CONCLUSION));
-
-            details.setId(examinationId);
-            details.setPatientId(patientId);
-            details.setDateInMillis(dateInMillis);
-            details.setComplaints(complaints);
-            details.setNotes(notes);
-            details.setTreatment(treatment);
-            details.setConclusion(conclusion);
-
-
-            String patientName = cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.PATIENT_FULL_NAME));
-
-            String photoPath = cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_PHOTO_PATH));
-
-            details.setPatientName(patientName);
-            details.setPatientPhotoPath(photoPath);
-        }
-
-        return details;
     }
 
     private void checkForOverlappingExaminations(Examination entity)
@@ -272,19 +226,20 @@ public class LocalExaminations implements IRepository<Examination> {
         long plusThirtyMinutes = entity.getDateInMillis() + examLengthInMillis;
 
         int countOfExaminationsOverlapping = getExaminationsCountInTimePeriod(minusThirtyMinutes,
-                plusThirtyMinutes);
+                plusThirtyMinutes, entity.getId());
 
         if(countOfExaminationsOverlapping > 0){
             throw new MedicException("Overlapping examinations found!");
         }
     }
 
-    private int getExaminationsCountInTimePeriod(long start, long end){
-        SQLiteDatabase db = openDb();
+    private int getExaminationsCountInTimePeriod(long start, long end, long currentExaminationId){
+        SQLiteDatabase db = open();
 
-        String[] args = { String.valueOf(start), String.valueOf(end)};
+        String[] args = { String.valueOf(start), String.valueOf(end),
+                String.valueOf(currentExaminationId)};
         Cursor countCursor =
-                db.rawQuery(QUERY_COUNT_OF_EXAMINATIONS_IN_GIVEN_TIME_PERIOD, args);
+                db.rawQuery(QUERY_COUNT_OF_EXAMINATIONS_IN_GIVEN_TIME_PERIOD_EXCLUDING_CURRENT, args);
 
         int count = 0;
         if(countCursor != null){

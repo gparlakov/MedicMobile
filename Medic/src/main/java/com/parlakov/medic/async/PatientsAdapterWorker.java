@@ -8,7 +8,6 @@ import android.widget.Spinner;
 
 import com.parlakov.medic.R;
 import com.parlakov.medic.activities.AddEditExaminationActivity;
-import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.localdata.MedicDbContract;
 import com.parlakov.uow.IUowMedic;
 
@@ -35,7 +34,7 @@ public class PatientsAdapterWorker
             Spinner spinner = activity.getPatientsSpinner();
             spinner.setAdapter(adapter);
             spinner.setSelection(mPatientPosition, true);
-            activity.setExaminationData();
+            activity.setExaminationDataToUi();
         }
     }
 

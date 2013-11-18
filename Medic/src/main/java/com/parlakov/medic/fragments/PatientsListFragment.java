@@ -91,9 +91,11 @@ public class PatientsListFragment extends ListFragment {
                 Cursor patientsCursor;
                 try{
                     if(getQuery() == null){
+                        // not a search-started fragment
                         patientsCursor = (Cursor) getData().getPatients().getAll();
                     }
                     else{
+                        // a search-started fragment
                         LocalPatients patientsData = (LocalPatients) getData().getPatients();
                         patientsCursor = patientsData.searchByName(getQuery());
                     }

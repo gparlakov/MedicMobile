@@ -15,12 +15,11 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.parlakov.medic.Global;
 import com.parlakov.medic.R;
 import com.parlakov.medic.async.PatientsAdapterWorker;
 import com.parlakov.medic.exceptions.MedicException;
 import com.parlakov.medic.fragments.DatePickerFragment;
-import com.parlakov.medic.fragments.ExaminationsListFragment;
-import com.parlakov.medic.fragments.PatientDetailsFragment;
 import com.parlakov.medic.fragments.TimePickerFragment;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.models.Examination;
@@ -47,6 +46,7 @@ public class AddEditExaminationActivity extends ActionBarActivity
     private Calendar mCalendar;
     private Examination mExamination;
     private Spinner mPatientsSpinner;
+    private long mExaminationToEditId;
 
     public Examination getExamination() {
         if(mExamination == null){
@@ -110,24 +110,37 @@ public class AddEditExaminationActivity extends ActionBarActivity
         Intent intent = getIntent();
 
         mPatientId = intent
-                .getLongExtra(PatientDetailsFragment.PATIENT_ID_EXTRA, 0);
+                .getLongExtra(Global.PATIENT_ID_EXTRA, 0);
 
         if(savedInstanceState == null){
-               getExaminationFromDbAsync(intent);
+            // take data from intent
+            mExaminationToEditId = intent
+                    .getLongExtra(Global.EXAMINATION_TO_EDIT_ID_EXTRA, 0);
+
+            getExaminationFromDbAsync();
+            if(mExaminationToEditId != 0){
+                disableDateButtons();
+            }
         }
         else{
             // take examination data from savedInstance
             mExamination = (Examination)
                     savedInstanceState.getSerializable(EXAMINATION_SAVE);
+
+            if (mExamination != null) {
+                mExaminationToEditId = mExamination.getId();
+            }
         }
     }
 
-    private void getExaminationFromDbAsync(Intent intent) {
-        long examinationId = intent
-                .getLongExtra(ExaminationsListFragment.EXAMINATION_TO_EDIT_ID_EXTRA, 0);
-        // TODO - check for possible concurrency with other method that uses the DB
-        // but how?
-        if(examinationId != 0){
+    private void disableDateButtons() {
+        getButtonSetDate().setEnabled(false);
+        getButtonSetTime().setEnabled(false);
+    }
+
+    private void getExaminationFromDbAsync() {
+
+        if(mExaminationToEditId != 0){
             new AsyncTask<Long, Void, Examination>() {
                 @Override
                 protected Examination doInBackground(Long... params) {
@@ -154,9 +167,9 @@ public class AddEditExaminationActivity extends ActionBarActivity
                     }
                     mExamination = examination;
                     mPatientId = mExamination.getPatientId();
-                    setExaminationData();
+                    setExaminationDataToUi();
                 }
-            }.execute(examinationId);
+            }.execute(mExaminationToEditId);
         }
     }
 
@@ -169,10 +182,11 @@ public class AddEditExaminationActivity extends ActionBarActivity
 
     private void initialize() {
         try{
-            // will call setExaminationData when finished to put data on Ui
+            // will call setExaminationDataToUi when finished to put data on Ui
             PatientsAdapterWorker getter =
                     new PatientsAdapterWorker();
 
+            //todo move exception handling inside Worker
             getter.execute(this);
         }
         catch (SQLiteException ex) {
@@ -223,7 +237,7 @@ public class AddEditExaminationActivity extends ActionBarActivity
     }
 
     private void doSaveExamination() {
-        final Examination examination = getExaminationFromUi();
+        final Examination examination = getExaminationFromUserInput();
         if(!isValidExamination(examination)){
             return;
         }
@@ -238,7 +252,14 @@ public class AddEditExaminationActivity extends ActionBarActivity
             @Override
             protected Boolean doInBackground(Object... params) {
                 try{
-                    data.getExaminations().add(examination);
+                    if(examination.getId() != 0){
+                        // edit examination
+                        data.getExaminations().update(examination);
+                    }
+                    else{
+                        // new examination
+                        data.getExaminations().add(examination);
+                    }
                     return true;
                 }
                 catch (MedicException e) {
@@ -273,14 +294,22 @@ public class AddEditExaminationActivity extends ActionBarActivity
 
     private boolean isValidExamination(Examination examination) {
         Boolean isValid = true;
-        if(getCalendar().compareTo(Calendar.getInstance()) <= 0){
-            Toast.makeText(this, getString(R.string.toast_dateMustBeLaterThanNow),
-                    Toast.LENGTH_LONG).show();
 
-            isValid = false;
+        // if we are editing an existing examination
+        // the date time can be a passed moment i.e. edit exam
+        // results after examination finishes
+        if(examination.getId() == 0){
+            // check if trying to create an examination before now
+            Calendar now = Calendar.getInstance();
+            if(getCalendar().compareTo(now) <= 0){
+                Toast.makeText(this, getString(R.string.toast_dateMustBeLaterThanNow),
+                        Toast.LENGTH_LONG).show();
+
+                isValid = false;
+            }
         }
 
-        // check if a patient is present
+        // check if a patient (id) is chosen
         if(examination.getPatientId() == 0){
             Toast.makeText(this, getString(R.string.toast_missingPatient),
                     Toast.LENGTH_LONG).show();
@@ -290,7 +319,7 @@ public class AddEditExaminationActivity extends ActionBarActivity
         return isValid;
     }
 
-    private Examination getExaminationFromUi() {
+    private Examination getExaminationFromUserInput() {
         Examination examination = getExamination();
 
         Spinner patientSpinner = (Spinner) findViewById(R.id.spinner_patients);
@@ -314,6 +343,26 @@ public class AddEditExaminationActivity extends ActionBarActivity
         examination.setNotes(notes);
         examination.setPatientId(selectedPatientId);
         return examination;
+    }
+
+    public void setExaminationDataToUi() {
+        if(mExamination != null){
+            TextHelper.setTextToEditView(R.id.editText_examination_complaints, this,
+                    mExamination.getComplaints());
+
+            TextHelper.setTextToEditView(R.id.editText_examination_treatment, this,
+                    mExamination.getTreatment());
+
+            TextHelper.setTextToEditView(R.id.editText_examination_conclusion, this,
+                    mExamination.getConclusion());
+
+            TextHelper.setTextToEditView(R.id.editText_examination_notes, this,
+                    mExamination.getNotes());
+
+            getCalendar().setTimeInMillis(mExamination.getDateInMillis());
+            updateUiDate();
+            updateUiTime();
+        }
     }
 
     //<editor-fold desc="Date and Time set listener implementation">
@@ -364,6 +413,7 @@ public class AddEditExaminationActivity extends ActionBarActivity
 
         if(mData != null){
             mData.closeDb();
+            mData= null;
         }
     }
 
@@ -373,26 +423,5 @@ public class AddEditExaminationActivity extends ActionBarActivity
 
         outState.putSerializable(EXAMINATION_SAVE, mExamination);
     }
-
-    public void setExaminationData() {
-        if(mExamination != null){
-            TextHelper.setTextToEditView(R.id.editText_examination_complaints, this,
-                    mExamination.getComplaints());
-
-            TextHelper.setTextToEditView(R.id.editText_examination_treatment, this,
-                    mExamination.getTreatment());
-
-            TextHelper.setTextToEditView(R.id.editText_examination_conclusion, this,
-                    mExamination.getConclusion());
-
-            TextHelper.setTextToEditView(R.id.editText_examination_notes, this,
-                    mExamination.getNotes());
-
-            getCalendar().setTimeInMillis(mExamination.getDateInMillis());
-            updateUiDate();
-            updateUiTime();
-        }
-    }
-
     //</editor-fold>
 }

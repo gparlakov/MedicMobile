@@ -1,18 +1,19 @@
 package com.parlakov.medic.fragments;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MotionEventCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
@@ -20,7 +21,9 @@ import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.parlakov.medic.Global;
 import com.parlakov.medic.R;
+import com.parlakov.medic.activities.AddEditExaminationActivity;
 import com.parlakov.medic.async.CancelAppointmentWorker;
 import com.parlakov.medic.dto.CancelAppointmentDTO;
 import com.parlakov.medic.exceptions.MedicException;
@@ -36,7 +39,6 @@ import com.parlakov.medic.viewModels.ExaminationDetails;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by georgi on 13-11-15.
@@ -44,31 +46,21 @@ import java.util.List;
 public class ExaminationDetailsFragment extends Fragment
         implements OnCancelResultListener,
         DatePickerDialog.OnDateSetListener,
-        TimePickerDialog.OnTimeSetListener ,
-        View.OnTouchListener{
+        TimePickerDialog.OnTimeSetListener{
 
-    private static final String IDS_LIST = "ids list";
-    private static final String CURRENT_POSITION = "current id position";
+    private static final String EXAMINATION_ID = "examination id";
     private static final String EXAMINATION_DETAILS = "examination details";
 
     private long mExaminationId;
-    private long[] mIdsList;
+    private long oldTime;
     private ExaminationDetails mExaminationDetails;
     private LocalData mData;
-    private long oldTime;
-    private float mStartOfSwipeY;
-
-    private int mCurrentIdPosition;
 
     public LocalData getData() {
         if (mData == null) {
             mData = new LocalData(getActivity());
         }
         return mData;
-    }
-
-    public void setData(LocalData data) {
-        this.mData = data;
     }
 
     public ExaminationDetails getExamination() {
@@ -78,10 +70,11 @@ public class ExaminationDetailsFragment extends Fragment
         return mExaminationDetails;
     }
 
-    public ExaminationDetailsFragment(long examinationId, long[] idsList) {
+    public ExaminationDetailsFragment(){
+    }
+
+    public ExaminationDetailsFragment(long examinationId) {
         mExaminationId = examinationId;
-        mIdsList = idsList;
-        mCurrentIdPosition = -1;
     }
 
     @Override
@@ -91,32 +84,25 @@ public class ExaminationDetailsFragment extends Fragment
         setHasOptionsMenu(true);
 
         if(savedInstanceState != null){
-            mIdsList = savedInstanceState.getLongArray(IDS_LIST);
-            mCurrentIdPosition = savedInstanceState.getInt(CURRENT_POSITION);
-            mExaminationId = mIdsList[mCurrentIdPosition];
-            mExaminationDetails = (ExaminationDetails) savedInstanceState.getSerializable(EXAMINATION_DETAILS);
+            mExaminationId = savedInstanceState.getLong(EXAMINATION_ID);
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
         View view = inflater.inflate(
                 R.layout.fragment_examination_details, container, false);
-        view.setOnTouchListener(this);
+
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if(mExaminationDetails == null){
-            initialize();
-        }
-        else{
-            updateExaminationTextFieldsAndPhoto();
-            updateExaminationDate();
-        }
+
+        initialize();
     }
 
     private void initialize() {
@@ -174,12 +160,15 @@ public class ExaminationDetailsFragment extends Fragment
                 getActivity(), ex.getNotes());
 
         TextHelper.setTextToTextView(R.id.textView_examinationDetails_patientName,
-                getActivity(), ex.getPatientName());
+                getActivity(), ex.getPatientName().trim());
 
-        ImageView photo = (ImageView) getActivity()
+        String patientPhotoPath = ex.getPatientPhotoPath();
+        if(patientPhotoPath != null && !patientPhotoPath.isEmpty()){
+            ImageView photo = (ImageView) getActivity()
                 .findViewById(R.id.image_examinationDetails_patientPhoto);
 
-        ImageHelper.loadImageFromFileAsync(ex.getPatientPhotoPath(), photo);
+            ImageHelper.loadImageFromFileAsync(patientPhotoPath, photo);
+        }
     }
 
     private void updateExaminationDate(){
@@ -207,20 +196,32 @@ public class ExaminationDetailsFragment extends Fragment
             case R.id.action_cancelAppointment:
                 cancelAppointment(mExaminationId);
                 break;
+
             case R.id.action_setResults:
-                //TODO
+                Intent editExaminationIntent = new Intent(getActivity(),
+                       AddEditExaminationActivity.class);
+                editExaminationIntent.putExtra(Global.EXAMINATION_TO_EDIT_ID_EXTRA,
+                        mExaminationId);
+                startActivity(editExaminationIntent);
                 break;
+
+            case R.id.action_patientHistory:
+                long patientId = mExaminationDetails.getPatientId();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container_examinations_details,
+                                new PatientHistoryFragment(patientId))
+                        .addToBackStack("patient_history_fragment")
+                        .commit();
+                break;
+
             case R.id.action_changeDate:
                 changeDate();
                 break;
+
             case R.id.action_changeTime:
                 changeTime();
                 break;
-            case R.id.action_returnToMain:
-                ChildFragmentListener listener =
-                        (ChildFragmentListener) getActivity();
-                listener.onChildFragmentClose();
-                break;
+
             default:
                 handled = super.onOptionsItemSelected(item);
                 break;
@@ -290,13 +291,13 @@ public class ExaminationDetailsFragment extends Fragment
     private void setNewDateTime(Calendar cal) {
         mExaminationDetails.setDateInMillis(cal.getTimeInMillis());
 
-        new AsyncTask<Object, Void, Boolean>() {
+        new AsyncTask<Void, Void, Boolean>() {
             private static final String SQLITE_EXCEPTION = "SQLite exception";
             private static final String MEDIC_EXCEPTION = "Medic exception";
             private String mExceptionType;
 
             @Override
-            protected Boolean doInBackground(Object... params) {
+            protected Boolean doInBackground(Void... params) {
                 try{
                     getData().getExaminations()
                             .update(mExaminationDetails);
@@ -343,89 +344,9 @@ public class ExaminationDetailsFragment extends Fragment
     }
     //</editor-fold>
 
-    //<editor-fold desc="Touch handle - get prev/next examination">
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        Boolean handled = true;
-
-        int action = MotionEventCompat.getActionMasked(event);
-        switch (action) {
-            case MotionEvent.ACTION_MOVE:
-                handleSwipe(event);
-                break;
-            default:
-                handled = false;
-                break;
-        }
-
-        return handled;
-    }
-
-    private void handleSwipe(MotionEvent event) {
-        float currentY = event.getY();
-        if(mStartOfSwipeY == 0){
-            mStartOfSwipeY = currentY;
-        }
-        else{
-            float difference = currentY-mStartOfSwipeY;
-            if(difference > 0){
-                getPreviousExamination();
-            }
-            else if (difference < 0){
-                getNextExamination();
-            }
-            mStartOfSwipeY = 0;
-        }
-    }
-
-    private void getPreviousExamination() {
-        int position = getExaminationIdPosition();
-        if (position > 0){
-            mExaminationId = mIdsList[position - 1];
-            setExaminationPosition(position - 1);
-            initialize();
-        }
-        else{
-            Toast.makeText(getActivity(), getString(R.string.no_more_examinations), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void getNextExamination() {
-        int position = getExaminationIdPosition();
-        if (position < mIdsList.length - 1){
-            mExaminationId = mIdsList[position + 1];
-            setExaminationPosition(position + 1);
-            initialize();
-        }
-        else{
-            Toast.makeText(getActivity(), getString(R.string.no_more_examinations), Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    private int getExaminationIdPosition() {
-        if (mCurrentIdPosition == -1){
-            for (int i = 0; i < mIdsList.length; i++) {
-                if(mIdsList[i] == mExaminationId){
-                    mCurrentIdPosition = i;
-                    break;
-                }
-            }
-        }
-
-        return mCurrentIdPosition;
-    }
-
-    private void setExaminationPosition(int examinationIdPosition) {
-        mCurrentIdPosition = examinationIdPosition;
-    }
-    //</editor-fold>
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt(CURRENT_POSITION, mCurrentIdPosition);
-        outState.putLongArray(IDS_LIST, mIdsList);
-        outState.putSerializable(EXAMINATION_DETAILS, mExaminationDetails);
+        outState.putLong(EXAMINATION_ID, mExaminationId);
     }
 
     @Override
@@ -433,7 +354,6 @@ public class ExaminationDetailsFragment extends Fragment
         super.onStop();
 
         closeDbConnection();
-
     }
 
     private void closeDbConnection() {

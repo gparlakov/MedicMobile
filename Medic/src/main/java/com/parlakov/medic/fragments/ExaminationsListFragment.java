@@ -2,10 +2,12 @@ package com.parlakov.medic.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.Menu;
@@ -14,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
+import com.parlakov.medic.Global;
 import com.parlakov.medic.R;
 import com.parlakov.medic.activities.AddEditExaminationActivity;
 import com.parlakov.medic.interfaces.ChildFragmentListener;
@@ -29,7 +32,6 @@ import java.util.Calendar;
  * Created by georgi on 13-11-11.
  */
 public class ExaminationsListFragment extends ListFragment {
-    public static final String EXAMINATION_TO_EDIT_ID_EXTRA = "edit examination id";
 
     //<editor-fold desc="members and getters">
     private final Calendar mCurrentDate;
@@ -75,10 +77,10 @@ public class ExaminationsListFragment extends ListFragment {
                                 int position, long id) {
         super.onListItemClick(listView, v, position, id);
 
-        getFragmentManager().beginTransaction()
-                .replace(R.id.container_medic_main,
-                        new ExaminationDetailsFragment(id, getIdsArray()))
-                .commit();
+        Intent viewExaminationDetails = new Intent(Global.VIEW_EXAMINATION_ACTION);
+        viewExaminationDetails.putExtra(
+                Global.EXAMINATION_DETAILS_ID_TO_VIEW, id);
+        startActivity(viewExaminationDetails);
     }
 
     private long[] getIdsArray() {

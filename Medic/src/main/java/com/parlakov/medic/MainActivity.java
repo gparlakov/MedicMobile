@@ -64,7 +64,6 @@ public class MainActivity extends ActionBarActivity
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManagerLazy().findFragmentById(R.id.navigation_drawer);
-        //mTitle = getTitle();
 
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
@@ -95,6 +94,7 @@ public class MainActivity extends ActionBarActivity
 
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
+
         switch (position) {
             case TODAYS_APPOINTMENTS_DRAWER_POSITION:
                 /* gives the current date to the instance so that
@@ -200,7 +200,7 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onChildFragmentClose() {
         onNavigationDrawerItemSelected(
-            mNavigationDrawerFragment.getmCurrentSelectedPosition());
+            mNavigationDrawerFragment.getCurrentSelectedPosition());
     }
 
     @Override

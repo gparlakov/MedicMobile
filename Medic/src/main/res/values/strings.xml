@@ -105,4 +105,7 @@
     <string name="label_notes">Notes</string>
     <string name="none_placeholder">none</string>
     <string name="no_more_examinations">no more</string>
+    <string name="action_title_patientHistory">History</string>
+    <string name="empty_text_empty_history">This patient has not had any examinations yet.</string>
+    <string name="toast_exception_could_not_extract_patient_history">Could not extract patients history from db</string>
 </resources>

@@ -2,14 +2,15 @@ package com.parlakov.medic.viewModels;
 
 import com.parlakov.medic.models.Examination;
 
+import java.io.Serializable;
+
 /**
  * Created by georgi on 13-11-16.
  */
-public  class ExaminationDetails extends Examination {
+public  class ExaminationDetails extends Examination implements Serializable{
 
     private String mPatientName;
     private String mPatientPhotoPath;
-
 
     public String getPatientName() {
         return mPatientName;

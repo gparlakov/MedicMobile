@@ -97,16 +97,22 @@ public class ImageHelper {
     }
 
     // Gets the bitmap from file downsized to fit the desired width height
-    public static Bitmap decodeSampledBitmapFromFile(String file, int reqWidth, int reqHeight){
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(file, options);
+    public static Bitmap decodeSampledBitmapFromFile(String filePath, int reqWidth, int reqHeight){
+        Bitmap result = null;
 
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        if(filePath != null && !filePath.isEmpty()){
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(filePath, options);
 
-        options.inJustDecodeBounds = false;
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
-        return  BitmapFactory.decodeFile(file, options);
+            options.inJustDecodeBounds = false;
+
+            result = BitmapFactory.decodeFile(filePath, options);
+        }
+
+        return result;
     }
 
     // calculates the sample size from given required width/ height
