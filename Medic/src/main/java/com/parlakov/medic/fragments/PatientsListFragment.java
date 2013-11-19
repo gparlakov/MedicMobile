@@ -14,14 +14,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
+import com.parlakov.medic.adapters.AdapterFactory;
 import com.parlakov.medic.interfaces.ChildFragmentListener;
 import com.parlakov.medic.R;
 import com.parlakov.medic.activities.AddEditPatientActivity;
 import com.parlakov.medic.activities.PatientManagementActivity;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.localdata.LocalPatients;
-import com.parlakov.medic.localdata.MedicDbContract;
-import com.parlakov.medic.viewbinders.PatientsListViewBinder;
 import com.parlakov.uow.IUowMedic;
 
 /**
@@ -100,8 +99,8 @@ public class PatientsListFragment extends ListFragment {
                         patientsCursor = patientsData.searchByName(getQuery());
                     }
 
-                    SimpleCursorAdapter adapter =
-                            getPatientsSimpleCursorAdapter(context, patientsCursor);
+                    SimpleCursorAdapter adapter = AdapterFactory
+                            .getPatientsSimpleCursorAdapter(context, patientsCursor);
 
                     return  adapter;
                 }
@@ -127,36 +126,6 @@ public class PatientsListFragment extends ListFragment {
                 setListAdapter(adapter);
             }
         }.execute();
-
-    }
-
-    private SimpleCursorAdapter getPatientsSimpleCursorAdapter(
-            Context context, Cursor patients) {
-
-        String[] from = new String[]
-                {
-                        MedicDbContract.Patient.COLUMN_NAME_PHOTO_PATH,
-                        MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME,
-                        MedicDbContract.Patient.COLUMN_NAME_LAST_NAME,
-                };
-
-        int[] to = new int[]
-                {
-                        R.id.listItemPatientImage,
-                        R.id.listItemPatientFirstName,
-                        R.id.listItemPatientLastName
-                };
-
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(context,
-                R.layout.item_patient,
-                patients,
-                from,
-                to,
-                0);
-
-        adapter.setViewBinder(new PatientsListViewBinder());
-
-        return adapter;
     }
 
     //<editor-fold desc="action bar management">

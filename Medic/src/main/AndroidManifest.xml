@@ -87,7 +87,7 @@
 
         <activity
             android:name=".activities.ExaminationManagementActivity"
-            android:label="Examination Management"
+            android:label="@string/title_examinations"
             android:uiOptions="splitActionBarWhenNarrow">
 
             <meta-data android:name="android.support.UI_OPTIONS"

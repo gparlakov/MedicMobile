@@ -6,10 +6,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
 
 import com.parlakov.medic.R;
-import com.parlakov.medic.adapters.PatientHistoryCursorAdapter;
+import com.parlakov.medic.adapters.AdapterFactory;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.localdata.LocalExaminations;
 
@@ -19,13 +20,16 @@ import com.parlakov.medic.localdata.LocalExaminations;
 public class PatientHistoryFragment extends ListFragment {
 
     private static final String PATIENT_ID = "patient id";
+    private static final String PATIENT_NAME = "patient name";
+    private String mPatientName;
 
     public PatientHistoryFragment(){
-        this(0);
+        this(0, null);
     }
 
-    public PatientHistoryFragment(long mPatientId) {
-        this.mPatientId = mPatientId;
+    public PatientHistoryFragment(long patientId, String patientName) {
+        mPatientId = patientId;
+        mPatientName = patientName;
     }
 
     private long mPatientId;
@@ -45,6 +49,19 @@ public class PatientHistoryFragment extends ListFragment {
         initialize();
 
         setEmptyText(getString(R.string.empty_text_empty_history));
+
+        addPatientNameToTitle();
+    }
+
+    private void addPatientNameToTitle() {
+
+        String title = getString(R.string.title_patientHistory);
+        if(mPatientName != null){
+            title += ": " + mPatientName;
+        }
+        ((ActionBarActivity)getActivity())
+                .getSupportActionBar().setTitle(title);
+
     }
 
     @Override
@@ -64,6 +81,7 @@ public class PatientHistoryFragment extends ListFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putLong(PATIENT_ID, mPatientId);
+        outState.putString(PATIENT_NAME, mPatientName);
     }
 
     @Override
@@ -72,6 +90,7 @@ public class PatientHistoryFragment extends ListFragment {
 
         if (savedInstanceState != null){
             mPatientId = savedInstanceState.getLong(PATIENT_ID);
+            mPatientName = savedInstanceState.getString(PATIENT_NAME);
         }
     }
 
@@ -87,7 +106,7 @@ public class PatientHistoryFragment extends ListFragment {
 
                     Cursor examHistoryCursor = examinations.getByPatientId(mPatientId);
 
-                    return PatientHistoryCursorAdapter.getAdapter(examHistoryCursor,
+                    return AdapterFactory.getPatientHistoryAdapter(examHistoryCursor,
                             getActivity());
 
                 }

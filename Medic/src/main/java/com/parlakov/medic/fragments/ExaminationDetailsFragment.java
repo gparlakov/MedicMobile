@@ -10,6 +10,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,11 +52,13 @@ public class ExaminationDetailsFragment extends Fragment
 
     private static final String EXAMINATION_ID = "examination id";
     private static final String EXAMINATION_DETAILS = "examination details";
+    private static final String TITLE = "Title";
 
     private long mExaminationId;
     private long oldTime;
     private ExaminationDetails mExaminationDetails;
     private LocalData mData;
+    private String mTitle;
 
     public LocalData getData() {
         if (mData == null) {
@@ -85,17 +89,15 @@ public class ExaminationDetailsFragment extends Fragment
 
         if(savedInstanceState != null){
             mExaminationId = savedInstanceState.getLong(EXAMINATION_ID);
+            mTitle = savedInstanceState.getString(TITLE);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View view = inflater.inflate(
+        return inflater.inflate(
                 R.layout.fragment_examination_details, container, false);
-
-        return view;
     }
 
     @Override
@@ -103,6 +105,11 @@ public class ExaminationDetailsFragment extends Fragment
         super.onStart();
 
         initialize();
+
+        ActionBar bar = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        if(bar != null){
+            bar.setTitle(R.string.title_examinations);
+        }
     }
 
     private void initialize() {
@@ -207,9 +214,10 @@ public class ExaminationDetailsFragment extends Fragment
 
             case R.id.action_patientHistory:
                 long patientId = mExaminationDetails.getPatientId();
+                String patientName = mExaminationDetails.getPatientName();
                 getFragmentManager().beginTransaction()
                         .replace(R.id.container_examinations_details,
-                                new PatientHistoryFragment(patientId))
+                                new PatientHistoryFragment(patientId, patientName))
                         .addToBackStack("patient_history_fragment")
                         .commit();
                 break;
@@ -288,6 +296,7 @@ public class ExaminationDetailsFragment extends Fragment
         setNewDateTime(cal);
     }
 
+    // saves the new time of examination/ appointment to db async
     private void setNewDateTime(Calendar cal) {
         mExaminationDetails.setDateInMillis(cal.getTimeInMillis());
 
@@ -347,6 +356,8 @@ public class ExaminationDetailsFragment extends Fragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putLong(EXAMINATION_ID, mExaminationId);
+        String title = String.valueOf(getActivity().getTitle());
+        outState.putString(TITLE, title);
     }
 
     @Override

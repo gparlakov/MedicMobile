@@ -22,6 +22,10 @@ public class ExaminationManagementActivity extends ActionBarActivity implements 
         FragmentManager fm = getSupportFragmentManager();
         fm.addOnBackStackChangedListener(this);
 
+        if(fm.getBackStackEntryCount() > 0){
+            return;
+        }
+
         String action = getIntent().getAction();
         if(action != null && action.equals(Global.VIEW_EXAMINATION_ACTION)){
 

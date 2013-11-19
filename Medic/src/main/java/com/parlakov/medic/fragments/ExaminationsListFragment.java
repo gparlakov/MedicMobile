@@ -2,12 +2,10 @@ package com.parlakov.medic.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.Menu;
@@ -19,11 +17,10 @@ import android.widget.ListView;
 import com.parlakov.medic.Global;
 import com.parlakov.medic.R;
 import com.parlakov.medic.activities.AddEditExaminationActivity;
+import com.parlakov.medic.adapters.AdapterFactory;
 import com.parlakov.medic.interfaces.ChildFragmentListener;
 import com.parlakov.medic.localdata.LocalData;
 import com.parlakov.medic.localdata.LocalExaminations;
-import com.parlakov.medic.localdata.MedicDbContract;
-import com.parlakov.medic.viewbinders.ExaminationsListViewBinder;
 import com.parlakov.uow.IUowMedic;
 
 import java.util.Calendar;
@@ -83,18 +80,6 @@ public class ExaminationsListFragment extends ListFragment {
         startActivity(viewExaminationDetails);
     }
 
-    private long[] getIdsArray() {
-
-        int count = getListAdapter().getCount();
-        long[] idsList = new long[count];
-
-        for (int i = 0; i < count; i++) {
-            idsList[i] = getListAdapter().getItemId(i);
-        }
-
-        return idsList;
-    }
-
     //<editor-fold desc="data loading async">
     private void initialize() {
 
@@ -105,39 +90,18 @@ public class ExaminationsListFragment extends ListFragment {
         new AsyncTask<Void, Void, SimpleCursorAdapter>() {
             @Override
             protected SimpleCursorAdapter doInBackground(Void... params) {
-
-                Cursor allExaminations;
+                SimpleCursorAdapter adapter = null;
                 try {
-                    allExaminations = getCursorExaminations();
-                } catch (SQLiteException ex) {
-                    ex.printStackTrace();
-                    return null;
+                    Cursor allExaminations = getCursorExaminations();
+
+                    adapter = AdapterFactory
+                            .getExaminationsSimpleCursorAdapter(allExaminations, context);
+
                 }
-
-                String[] fromColumns =
-                        {
-                                MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS,
-                                MedicDbContract.PATIENT_FULL_NAME,
-                                MedicDbContract.Examination.COLUMN_NAME_COMPLAINTS
-                        };
-
-                int[] toViewIds =
-                        {
-                                R.id.cursor_item_examination_date,
-                                R.id.cursor_item_examination_patientFullName,
-                                R.id.cursor_item_examination_complaints
-                        };
-
-                SimpleCursorAdapter adapter = new SimpleCursorAdapter(
-                        context,
-                        R.layout.item_examination,
-                        allExaminations,
-                        fromColumns,
-                        toViewIds,
-                        0);
-
-                adapter.setViewBinder(new ExaminationsListViewBinder());
-
+                catch (SQLiteException ex) {
+                    ex.printStackTrace();
+                    // will return null
+                }
                 return adapter;
             }
 

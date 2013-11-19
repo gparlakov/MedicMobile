@@ -108,4 +108,6 @@
     <string name="action_title_patientHistory">History</string>
     <string name="empty_text_empty_history">This patient has not had any examinations yet.</string>
     <string name="toast_exception_could_not_extract_patient_history">Could not extract patients history from db</string>
+    <string name="title_patientHistory">Patient History</string>
+    <string name="title_examinations">Examination</string>
 </resources>

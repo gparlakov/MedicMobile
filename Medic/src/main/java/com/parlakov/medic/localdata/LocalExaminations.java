@@ -54,6 +54,23 @@ public class LocalExaminations implements IRepository<Examination> {
                 "WHERE " + MedicDbContract.Examination.COLUMN_NAME_CANCELED + " IS NULL " +
                 "ORDER BY e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS + "] DESC;";
 
+    private String QUERY_EXAMINATIONS_WITH_PATIENT_NAMES_GROUPED_BY_DATE =
+            " SELECT " +
+                    " e.[" + MedicDbContract.Examination.COLUMN_NAME_ID + "]," +
+                    " e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS + "]," +
+                    " p.[" + MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME + "] " +
+                    " || ' ' || p.[" +
+                    MedicDbContract.Patient.COLUMN_NAME_LAST_NAME + "] " +
+                    " AS [" + MedicDbContract.PATIENT_FULL_NAME + "]," +
+                    " e.[" + MedicDbContract.Examination.COLUMN_NAME_COMPLAINTS + "] " +
+                "FROM " + MedicDbContract.Examination.TABLE_NAME + " e INNER JOIN " +
+                    MedicDbContract.Patient.TABLE_NAME + " p ON e.[" +
+                    MedicDbContract.Examination.COLUMN_NAME_PATIENT_ID +
+                    "] = p.[" + MedicDbContract.Patient.COLUMN_NAME_ID + "] " +
+                "WHERE " + MedicDbContract.Examination.COLUMN_NAME_CANCELED + " IS NULL " +
+                "GROUP BY date(e.["  + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS + "] / 1000, 'unixepoch') " +
+                "ORDER BY e.[" + MedicDbContract.Examination.COLUMN_NAME_DATE_IN_MILLIS + "] DESC;";
+
     private String QUERY_EXAMINATIONS_WITH_PATIENT_NAMES_TIME_WITHIN_TIME_PERIOD =
             " SELECT " +
                     " e.[" + MedicDbContract.Examination.COLUMN_NAME_ID + "]," +
@@ -171,6 +188,14 @@ public class LocalExaminations implements IRepository<Examination> {
         }
 
         return result;
+    }
+
+    public Cursor getAllGropedByDate(){
+        SQLiteDatabase db = open();
+        Cursor cr = db.rawQuery(
+                QUERY_EXAMINATIONS_WITH_PATIENT_NAMES_GROUPED_BY_DATE, null);
+
+        return cr;
     }
 
     @Override

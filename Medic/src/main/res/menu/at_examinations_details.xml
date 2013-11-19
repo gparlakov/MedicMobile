@@ -18,14 +18,14 @@
 
     <item
         android:id="@+id/action_changeDate"
-        app:showAsAction="ifRoom|withText"
+        app:showAsAction="ifRoom"
         android:title="@string/action_title_changeDate"
         android:icon="@android:drawable/ic_menu_my_calendar">
     </item>
 
     <item
         android:id="@+id/action_changeTime"
-        app:showAsAction="ifRoom|withText"
+        app:showAsAction="ifRoom"
         android:title="@string/action_title_changeTime"
         android:icon="@android:drawable/ic_menu_rotate">
     </item>
@@ -33,7 +33,7 @@
     <item
         android:id="@+id/action_cancelAppointment"
         android:title="@string/action_title_cancelAppointment"
-        app:showAsAction="ifRoom|withText"
+        app:showAsAction="ifRoom"
         android:icon="@android:drawable/ic_delete" />
 
 </menu>
