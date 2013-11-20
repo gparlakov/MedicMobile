@@ -22,8 +22,6 @@ public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks,
         ChildFragmentListener {
 
-    //TODO - refactor - extract a NavigationDrawerHelper class
-
     //<editor-fold desc="Constants">
     public static final int TODAYS_APPOINTMENTS_DRAWER_POSITION = 0;
     public static final int PATIENTS_LIST_DRAWER_POSITION = 1;
