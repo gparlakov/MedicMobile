@@ -20,7 +20,7 @@
     <string name="send_post_text">Register new Doctor</string>
     <string name="hint_username">Username…</string>
     <string name="hint_password">Password…</string>
-    <string name="login_doLoginButton">Goin</string>
+    <string name="login_doLoginButton">Login</string>
     <string name="register_phone">Phone…</string>
     <string name="hint_registerPhone">Phone…</string>
     <string name="hint_registerEmail">Email…</string>
@@ -110,4 +110,6 @@
     <string name="toast_exception_could_not_extract_patient_history">Could not extract patients history from db</string>
     <string name="title_patientHistory">Patient History</string>
     <string name="title_examinations">Examination</string>
+    <string name="explanation_registerToSync">Register to be able to synchronize data-base data with remote server</string>
+    <string name="button_settings_sync">Synchronize</string>
 </resources>

@@ -1,20 +1,23 @@
 package com.parlakov.medic.activities;
 
-import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 
 import com.parlakov.medic.Global;
 import com.parlakov.medic.R;
+import com.parlakov.medic.fragments.LoginFragment;
+import com.parlakov.medic.fragments.RegisterFragment;
 
 /**
  * Created by georgi on 13-11-8.
  */
-public class SettingsActivity extends Activity{
+public class SettingsActivity extends FragmentActivity{
     RadioButton mUseSdCardChoiceRadioButton;
     RadioButton mUseDeviceMemoryChoiceButton;
     private SharedPreferences mPrefs;
@@ -38,7 +41,7 @@ public class SettingsActivity extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choose_save_data_location);
+        setContentView(R.layout.activity_settings);
 
         mPrefs = getSharedPreferences(Global.PROPERTYS_NAME, MODE_PRIVATE);
 
@@ -73,6 +76,28 @@ public class SettingsActivity extends Activity{
         if(!state.equals(Environment.MEDIA_MOUNTED)){
             getUseSdCardChoiceRadioButton().setEnabled(false);
         }
+
+        Button login = (Button) findViewById(R.id.button_settings_login);
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getSupportFragmentManager().beginTransaction()
+                    .replace(R.layout.activity_settings, new LoginFragment())
+                    .addToBackStack("loginFragment")
+                    .commit();
+            }
+        });
+
+        Button register = (Button) findViewById(R.id.button_settings_register);
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.layout.activity_settings, new RegisterFragment())
+                        .addToBackStack("registerFragment")
+                        .commit();
+            }
+        });
     }
 
     private void doSaveLocationChosen() {
