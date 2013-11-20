@@ -7,7 +7,7 @@
         @layout/fragment_patient_details_wide
     </item>
 
-    <item name="cursor_item_examination" type="layout">@layout/item_examination_wide</item>
+    <item name="item_examination" type="layout">@layout/item_examination_wide</item>
 
 
 </resources>
