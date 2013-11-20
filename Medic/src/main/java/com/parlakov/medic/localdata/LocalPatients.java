@@ -1,6 +1,5 @@
 package com.parlakov.medic.localdata;
 
-import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,88 +7,142 @@ import android.database.sqlite.SQLiteDatabase;
 import com.parlakov.medic.models.Patient;
 import com.parlakov.uow.IRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Queue;
+import static com.parlakov.medic.util.PatientDataHelper.getContentValuesFromEntity;
+import static com.parlakov.medic.util.PatientDataHelper.getPatient;
 
 /**
  * Created by georgi on 13-11-2.
  */
-public class LocalPatients {
-
+public class LocalPatients implements IRepository<Patient> {
     private final MedicDbHelper mDbHelper;
 
-    public LocalPatients(MedicDbHelper dbHelper){
+    private SQLiteDatabase db;
+
+    private SQLiteDatabase open() {
+        if (db == null) {
+            db = mDbHelper.getWritableDatabase();
+        }
+        return db;
+    }
+
+    public void close() {
+        if (db != null){
+            db.close();
+            db = null;
+        }
+    }
+
+    //constructor
+    public LocalPatients(MedicDbHelper dbHelper) {
         mDbHelper = dbHelper;
     }
 
-    public Patient getById(long id) {
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+    @Override
+    public Patient getById(Object id) {
+        if (id == null) {
+            throw new NullPointerException("Empty patient id passed");
+        }
+        long idPat = Long.parseLong(String.valueOf(id));
+        SQLiteDatabase db = open();
         Cursor cursor = null;
-        Patient patient = null;
 
-        if(db != null){
-            cursor = db.rawQuery("SELECT * FROM " + MedicDbContract.Patient.TABLE_NAME,
-                    new String[]{MedicDbContract.Patient.COLUMN_NAME_ID + " = " + id});
-        }
-        if(cursor != null){
-            cursor.moveToFirst();
-            patient = new Patient();
-            patient.setFirstName(cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME)));
-
-            patient.setLastName(cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_LAST_NAME)));
-
-            patient.setAge(cursor.getInt(
-                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_AGE)));
-
-            patient.setPhone(cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_PHONE)));
-
-            patient.setImagePath(cursor.getString(
-                    cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_IMAGE_PATH)));
-
-            patient.setId(id);
+        if (db != null) {
+            cursor = db.query(MedicDbContract.Patient.TABLE_NAME,
+                    null, MedicDbContract.Patient.COLUMN_NAME_ID + " = " + idPat,
+                    null, null, null, null);
         }
 
+        Patient patient = getPatient(idPat, cursor);
 
         return patient;
     }
 
     public Cursor getAll() {
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        Cursor allPatients = db.rawQuery("Select * from " +
-                MedicDbContract.Patient.TABLE_NAME, null);
+        SQLiteDatabase db = open();
 
-//        db.close();
+        String[] columns = {
+                MedicDbContract.Patient.COLUMN_NAME_ID,
+                MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME,
+                MedicDbContract.Patient.COLUMN_NAME_LAST_NAME,
+                MedicDbContract.Patient.COLUMN_NAME_PHOTO_PATH
+        };
+
+        String orderBy = MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME;
+
+        Cursor allPatients = db.query(MedicDbContract.Patient.TABLE_NAME,
+                columns, null, null, null, null, orderBy);
+
         return allPatients;
     }
 
     public void add(Patient entity) {
-        if(entity == null)
+        if (entity == null)
             throw new NullPointerException("Passed entity is null");
+
+        SQLiteDatabase db = open();
+
+        ContentValues values = getContentValuesFromEntity(entity);
+
+        db.insert(MedicDbContract.Patient.TABLE_NAME, null, values);
+        close();
+    }
+
+    @Override
+    public void deleteOnId(Object id) {
+
+    }
+
+    public void delete(Patient entity) {
+        if (entity == null) {
+            throw new NullPointerException("Null patient pointer passed!");
+        }
+
+        long id = entity.getId();
+        SQLiteDatabase db = open();
+
+        db.delete(MedicDbContract.Patient.TABLE_NAME,
+                MedicDbContract.Patient.COLUMN_NAME_ID + " = " + id,
+                null);
+
+    }
+
+    public void update(Patient entity) {
+        if (entity == null)
+            throw new NullPointerException("No patient to update");
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME, entity.getFirstName());
-        values.put(MedicDbContract.Patient.COLUMN_NAME_LAST_NAME, entity.getLastName());
-        values.put(MedicDbContract.Patient.COLUMN_NAME_AGE, entity.getAge());
-        values.put(MedicDbContract.Patient.COLUMN_NAME_PHONE, entity.getPhone());
-        values.put(MedicDbContract.Patient.COLUMN_NAME_IMAGE_PATH, entity.getImagePath());
+        ContentValues values = getContentValuesFromEntity(entity);
 
+        db.update(MedicDbContract.Patient.TABLE_NAME,
+                values,
+                MedicDbContract.Patient.COLUMN_NAME_ID + " = " + entity.getId(),
+                null);
 
-        db.insert(MedicDbContract.Patient.TABLE_NAME, null, values);
-        db.close();
+        close();
     }
 
-    public Boolean delete(int id) {
-        return null;
-    }
+    public Cursor searchByName(String query) {
+        SQLiteDatabase db = open();
 
-    public Patient update(Patient entity) {
-        return null;
+        String[] columns = {
+                MedicDbContract.Patient.COLUMN_NAME_ID,
+                MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME,
+                MedicDbContract.Patient.COLUMN_NAME_LAST_NAME,
+                MedicDbContract.Patient.COLUMN_NAME_PHOTO_PATH
+        };
+
+        String selection = MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME +
+                " LIKE ? OR " + MedicDbContract.Patient.COLUMN_NAME_LAST_NAME +
+                " LIKE ?";
+
+        String[] args = { query + "%", query + "%" };
+
+        String orderBy = MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME;
+
+        Cursor cursor = db.query(MedicDbContract.Patient.TABLE_NAME,
+                columns, selection, args, null, null, orderBy);
+
+        return cursor;
     }
 }

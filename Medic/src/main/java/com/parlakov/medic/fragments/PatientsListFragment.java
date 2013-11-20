@@ -3,41 +3,70 @@ package com.parlakov.medic.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
+import android.database.sqlite.SQLiteException;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.parlakov.medic.adapters.AdapterFactory;
+import com.parlakov.medic.interfaces.ChildFragmentListener;
 import com.parlakov.medic.R;
-import com.parlakov.medic.activities.AddPatientActivity;
+import com.parlakov.medic.activities.AddEditPatientActivity;
+import com.parlakov.medic.activities.PatientManagementActivity;
 import com.parlakov.medic.localdata.LocalData;
-import com.parlakov.medic.localdata.MedicDbContract;
+import com.parlakov.medic.localdata.LocalPatients;
+import com.parlakov.uow.IUowMedic;
 
 /**
  * Created by georgi on 13-11-5.
  */
 public class PatientsListFragment extends ListFragment {
 
+    //<editor-fold desc="members and getters">
+    private final String mQuery;
+    private IUowMedic mData;
+    private Cursor mPatientsCursor;
+
+    public String getQuery() {
+        return mQuery;
+    }
+
+    public IUowMedic getData() {
+        if(mData == null){
+            mData = new LocalData(getActivity());
+        }
+        return mData;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="constructors">
+    public PatientsListFragment() {
+        this(null);
+    }
+
+    public PatientsListFragment(String query) {
+        mQuery = query;
+    }
+    //</editor-fold>
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         setHasOptionsMenu(true);
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        initialize();
+        if(mQuery != null){
+            setEmptyText(getString(R.string.search_nothing_found)
+                    + "\"" + mQuery + "\"");
+        }else{
+            setEmptyText(getString(R.string.emptyText_patientsList));
+        }
     }
 
     @Override
@@ -46,70 +75,68 @@ public class PatientsListFragment extends ListFragment {
     }
 
     private void handlePatientItemClicked(long id) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.container,
-                new PatientDetailsFragment(id)).commit();
+        Intent showPatientDetails = new Intent(getActivity(), PatientManagementActivity.class);
+        showPatientDetails.putExtra(PatientManagementActivity.PATIENT_ID_EXTRA, id);
+        startActivity(showPatientDetails);
     }
 
     private void initialize() {
-        Context context = getListView().getContext();
-        LocalData data = new LocalData(context);
-        Cursor patients = data.getPatients().getAll();
 
-        SimpleCursorAdapter adapter = getPatiensSimpleCursorAdapter(context, patients);
+        final Context context = getListView().getContext();
 
-        this.setListAdapter(adapter);
-        this.setEmptyText(getString(R.string.emptyPatientsList));
-    }
-
-    private SimpleCursorAdapter getPatiensSimpleCursorAdapter(Context context, Cursor patients) {
-        String[] from = new String[]
-                {
-                        MedicDbContract.Patient.COLUMN_NAME_IMAGE_PATH,
-                        MedicDbContract.Patient.COLUMN_NAME_FIRST_NAME,
-                        MedicDbContract.Patient.COLUMN_NAME_LAST_NAME,
-                };
-
-        int[] to = new int[]
-                {
-                        R.id.listItemPatientImage,
-                        R.id.listItemPatientFirstName,
-                        R.id.listItemPatientLastName
-                };
-
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(context,
-                R.layout.item_patient,
-                patients,
-                from,
-                to,
-                0);
-
-        adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+        new AsyncTask<Void, Void, SimpleCursorAdapter>() {
             @Override
-            public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-                if (columnIndex ==
-                        cursor.getColumnIndex(MedicDbContract.Patient.COLUMN_NAME_IMAGE_PATH)) {
-                    String picturePath = cursor.getString(columnIndex);
-                    ImageView patientPicture = (ImageView) view;
-                    if (picturePath != null && !picturePath.isEmpty()) {
-                        patientPicture.setImageDrawable(Drawable.createFromPath(picturePath));
-                    } else {
-                        patientPicture.setImageResource(R.drawable.ic_default_picture);
+            protected SimpleCursorAdapter doInBackground(Void... params) {
+                Cursor patientsCursor;
+                try{
+                    if(getQuery() == null){
+                        // not a search-started fragment
+                        patientsCursor = (Cursor) getData().getPatients().getAll();
                     }
-                    return true;
+                    else{
+                        // a search-started fragment
+                        LocalPatients patientsData = (LocalPatients) getData().getPatients();
+                        patientsCursor = patientsData.searchByName(getQuery());
+                    }
+
+                    SimpleCursorAdapter adapter = AdapterFactory
+                            .getPatientsSimpleCursorAdapter(context, patientsCursor);
+
+                    return  adapter;
                 }
-
-                return false;
+                catch(SQLiteException ex){
+                    ex.printStackTrace();
+                    return null;
+                }
             }
-        });
 
-        return adapter;
+            @Override
+            protected void onPostExecute(SimpleCursorAdapter adapter) {
+                if(adapter == null){
+                    ChildFragmentListener parentActivity =
+                            (ChildFragmentListener) getActivity();
+                    if(parentActivity != null){
+                        parentActivity.showErrorMessageAndExit(
+                                R.string.toast_exception_dbNoFoundMaybeSDMissing);
+                    } else {
+                        getActivity().finish();
+                    }
+                    return;
+                }
+                setListAdapter(adapter);
+            }
+        }.execute();
     }
 
     //<editor-fold desc="action bar management">
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.addpatientmenu, menu);
+        if(mQuery != null){
+            inflater.inflate(R.menu.at_patients_search_result, menu);
+
+        } else {
+            inflater.inflate(R.menu.at_patients_list, menu);
+        }
     }
 
     @Override
@@ -119,8 +146,12 @@ public class PatientsListFragment extends ListFragment {
         int itemId = item.getItemId();
         switch (itemId) {
             case R.id.action_addPatient:
-                Intent newPatientIntent = new Intent(getActivity(), AddPatientActivity.class);
+                Intent newPatientIntent = new Intent(getActivity(), AddEditPatientActivity.class);
                 startActivity(newPatientIntent);
+                break;
+            case R.id.action_returnToPatientsList:
+                ChildFragmentListener listener = (ChildFragmentListener) getActivity();
+                listener.onChildFragmentClose();
                 break;
             default:
                 handled = super.onOptionsItemSelected(item);
@@ -131,15 +162,30 @@ public class PatientsListFragment extends ListFragment {
     }
     //</editor-fold>
 
-    //<editor-fold desc="Save/Restore instance">
+    //<editor-fold desc="life-cycle management">
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    public void onStart() {
+        super.onStart();
+        initialize();
     }
 
     @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
+    public void onStop() {
+        super.onStop();
+
+        closeDataConnection();
     }
     //</editor-fold>
+
+    private void closeDataConnection() {
+        if(mData != null){
+            mData.closeDb();
+            mData = null;
+        }
+
+        if(mPatientsCursor != null){
+            mPatientsCursor.close();
+            mPatientsCursor = null;
+        }
+    }
 }

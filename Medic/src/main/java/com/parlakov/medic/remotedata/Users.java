@@ -1,8 +1,7 @@
-package com.parlakov.medic.data;
+package com.parlakov.medic.remotedata;
 
 //import com.google.gson.Gson;
 
-import com.parlakov.medic.models.LoginUser;
 import com.parlakov.medic.models.User;
 import com.parlakov.uow.IUsersRepository;
 

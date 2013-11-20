@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/cursor_item_patients"
+    android:padding="@dimen/list_item_padding_wide">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cursor_item_examination_date"
+        android:layout_marginLeft="@dimen/textView_horizontalMargin"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_marginStart="@dimen/textView_horizontalMargin"
+        android:layout_marginTop="@dimen/textView_verticalMargin"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cursor_item_examination_patientFullName"
+        android:layout_marginLeft="@dimen/textView_horizontalMargin"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_marginStart="@dimen/textView_horizontalMargin"
+        android:layout_marginTop="@dimen/textView_verticalMargin"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cursor_item_examination_complaints"
+        android:layout_marginLeft="@dimen/textView_horizontalMargin"
+        android:layout_marginStart="@dimen/textView_horizontalMargin"
+        android:layout_marginTop="@dimen/textView_verticalMargin"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/black"/>
+
+
+</LinearLayout>

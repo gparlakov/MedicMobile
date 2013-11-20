@@ -1,5 +1,10 @@
 package com.parlakov.uow;
 
+import android.database.Cursor;
+
+import com.parlakov.medic.exceptions.MedicException;
+import com.parlakov.medic.models.Examination;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -8,16 +13,17 @@ import java.util.List;
  */
 public interface IRepository<T> {
 
-    public T getById(int id);
+    T getById(Object id);
 
-    public Collection<T> getAll();
+    public Object getAll();
 
-    public void add(T entity);
+    public void add(T entity) throws MedicException;
 
-    public Boolean delete(T entity);
+    public void deleteOnId(Object id);
 
-    public Boolean delete(int id);
+    public void delete(T entity);
 
-    public T update(T entity);
+    public void update(T entity) throws MedicException;
 
+    public void close();
 }

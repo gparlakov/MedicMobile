@@ -1,14 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="fill_parent">
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="patient details :"
-        android:id="@+id/textView_patientDetails"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-</RelativeLayout>
+        <!--title-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/title_patientDetails"
+            android:id="@+id/textView_patientDetails"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"/>
+
+        <!--Patient image-->
+        <ImageView
+            android:layout_height="@dimen/patient_details_photo_dimen"
+            android:layout_width="@dimen/patient_details_photo_dimen"
+            android:src="@drawable/ic_default_picture"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/textView_patientDetails"
+            android:id="@+id/imageView_patientDetails_Photo" />
+
+        <!--Patient Name-->
+        <TextView
+            android:layout_width="@dimen/label_width"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/label_patientName"
+            android:id="@+id/textViewLabelPatientName"
+            android:layout_below="@+id/imageView_patientDetails_Photo"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="@dimen/textView_horizontalMargin"
+            android:layout_marginLeft="@dimen/patient_details_wide_text_margin_horizontal"
+            android:layout_marginTop="@dimen/patient_details_wide_text_margin_vertical"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/textViewPatientName"
+            android:layout_below="@+id/imageView_patientDetails_Photo"
+            android:layout_toRightOf="@+id/textViewLabelPatientName"
+            android:layout_marginLeft="@dimen/patient_details_wide_text_margin_horizontal"
+            android:layout_marginTop="@dimen/patient_details_wide_text_margin_vertical"/>
+
+        <!--Patient Age-->
+        <TextView
+            android:layout_width="@dimen/label_width"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/label_patientAge"
+            android:id="@+id/textViewLabelPatientAgeLabel"
+            android:layout_below="@+id/textViewLabelPatientName"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/patient_details_wide_text_margin_horizontal"
+            android:layout_marginRight="@dimen/patient_details_wide_text_margin_horizontal"
+            android:layout_marginTop="@dimen/patient_details_wide_text_margin_vertical"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/textViewPatientAge"
+            android:layout_below="@+id/textViewPatientName"
+            android:layout_toRightOf="@+id/textViewLabelPatientAgeLabel"
+            android:layout_marginLeft="@dimen/patient_details_wide_text_margin_horizontal"
+            android:layout_marginTop="@dimen/patient_details_wide_text_margin_vertical"/>
+
+        <!--Patient Phone-->
+        <TextView
+            android:layout_width="@dimen/label_width"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/label_patientPhone"
+            android:id="@+id/textViewLabelPatientPhoneLabel"
+            android:layout_below="@+id/textViewLabelPatientAgeLabel"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/patient_details_wide_text_margin_horizontal"
+            android:layout_marginRight="@dimen/patient_details_wide_text_margin_horizontal"
+            android:layout_marginTop="@dimen/patient_details_wide_text_margin_vertical"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/textViewPatientPhone"
+            android:layout_below="@+id/textViewPatientAge"
+            android:layout_toRightOf="@+id/textViewLabelPatientPhoneLabel"
+            android:layout_marginLeft="@dimen/patient_details_wide_text_margin_horizontal"
+            android:layout_marginTop="@dimen/patient_details_wide_text_margin_vertical"/>
+    </RelativeLayout>
+</ScrollView>

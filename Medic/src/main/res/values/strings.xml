@@ -4,39 +4,110 @@
     <string name="app_name">Medic</string>
     <string name="app_sd_card_folder">medic</string>
     <string name="app_pictures_folder">pictures</string>
-    <string name="title_sectionHome">Home</string>
+
+    <string name="title_sectionTodaysAppointments">Todays appointments</string>
+    <string name="title_sectionExaminationsList">Examinations</string>
+    <string name="title_sectionPatientsList">Patients List</string>
     <string name="title_sectionLogin">Login</string>
     <string name="title_sectionRegister">Register</string>
+    <string name="title_sectionSettings">Settings</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="add_patient">Add Patient</string>
+    <string name="action_add_patient">Add</string>
     <string name="action_settings">Settings</string>
     <string name="send_get_request_text">Send Get</string>
     <string name="send_post_text">Register new Doctor</string>
-    <string name="hint_username">Username...</string>
-    <string name="hint_password">Password...</string>
+    <string name="hint_username">Username…</string>
+    <string name="hint_password">Password…</string>
     <string name="login_doLoginButton">Goin</string>
-    <string name="register_phone">Phone...</string>
-    <string name="hint_registerPhone">Phone...</string>
-    <string name="hint_registerEmail">Email....</string>
-    <string name="hint_displayName">Display Name...</string>
+    <string name="register_phone">Phone…</string>
+    <string name="hint_registerPhone">Phone…</string>
+    <string name="hint_registerEmail">Email…</string>
+    <string name="hint_displayName">Display Name…</string>
     <string name="register_doRegisterText">Register</string>
-    <string name="home_welcomeGreeting">Welcome to MEDIC. Your helper in the practice...</string>
+    <string name="home_welcomeGreeting">Welcome to MEDIC. Your helper in the practice!</string>
     <string name="create_tables">Create tables</string>
-    <string name="title_addPatient">Add patient</string>
-    <string name="hint_patientFirstName">First Name...</string>
-    <string name="hint_patientLastName">Last Name...</string>
-    <string name="hint_patientPhone">Phone...</string>
-    <string name="hint_patientAge">Age...</string>
+    <string name="title_activity_addEditPatient">Edit Patient</string>
+    <string name="hint_patientFirstName">First Name…</string>
+    <string name="hint_patientLastName">Last Name…</string>
+    <string name="hint_patientPhone">Phone…</string>
+    <string name="hint_patientAge">Age…</string>
     <string name="button_savePatient">Save patient</string>
     <string name="button_takeNewPatientPicture">Take picture</string>
     <string name="contentDescription_patientImage">Patient image</string>
     <string name="newPatientPicture">Patient picture</string>
-    <string name="emptyPatientsList">Add patients - click + on action bar</string>
+    <string name="emptyText_patientsList">Add patients - click + on action bar</string>
     <string name="title_activity_patients_list">Patients List</string>
-    <string name="radio_button_use_sd_card">Use SD Card</string>
-    <string name="radio_button_use_device_storage">Use device storage</string>
+    <string name="radio_button_use_sd_card">
+        Use SD Card - data is public and remains after uninstall in your SD
+        memory card</string>
+    <string name="radio_button_use_device_storage">
+        Use device storage - data is private
+        (can not be seen from outside the app) and is deleted upon uninstall</string>
     <string name="title_saveLocation">Choose where to save your data</string>
     <string name="button_saveLocationChosen">Done</string>
-
+    <string name="action_callPatient">Call Patient</string>
+    <string name="action_deletePatient">Delete Patient</string>
+    <string name="action_editPatient">Edit</string>
+    <string name="title_patientDetails">Patient details</string>
+    <string name="label_patientName">Name</string>
+    <string name="label_patientAge">Age</string>
+    <string name="label_patientPhone">Phone</string>
+    <string name="title_activity_patient">Patient</string>
+    <string name="exception_patientNotDeleted">
+        Could not delete patient from db - please try again</string>
+    <string name="error_patientIdCanNotBeFound">
+        No patient selected - go back and try again</string>
+    <string name="action_addAppointment">Add Appointment</string>
+    <string name="exception_unableToOpenDb">Could not open database</string>
+    <string name="exception_unknownException">Error occured. Please try again.</string>
+    <string name="accessibility_patientPhoto">Patient Photo</string>
+    <string name="toast_noPatientNumber">
+        This patient has no number associated with. Please edit patient</string>
+    <string name="action_title_addExamination">Add Examination</string>
+    <string name="hint_examination_patientComplaints">Patient complaints…</string>
+    <string name="hint_examination_treatment">Treatment…</string>
+    <string name="hint_examination_conclusion">Conclusion…</string>
+    <string name="hint_examination_note">Notes…</string>
+    <string name="button_examination_save">Save Examination</string>
+    <string name="hint_search_patients">Search patients…</string>
+    <string name="action_search_patients">Search patients</string>
+    <string name="search_nothing_found">No patients found by search of </string>
+    <string name="emptyText_todaysAppointments">
+        Today\'s examinations are nil!</string>
+    <string name="button_setExaminationDate">Set Date</string>
+    <string name="button_setExaminationTime">Set Time</string>
+    <string name="toast_dateMustBeLaterThanNow">
+        Date and time must be later than now.</string>
+    <string name="toast_exception_dbNoFoundMaybeSDMissing">
+        Could not connect to db. If the data is on the SD card, maybe the
+        SD card is not mounted?</string>
+    <string name="toast_exception_examination_not_found_id_db">
+        Could not find examination to edit in database.</string>
+    <string name="action_returnToPatientsList">Back to list</string>
+    <string name="action_title_changeDate">Change Date</string>
+    <string name="action_title_cancelAppointment">Cancel appointment</string>
+    <string name="action_title_results">Results</string>
+    <string name="action_title_back">Back</string>
+    <string name="emptyText_examinations">Empty examinations list</string>
+    <string name="toast_examinationCanceled">Examination canceled</string>
+    <string name="toast_examinationNotCanceled">
+        Examination could not be canceled due to problems in
+        database connection</string>
+    <string name="toast_exception_examinationNotFound">Examination not found</string>
+    <string name="exception_overlapping_examination">Existing ovarlapping appointment found.</string>
+    <string name="toast_missingPatient">Missing patient info!</string>
+    <string name="action_title_changeTime">Change Time</string>
+    <string name="label_complaints">Complaints</string>
+    <string name="label_conclusions">Conclusions</string>
+    <string name="label_treatment">Treatment</string>
+    <string name="label_notes">Notes</string>
+    <string name="none_placeholder">none</string>
+    <string name="no_more_examinations">no more</string>
+    <string name="action_title_patientHistory">History</string>
+    <string name="empty_text_empty_history">This patient has not had any examinations yet.</string>
+    <string name="toast_exception_could_not_extract_patient_history">Could not extract patients history from db</string>
+    <string name="title_patientHistory">Patient History</string>
+    <string name="title_examinations">Examination</string>
 </resources>

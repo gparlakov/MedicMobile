@@ -1,16 +1,14 @@
-package com.parlakov.medic.data;
+package com.parlakov.medic.remotedata;
 
 import com.parlakov.medic.models.Examination;
 import com.parlakov.medic.models.Patient;
-import com.parlakov.medic.models.User;
 import com.parlakov.uow.IRepository;
-import com.parlakov.uow.IUow;
-import com.parlakov.uow.IUsersRepository;
+import com.parlakov.uow.IUowMedic;
 
 /**
  * Created by georgi on 13-10-30.
  */
-public class Data implements IUow{
+public class Data implements IUowMedic {
     private final String BASE_URL = "http://api.everlive.com/v1/";
     private final String API_KEY = "9ZjuCuRmsDNSzQgC";
 
@@ -29,6 +27,11 @@ public class Data implements IUow{
     @Override
     public IRepository<Examination> getExaminations() {
         return null;
+    }
+
+    @Override
+    public void closeDb() {
+        //nothing to close here
     }
 
     Users mDoctors;

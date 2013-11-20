@@ -1,5 +1,6 @@
 package com.parlakov.medic.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 /**
  * Created by georgi on 13-10-30.
  */
-public class Patient {
+public class Patient implements Serializable {
 
     private String firstName;
     private String lastName;
@@ -81,7 +82,7 @@ public class Patient {
         this.imagePath = imagePath;
     }
 
-    public String getImagePath() {
+    public String getPhotoPath() {
         return imagePath;
     }
 }

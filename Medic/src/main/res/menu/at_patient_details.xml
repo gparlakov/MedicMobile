@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_editPatientData"
+        app:showAsAction="withText|always"
+        android:title="@string/action_editPatient"
+        android:icon="@android:drawable/ic_menu_edit">
+    </item>
+
+    <item
+        android:id="@+id/action_addAppointment"
+        app:showAsAction="withText|always"
+        android:title="@string/action_addAppointment"
+        android:icon="@android:drawable/ic_input_add">
+    </item>
+
+    <item
+        android:id="@+id/action_callPatient"
+        app:showAsAction="withText|ifRoom"
+        android:title="@string/action_callPatient"
+        android:icon="@android:drawable/ic_menu_call">
+    </item>
+
+
+    <item
+        android:id="@+id/action_deletePatient"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/action_deletePatient"
+        android:icon="@android:drawable/ic_delete">
+    </item>
+</menu>
