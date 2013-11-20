@@ -10,10 +10,6 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/medium_padding">
 
-        <!--<TextView-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/addEditExamination_chosenDate"/>-->
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
@@ -51,6 +47,15 @@
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:ems="10"
+            android:id="@+id/editText_examination_conclusion"
+            android:enabled="true"
+            android:hint="@string/hint_examination_conclusion" />
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:ems="10"
             android:id="@+id/editText_examination_treatment"
             android:enabled="true"
             android:hint="@string/hint_examination_treatment" />
@@ -63,15 +68,6 @@
             android:id="@+id/editText_examination_notes"
             android:enabled="true"
             android:hint="@string/hint_examination_note" />
-
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:ems="10"
-            android:id="@+id/editText_examination_conclusion"
-            android:enabled="true"
-            android:hint="@string/hint_examination_conclusion" />
 
         <Button
             android:layout_width="wrap_content"

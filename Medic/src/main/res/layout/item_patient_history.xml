@@ -40,7 +40,7 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/label_treatment"
             android:id="@+id/textView_label_treatment_item_patientHistory"
-            android:layout_below="@+id/textView_complaints_patientHistory"
+            android:layout_below="@+id/textView_conclusion_patientHistory"
             android:layout_alignParentLeft="true" />
 
         <TextView
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/label_conclusions"
-            android:layout_below="@+id/textView_treatment_patientHistory"
+            android:layout_below="@+id/textView_complaints_patientHistory"
             android:layout_alignParentLeft="true" />
 
         <TextView
@@ -73,8 +73,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/label_conclusions"
-            android:layout_below="@+id/textView_conclusion_patientHistory"
+            android:text="@string/label_notes"
+            android:layout_below="@+id/textView_treatment_patientHistory"
             android:layout_alignParentLeft="true" />
 
         <TextView
