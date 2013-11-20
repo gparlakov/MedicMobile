@@ -6,10 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.parlakov.medic.R;
 import com.parlakov.medic.models.User;
+import com.parlakov.medic.remotedata.Data;
 import com.parlakov.medic.util.TextHelper;
+
+import java.io.IOException;
 
 /**
  * Created by georgi on 13-11-1.
@@ -38,7 +42,7 @@ public class RegisterFragment extends Fragment {
     }
 
     private void doRegister(View view) {
-       /* User newUser = getUserInfo(view);
+        User newUser = getUserInfo(view);
 
         Data data = new Data();
 
@@ -50,7 +54,7 @@ public class RegisterFragment extends Fragment {
             result = "NOT Registered. Error: " + e.getMessage();
         }
 
-        showToastMessage(result, 5000, view);*/
+        Toast.makeText(getActivity(), result,Toast.LENGTH_LONG).show();
     }
 
     private User getUserInfo(View view) {

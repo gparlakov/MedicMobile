@@ -6,8 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.parlakov.medic.R;
+import com.parlakov.medic.remotedata.Data;
+import com.parlakov.medic.util.TextHelper;
+
+import java.io.IOException;
 
 /**
  * Created by georgi on 13-11-1.
@@ -33,21 +38,21 @@ public class LoginFragment extends Fragment {
     }
 
     private void doLogin(View view) {
-//        String username = getTextFromEditView(R.id.login_usernameEditText, view);
-//        String password = getTextFromEditView(R.id.login_passwordEditText, view);
-//        Log.i("Username via getString method", getString(R.id.login_usernameEditText));
-//
-//        Data data = new Data();
-//        String result = null;
-//        try {
-//            data.getUsers().login(username, password);
-//            result = "Logged in!";
-//
-//        } catch (IOException e) {
-//            result = "Not logged in. Error: " + e.getMessage();
-//        }
+        String username = TextHelper.getTextFromEditView(R.id.login_usernameEditText, view);
+        String password = TextHelper.getTextFromEditView(R.id.login_passwordEditText, view);
 
-//        showToastMessage(result, 10000, view);
+
+        Data data = new Data();
+        String result = null;
+        try {
+            data.getUsers().login(username, password);
+            result = "Logged in!";
+
+        } catch (IOException e) {
+            result = "Not logged in. Error: " + e.getMessage();
+        }
+
+        Toast.makeText(getActivity(), result, Toast.LENGTH_LONG).show();
     }
 
 }
