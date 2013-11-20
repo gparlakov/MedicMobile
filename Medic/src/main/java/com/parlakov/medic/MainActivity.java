@@ -28,8 +28,6 @@ public class MainActivity extends ActionBarActivity
     public static final int TODAYS_APPOINTMENTS_DRAWER_POSITION = 0;
     public static final int PATIENTS_LIST_DRAWER_POSITION = 1;
     public static final int EXAMINATIONS_LIST_DRAWER_POSITION = 2;
-    public static final int LOGIN_DRAWER_POSITION = 5;
-    public static final int REGISTER_DRAWER_POSITION = 4;
 
     private static final int CHOOSE_LOCATION_REQUEST_CODE = 1000;
 

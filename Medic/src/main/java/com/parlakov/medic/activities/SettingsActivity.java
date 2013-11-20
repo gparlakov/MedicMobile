@@ -1,5 +1,6 @@
 package com.parlakov.medic.activities;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -81,10 +82,7 @@ public class SettingsActivity extends FragmentActivity{
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSupportFragmentManager().beginTransaction()
-                    .replace(R.layout.activity_settings, new LoginFragment())
-                    .addToBackStack("loginFragment")
-                    .commit();
+                openLogin();
             }
         });
 
@@ -92,10 +90,7 @@ public class SettingsActivity extends FragmentActivity{
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.layout.activity_settings, new RegisterFragment())
-                        .addToBackStack("registerFragment")
-                        .commit();
+                openRegister();
             }
         });
     }
@@ -129,4 +124,25 @@ public class SettingsActivity extends FragmentActivity{
 
         finish();
     }
+
+    private void openLogin(){
+        FragmentManager fm = getSupportFragmentManager();
+
+        fm.popBackStack();
+        fm.beginTransaction()
+                .replace(R.id.container_settings, new LoginFragment())
+                .addToBackStack("loginFragment")
+                .commit();
+    }
+
+
+    private void openRegister(){
+        FragmentManager fm = getSupportFragmentManager();
+        fm.popBackStack();
+        fm.beginTransaction()
+                .replace(R.id.container_settings, new RegisterFragment())
+                .addToBackStack("registerFragment")
+                .commit();
+    }
+
 }
