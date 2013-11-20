@@ -97,7 +97,6 @@ public class SettingsActivity extends FragmentActivity{
                         .addToBackStack("registerFragment")
                         .commit();
             }
-            //change
         });
     }
 
